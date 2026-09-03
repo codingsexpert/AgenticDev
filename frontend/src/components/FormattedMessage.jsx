@@ -50,7 +50,7 @@ function CodeBlock({ language, code, activeSandboxId, onOpenCodeBlock, onQuickAc
   const firstLine = code.split('\n')[0].trim();
   let filename = '';
   if (firstLine.startsWith('//') || firstLine.startsWith('<!--') || firstLine.startsWith('/*') || firstLine.startsWith('#')) {
-    filename = firstLine.replace(/[\/\*<\!#>\-]/g, '').trim();
+    filename = firstLine.replace(/[\/\*<\!#>\-]/g, '').replace(/^file:\s*/i, '').trim();
   }
 
   const handleApply = async () => {
@@ -356,7 +356,7 @@ export default function FormattedMessage({ content = '', isUser = false, activeS
                                     let f = '';
                                     const fl = c.split('\n')[0].trim();
                                     if (fl.startsWith('//') || fl.startsWith('<!--') || fl.startsWith('/*')) {
-                                        f = fl.replace(/[\/\*<\!#>\-]/g, '').trim();
+                                        f = fl.replace(/[\/\*<\!#>\-]/g, '').replace(/^file:\s*/i, '').trim();
                                     }
                                     allBlocks.push({ language: l, code: c, filename: f });
                                 }

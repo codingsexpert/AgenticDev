@@ -772,6 +772,22 @@ def save_sandbox_file_content(sandbox_id: str, req: SaveFileRequest):
     if not success:
         raise HTTPException(status_code=500, detail="Failed to save file to sandbox")
     return {"status": "success", "path": req.path}
+class RenameFileRequest(BaseModel):
+    old_path: str
+    new_path: str
+
+@app.post("/api/sandboxes/{sandbox_id}/rename")
+def rename_sandbox_file(sandbox_id: str, req: RenameFileRequest):
+    import os
+    from src.utils.sandbox_manager import get_sandbox_dir
+    s_dir = get_sandbox_dir(sandbox_id)
+    old_full = os.path.join(s_dir, req.old_path)
+    new_full = os.path.join(s_dir, req.new_path)
+    if os.path.exists(old_full):
+        os.makedirs(os.path.dirname(new_full), exist_ok=True)
+        os.rename(old_full, new_full)
+        return {"status": "success"}
+    raise HTTPException(status_code=404, detail="File not found")
 
 class DeployRequest(BaseModel):
     token: str

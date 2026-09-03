@@ -15,15 +15,16 @@ const getFileIcon = (name) => {
   return <File className="w-3.5 h-3.5 text-slate-400" />;
 };
 
-const FileTreeNode = ({ node, level, selectedFile, onSelect, hasUnsavedChanges }) => {
+const FileTreeNode = ({ node, level, selectedFile, onSelect, onRename, hasUnsavedChanges }) => {
   const [isOpen, setIsOpen] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
   const isFile = node.type === 'file';
   const isSelected = selectedFile === node.path;
   
   return (
     <div className="select-none">
       <div 
-        className={`flex items-center px-1 py-1 cursor-pointer transition-colors ${isSelected ? 'bg-[#37373d] text-white' : 'hover:bg-[#2a2d2e] text-[#cccccc]'}`}
+        className={`flex items-center px-1 py-1 cursor-pointer transition-colors group ${isSelected ? 'bg-[#37373d] text-white' : 'hover:bg-[#2a2d2e] text-[#cccccc]'}`}
         style={{ paddingLeft: `${level * 12 + 4}px` }}
         onClick={() => {
           if (isFile) {
@@ -32,6 +33,8 @@ const FileTreeNode = ({ node, level, selectedFile, onSelect, hasUnsavedChanges }
             setIsOpen(!isOpen);
           }
         }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         {!isFile ? (
           <div className="flex items-center justify-center w-4 h-4 shrink-0 mr-0.5">
@@ -49,9 +52,22 @@ const FileTreeNode = ({ node, level, selectedFile, onSelect, hasUnsavedChanges }
           )}
         </div>
         
-        <span className="text-[13px] truncate font-sans tracking-wide">{node.name}</span>
+        <span className="text-[13px] truncate font-sans tracking-wide flex-1">{node.name}</span>
         
-        {isFile && isSelected && hasUnsavedChanges && (
+        {isFile && isHovered && (
+          <button 
+            className="ml-auto mr-1 p-0.5 hover:bg-slate-600 rounded text-slate-300 transition-colors shrink-0"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRename(node.path);
+            }}
+            title="Rename file"
+          >
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+          </button>
+        )}
+        
+        {isFile && isSelected && hasUnsavedChanges && !isHovered && (
           <span className="ml-auto w-2 h-2 rounded-full bg-[#1e88e5] shrink-0 mr-2"></span>
         )}
       </div>
@@ -71,6 +87,7 @@ const FileTreeNode = ({ node, level, selectedFile, onSelect, hasUnsavedChanges }
               level={level + 1} 
               selectedFile={selectedFile} 
               onSelect={onSelect} 
+              onRename={onRename}
               hasUnsavedChanges={hasUnsavedChanges}
             />
           ))}
@@ -136,6 +153,28 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
     } catch (e) {
       setFileContent('// Failed to load file content');
       setOriginalContent('// Failed to load file content');
+    }
+  };
+
+  const handleRenameFile = async (oldPath) => {
+    const newName = window.prompt(`Rename ${oldPath} to:`, oldPath);
+    if (!newName || newName.trim() === '' || newName === oldPath) return;
+    
+    try {
+      const res = await fetch(`/api/sandboxes/${sandboxId}/rename`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ old_path: oldPath, new_path: newName.trim() })
+      });
+      if (!res.ok) throw new Error('Rename failed');
+      
+      if (selectedFile === oldPath) {
+        setSelectedFile(newName.trim());
+      }
+      fetchFiles();
+    } catch (e) {
+      console.error('Failed to rename file', e);
+      alert('Failed to rename file');
     }
   };
 
@@ -376,6 +415,7 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                       setSelectedFile(path);
                       fetchFileContent(path);
                    }}
+                   onRename={handleRenameFile}
                    hasUnsavedChanges={hasUnsavedChanges}
                  />
                ))}
