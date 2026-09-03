@@ -80,8 +80,8 @@ const FileTreeNode = ({ node, level, selectedFile, onSelect, hasUnsavedChanges }
   );
 };
 
-export default function ArtifactsCanvas({ sandboxId, onClose }) {
-  const [activeTab, setActiveTab] = useState('preview'); // 'code' | 'preview'
+export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code' }) {
+  const [activeTab, setActiveTab] = useState(initialTab); // 'code' | 'preview'
   const [files, setFiles] = useState([]);
   const [selectedFile, setSelectedFile] = useState('index.html');
   const [fileContent, setFileContent] = useState('');
@@ -282,8 +282,15 @@ export default function ArtifactsCanvas({ sandboxId, onClose }) {
         <div className="flex items-center space-x-2">
           <div className="flex bg-white p-0.5 rounded-lg border border-slate-200 text-xs shadow-2xs overflow-x-auto hide-scrollbar whitespace-nowrap">
             <button
+              onClick={() => setActiveTab('code')}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded-md transition-colors ${activeTab === 'code' ? 'bg-slate-900 text-white font-medium shadow-2xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
+            >
+              <Code className="w-3.5 h-3.5" />
+              <span>Code Editor</span>
+            </button>
+            <button
               onClick={() => setActiveTab('preview')}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded-md transition-colors bg-slate-900 text-white font-medium shadow-2xs`}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded-md transition-colors ${activeTab === 'preview' ? 'bg-slate-900 text-white font-medium shadow-2xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
             >
               <Eye className="w-3.5 h-3.5" />
               <span>Live Web Preview</span>

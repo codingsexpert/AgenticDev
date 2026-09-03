@@ -28,7 +28,18 @@
       "content": "```html\n<table border=\"1\">\n  <thead>\n    <tr>\n      <th>Name</th>\n      <th>Role</th>\n      <th>Subject</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Aarav Sharma</td>\n      <td>Student Leader</td>\n      <td>Mathematics</td>\n    </tr>\n    <tr>\n      <td>Riya Sen</td>\n      <td>Class Representative</td>\n      <td>Computer Science</td>\n    </tr>\n    <tr>\n      <td>Kabir Verma</td>\n      <td>Sports Captain</td>\n      <td>Physics</td>\n    </tr>\n  </tbody>\n</table>\n```"
     }
   ],
-  "node_history": [],
+  "node_history": [
+    {
+      "state_delta": {
+        "sandboxId": "sb_1788460803382"
+      }
+    },
+    {
+      "state_delta": {
+        "sandboxId": "sb_1788460824053"
+      }
+    }
+  ],
   "user_id": null,
-  "updated_at": 1786477563.3632078
+  "updated_at": 1788460824.0995991
 }
