@@ -779,8 +779,8 @@ class RenameFileRequest(BaseModel):
 @app.post("/api/sandboxes/{sandbox_id}/rename")
 def rename_sandbox_file(sandbox_id: str, req: RenameFileRequest):
     import os
-    from src.utils.sandbox_manager import get_sandbox_dir
-    s_dir = get_sandbox_dir(sandbox_id)
+    from src.utils.sandbox_manager import get_sandbox_path
+    s_dir = get_sandbox_path(sandbox_id)
     old_full = os.path.join(s_dir, req.old_path)
     new_full = os.path.join(s_dir, req.new_path)
     if os.path.exists(old_full):
