@@ -1,0 +1,18 @@
+{
+  "thread_id": "session_1785558611122",
+  "title": "hello ji kya haal hain",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hello ji kya haal hain"
+    },
+    {
+      "role": "assistant",
+      "content": "Sab badhiya ji! Aap bataiye, aaj main aapki kya madad kar sakta hoon?"
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_1785558602584",
+  "updated_at": 1785558612.650069
+}

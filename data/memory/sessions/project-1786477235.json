@@ -1,0 +1,71 @@
+{
+  "thread_id": "project-1786477235",
+  "title": "hi",
+  "mode": "build",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! Aaj hum kis project ya topic par kaam karne wale hain?"
+    }
+  ],
+  "node_history": [
+    {
+      "node": "setupSandbox",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": null,
+        "sandboxId": "sandbox-d00ba11ae31f"
+      }
+    },
+    {
+      "node": "sandboxHealthCheck",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": null,
+        "sandboxId": "sandbox-d00ba11ae31f"
+      }
+    },
+    {
+      "node": "selectNextTask",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": null,
+        "sandboxId": "sandbox-d00ba11ae31f"
+      }
+    },
+    {
+      "node": "presentToUser",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": null,
+        "sandboxId": "sandbox-d00ba11ae31f"
+      }
+    }
+  ],
+  "user_id": null,
+  "updated_at": 1786477244.468703
+}

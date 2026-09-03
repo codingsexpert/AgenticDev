@@ -1,0 +1,18 @@
+{
+  "thread_id": "session_1785558567247",
+  "title": "hi",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! Main ekdum badhiya hoon, bataiye aaj aapki kya madad kar sakta hoon?"
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_1785558562978",
+  "updated_at": 1785558569.0893152
+}

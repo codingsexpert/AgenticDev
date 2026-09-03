@@ -1,0 +1,155 @@
+INFO:     Started server process [45284]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+✅ Supabase Client Initialized in memory_manager.py
+✅ Python StateGraph compiled successfully (27 nodes)
+
+════════════════════════════════════════════════════════════
+  🤖 AI DEV TEAM — Web Dashboard UI Server
+  🌐 Dashboard running at: http://localhost:8000
+════════════════════════════════════════════════════════════
+
+🔍 [LangSmith] Tracing ENABLED → Project: 'ai-dev-team' (https://smith.langchain.com)
+🔍 [LangSmith] Tracing ENABLED → Project: 'ai-dev-team' (https://smith.langchain.com)
+INFO:     127.0.0.1:62273 - "GET /api/chats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62274 - "GET /api/chats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62277 - "GET /api/chats?user_id=32da5540-300c-45f1-8d0a-6668b54f4573 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62270 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62268 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62285 - "GET /api/chats/session_1787495477862 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62288 - "GET /api/chats/session_1787495477862 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62291 - "GET /api/chats/session_1787495477862 HTTP/1.1" 200 OK
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+⚡ Chat stream model 'gemini/gemini-2.0-flash' notice: litellm.NotFoundError: Vertex_ai_betaException - b'{\n  "error": {\n    "code": 404,\n    "message": "This model models/
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+⚡ Chat stream model 'gemini/gemini-2.0-flash' notice: litellm.NotFoundError: Vertex_ai_betaException - b'{\n  "error": {\n    "code": 404,\n    "message": "This model models/
+INFO:     127.0.0.1:62295 - "POST /api/chat/stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62299 - "POST /api/chats/save HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62302 - "GET /api/chats?user_id=32da5540-300c-45f1-8d0a-6668b54f4573 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62305 - "GET /api/chats/session_1787495477862 HTTP/1.1" 200 OK
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+⚡ Chat stream model 'gemini/gemini-2.0-flash' notice: litellm.NotFoundError: Vertex_ai_betaException - b'{\n  "error": {\n    "code": 404,\n    "message": "This model models/
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+⚡ Chat stream model 'gemini/gemini-2.0-flash' notice: litellm.NotFoundError: Vertex_ai_betaException - b'{\n  "error": {\n    "code": 404,\n    "message": "This model models/
+INFO:     127.0.0.1:62308 - "POST /api/chat/stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62313 - "POST /api/chats/save HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62316 - "GET /api/chats?user_id=32da5540-300c-45f1-8d0a-6668b54f4573 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62319 - "GET /api/chats/session_1787495962328 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62322 - "GET /api/chats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62326 - "GET /api/chats/session_1787495962328 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62332 - "GET /api/chats?user_id=25755334-5036-4b4a-b0f5-7c007102eebe HTTP/1.1" 200 OK
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+⚡ Chat stream model 'gemini/gemini-2.0-flash' notice: litellm.NotFoundError: Vertex_ai_betaException - b'{\n  "error": {\n    "code": 404,\n    "message": "This model models/
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+⚡ Chat stream model 'gemini/gemini-2.0-flash' notice: litellm.NotFoundError: Vertex_ai_betaException - b'{\n  "error": {\n    "code": 404,\n    "message": "This model models/
+INFO:     127.0.0.1:62336 - "POST /api/chat/stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62340 - "POST /api/chats/save HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62343 - "GET /api/chats?user_id=25755334-5036-4b4a-b0f5-7c007102eebe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62346 - "GET /api/chats/session_1787496022494 HTTP/1.1" 200 OK
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+⚡ Chat stream model 'gemini/gemini-2.0-flash' notice: litellm.NotFoundError: Vertex_ai_betaException - b'{\n  "error": {\n    "code": 404,\n    "message": "This model models/
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+⚡ Chat stream model 'gemini/gemini-2.0-flash' notice: litellm.NotFoundError: Vertex_ai_betaException - b'{\n  "error": {\n    "code": 404,\n    "message": "This model models/
+INFO:     127.0.0.1:62349 - "POST /api/chat/stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62354 - "POST /api/chats/save HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62357 - "GET /api/chats?user_id=25755334-5036-4b4a-b0f5-7c007102eebe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62360 - "GET /api/chats/session_1787496022494 HTTP/1.1" 200 OK
+🔍 [LangSmith] Tracing ENABLED → Project: 'ai-dev-team' (https://smith.langchain.com)
+🔍 [LangSmith] Tracing ENABLED → Project: 'ai-dev-team' (https://smith.langchain.com)
+⚠️ Supabase get_user_preferences error (falling back to local): [Errno 35] Resource temporarily unavailable
+⚠️ Supabase list_chat_sessions error (falling back to local): [Errno 35] Resource temporarily unavailable
+⚠️ Supabase list_chat_sessions error (falling back to local): [Errno 35] Resource temporarily unavailable
+⚠️ Supabase get_user_preferences error (falling back to local): [Errno 35] Resource temporarily unavailable
+⚠️ Supabase list_chat_sessions error (falling back to local): [Errno 35] Resource temporarily unavailable
+INFO:     127.0.0.1:62378 - "GET /api/chats?user_id=25755334-5036-4b4a-b0f5-7c007102eebe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62376 - "GET /api/chats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62374 - "GET /api/chats HTTP/1.1" 200 OK
+⚠️ Supabase get_long_term_memory error (falling back to local): <ConnectionTerminated error_code:1, last_stream_id:7, additional_data:None>
+⚠️ Supabase get_chat_session error (falling back to local): <ConnectionTerminated error_code:1, last_stream_id:7, additional_data:None>
+⚠️ Supabase get_chat_session error (falling back to local): <ConnectionTerminated error_code:1, last_stream_id:7, additional_data:None>
+⚠️ Supabase get_long_term_memory error (falling back to local): <ConnectionTerminated error_code:1, last_stream_id:7, additional_data:None>
+INFO:     127.0.0.1:62372 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62387 - "GET /api/chats/session_1787496022494 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62385 - "GET /api/chats/project-1786477559 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62380 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62395 - "GET /api/sandboxes/sandbox-783b66598fa9/files HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62397 - "GET /api/sandboxes/sandbox-783b66598fa9/files HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62390 - "GET /api/chats/project-1786477559 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62403 - "GET /api/sandboxes/sandbox-783b66598fa9/file?path=backend%2F.env HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62401 - "GET /api/sandboxes/sandbox-783b66598fa9/file?path=backend%2F.env HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62406 - "POST /api/sandboxes/sb_1787496090088/file HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62413 - "GET /api/sandboxes/sb_1787496090088/files HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62416 - "GET /api/sandboxes/sb_1787496090088/file?path=index.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62409 - "POST /api/chats/save HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62419 - "GET /api/chats?user_id=25755334-5036-4b4a-b0f5-7c007102eebe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62422 - "GET /api/chats/project-1786477559 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62425 - "GET /api/sandboxes/sandbox-783b66598fa9/files HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62428 - "GET /api/sandboxes/sandbox-783b66598fa9/file?path=backend%2F.env HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62431 - "POST /api/sandboxes/sb_1787496092241/file HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62437 - "GET /api/sandboxes/sb_1787496092241/files HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62440 - "GET /api/sandboxes/sb_1787496092241/file?path=index.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62434 - "POST /api/chats/save HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62443 - "GET /api/chats?user_id=25755334-5036-4b4a-b0f5-7c007102eebe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62446 - "GET /api/chats/project-1786477559 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62449 - "GET /api/sandboxes/sandbox-783b66598fa9/files HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62452 - "GET /api/sandboxes/sandbox-783b66598fa9/file?path=backend%2F.env HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62455 - "GET /api/chats/project-1786477559 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62458 - "GET /api/chats/session_1787496022494 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62461 - "GET /api/chats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62465 - "GET /api/chats/session_1787496022494 HTTP/1.1" 200 OK
+🔍 [LangSmith] Tracing ENABLED → Project: 'ai-dev-team' (https://smith.langchain.com)
+🔍 [LangSmith] Tracing ENABLED → Project: 'ai-dev-team' (https://smith.langchain.com)
+⚠️ Supabase get_user_preferences error (falling back to local): {'message': 'JWT issued at future', 'code': 'PGRST303', 'hint': None, 'details': None}
+INFO:     127.0.0.1:62557 - "GET /api/chats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62555 - "GET /api/chats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62554 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62556 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62560 - "GET /api/chats/session_1787496022494 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62562 - "GET /api/chats/session_1787496022494 HTTP/1.1" 200 OK
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+⚡ Chat stream model 'gemini/gemini-2.0-flash' notice: litellm.NotFoundError: Vertex_ai_betaException - b'{\n  "error": {\n    "code": 404,\n    "message": "This model models/
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+⚡ Chat stream model 'gemini/gemini-2.0-flash' notice: litellm.NotFoundError: Vertex_ai_betaException - b'{\n  "error": {\n    "code": 404,\n    "message": "This model models/
+INFO:     127.0.0.1:62567 - "POST /api/chat/stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62572 - "POST /api/chats/save HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62575 - "GET /api/chats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62578 - "GET /api/chats/session_1787496022494 HTTP/1.1" 200 OK
+🔍 [LangSmith] Tracing ENABLED → Project: 'ai-dev-team' (https://smith.langchain.com)
+🔍 [LangSmith] Tracing ENABLED → Project: 'ai-dev-team' (https://smith.langchain.com)
+INFO:     127.0.0.1:62619 - "GET /api/chats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62614 - "GET /api/chats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62613 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62618 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62623 - "GET /api/chats/session_1787496022494 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62626 - "GET /api/chats/session_1787496022494 HTTP/1.1" 200 OK

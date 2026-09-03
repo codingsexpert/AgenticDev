@@ -1,0 +1,26 @@
+{
+  "thread_id": "session_1785524181919",
+  "title": "hi",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Hey there! 👋 **PixlExpert** yahan hai! \n\nKaise ho aap? Aaj **HTML/CSS**, **FastAPI** ya kisi aur coding project mein kya help chahiye? \n\nKoi naya feature build karna hai, bugs fix karne hain, ya poora web application setup karna hai? Batao, code likhna shuru karte hain! 🚀"
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Hey again! 👋 \n\nBatao, aaj kis project pe kaam kar rahe ho? Main kaise help kar sakta hoon?"
+    }
+  ],
+  "node_history": [],
+  "user_id": null,
+  "updated_at": 1785524632.812968
+}

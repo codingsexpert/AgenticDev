@@ -1,0 +1,14 @@
+{
+  "thread_id": "chat-user-a-1",
+  "title": "User A Private Chat",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hello from user A"
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_1785558014536",
+  "updated_at": 1785558403.7577999
+}

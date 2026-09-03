@@ -1,0 +1,25 @@
+{
+  "thread_id": "session_1785467393389",
+  "title": "what is artificial intelligence ",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "what is artificial intelligence in 10 words"
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: All Gemini LLM API models are currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    },
+    {
+      "role": "user",
+      "content": "what is artificial intelligence in 10 words"
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: All Gemini LLM API models are currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    }
+  ],
+  "node_history": [],
+  "updated_at": 1785467423.228498
+}

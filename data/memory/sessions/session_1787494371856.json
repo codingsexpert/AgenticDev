@@ -1,0 +1,18 @@
+{
+  "thread_id": "session_1787494371856",
+  "title": "hlo",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hlo"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! Main ekdum badhiya hoon, bataiye aaj aapke liye kya code likhna hai?"
+    }
+  ],
+  "node_history": [],
+  "user_id": "32da5540-300c-45f1-8d0a-6668b54f4573",
+  "updated_at": 1787494377.232386
+}

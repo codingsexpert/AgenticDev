@@ -1,0 +1,34 @@
+{
+  "thread_id": "session_1787487128446",
+  "title": "hlo",
+  "mode": "build",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hlo"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! Main bilkul theek hoon, aap bataiye aapki kya help kar sakta hoon coding ya development mein?"
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! Aap bataiye, aaj kya code ya build karna hai?"
+    },
+    {
+      "role": "user",
+      "content": "build table with 5 students details name ,age subjects percentage using html only"
+    },
+    {
+      "role": "assistant",
+      "content": "```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Student Details Table</title>\n</head>\n<body>\n\n    <table border=\"1\" cellpadding=\"8\" cellspacing=\"0\">\n        <thead>\n            <tr>\n                <th>S.No.</th>\n                <th>Name</th>\n                <th>Age</th>\n                <th>Subjects</th>\n                <th>Percentage</th>\n            </tr>\n        </thead>\n        <tbody>\n            <tr>\n                <td>1</td>\n                <td>Rahul Sharma</td>\n                <td>20</td>\n                <td>Math, Physics, Chemistry</td>\n                <td>85.5%</td>\n            </tr>\n            <tr>\n                <td>2</td>\n                <td>Priya Patel</td>\n                <td>19</td>\n                <td>Biology, Chemistry, English</td>\n                <td>92.0%</td>\n            </tr>\n            <tr>\n                <td>3</td>\n                <td>Amit Kumar</td>\n                <td>21</td>\n                <td>Computer Science, Math, Physics</td>\n                <td>78.4%</td>\n            </tr>\n            <tr>\n                <td>4</td>\n                <td>Sneha Singh</td>\n                <td>20</td>\n                <td>Economics, Accounts, Business</td>\n                <td>88.2%</td>\n            </tr>\n            <tr>\n                <td>5</td>\n                <td>Rohit Verma</td>\n                <td>22</td>\n                <td>History, Political Science, English</td>\n                <td>81.0%</td>\n            </tr>\n        </tbody>\n    </table>\n\n</body>\n</html>\n```"
+    }
+  ],
+  "node_history": [],
+  "user_id": "32da5540-300c-45f1-8d0a-6668b54f4573",
+  "updated_at": 1787489143.374582
+}

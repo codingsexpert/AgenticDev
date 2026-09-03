@@ -1,0 +1,37 @@
+{
+  "thread_id": "session_1787494988953",
+  "title": "my name is mukesh",
+  "mode": "build",
+  "messages": [
+    {
+      "role": "user",
+      "content": "my name is mukesh"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello Mukesh! Aaj coding ya development mein kis cheez par kaam karna hai?"
+    },
+    {
+      "role": "user",
+      "content": "build simple calculator using html css js"
+    },
+    {
+      "role": "assistant",
+      "content": "```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Simple Calculator</title>\n    <style>\n        * {\n            box-sizing: border-box;\n            margin: 0;\n            padding: 0;\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n        }\n\n        body {\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            height: 100vh;\n            background: linear-gradient(135deg, #667eea, #764ba2);\n        }\n\n        .calculator {\n            background: #1e1e2f;\n            padding: 20px;\n            border-radius: 16px;\n            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);\n            width: 320px;\n        }\n\n        #display {\n            width: 100%;\n            height: 60px;\n            background: #27293d;\n            color: #ffffff;\n            font-size: 1.8rem;\n            text-align: right;\n            padding: 10px 15px;\n            border: none;\n            border-radius: 10px;\n            margin-bottom: 20px;\n            box-sizing: border-box;\n        }\n\n        .buttons {\n            display: grid;\n            grid-template-columns: repeat(4, 1fr);\n            gap: 12px;\n        }\n\n        button {\n            padding: 15px;\n            font-size: 1.2rem;\n            font-weight: bold;\n            border: none;\n            border-radius: 10px;\n            cursor: pointer;\n            background: #3a3f58;\n            color: #fff;\n            transition: background 0.2s, transform 0.1s;\n        }\n\n        button:hover {\n            background: #4e567d;\n        }\n\n        button:active {\n            transform: scale(0.95);\n        }\n\n        .btn-operator {\n            background: #ff9f43;\n            color: #fff;\n        }\n\n        .btn-operator:hover {\n            background: #ffb15c;\n        }\n\n        .btn-clear {\n            background: #ff5252;\n            color: #fff;\n        }\n\n        .btn-clear:hover {\n            background: #ff7676;\n        }\n\n        .btn-equal {\n            background: #2ed573;\n            color: #fff;\n            grid-column: span 2;\n        }\n\n        .btn-equal:hover {\n            background: #26af5f;\n        }\n    </style>\n</head>\n<body>\n\n    <div class=\"calculator\">\n        <input type=\"text\" id=\"display\" readonly>\n        <div class=\"buttons\">\n            <button class=\"btn-clear\" onclick=\"clearDisplay()\">C</button>\n            <button onclick=\"appendValue('/')\" class=\"btn-operator\">/</button>\n            <button onclick=\"appendValue('*')\" class=\"btn-operator\">*</button>\n            <button onclick=\"appendValue('-')\" class=\"btn-operator\">-</button>\n            \n            <button onclick=\"appendValue('7')\">7</button>\n            <button onclick=\"appendValue('8')\">8</button>\n            <button onclick=\"appendValue('9')\">9</button>\n            <button onclick=\"appendValue('+')\" class=\"btn-operator\">+</button>\n            \n            <button onclick=\"appendValue('4')\">4</button>\n            <button onclick=\"appendValue('5')\">5</button>\n            <button onclick=\"appendValue('6')\">6</button>\n            <button onclick=\"appendValue('.')\">.</button>\n            \n            <button onclick=\"appendValue('1')\">1</button>\n            <button onclick=\"appendValue('2')\">2</button>\n            <button onclick=\"appendValue('3')\">3</button>\n            <button onclick=\"appendValue('0')\">0</button>\n            \n            <button onclick=\"calculateResult()\" class=\"btn-equal\">=</button>\n        </div>\n    </div>\n\n    <script>\n        const display = document.getElementById('display');\n\n        function appendValue(value) {\n            display.value += value;\n        }\n\n        function clearDisplay() {\n            display.value = '';\n        }\n\n        function calculateResult() {\n            try {\n                display.value = eval(display.value);\n            } catch (error) {\n                display.value = 'Error';\n                setTimeout(clearDisplay, 1500);\n            }\n        }\n    </script>\n\n</body>\n</html>\n```"
+    }
+  ],
+  "node_history": [
+    {
+      "state_delta": {
+        "sandboxId": "sb_1787495021707"
+      }
+    },
+    {
+      "state_delta": {
+        "sandboxId": "sb_1787495032506"
+      }
+    }
+  ],
+  "user_id": "32da5540-300c-45f1-8d0a-6668b54f4573",
+  "updated_at": 1787495158.5667121
+}

@@ -1,0 +1,41 @@
+{
+  "thread_id": "session_1785467629715",
+  "title": "hello",
+  "mode": "build",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hello"
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: All Gemini LLM API models are currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Hey there! 👋 **PixlExpert** yahan hai. \n\nKaise ho aap? Aaj kya build karne ka plan hai? HTML-CSS, FastAPI, ya koi aur coding problem? \n\nBatao, code likhna shuru karte hain! 🚀"
+    },
+    {
+      "role": "user",
+      "content": "build 2 student table in html"
+    },
+    {
+      "role": "assistant",
+      "content": "Haan bilkul! Yahan main **2 Student Tables** ka complete Code de raha hoon with a clean, modern HTML & CSS design.\n\nIsme:\n1. **Table 1:** Student Personal Details (Roll No, Name, Class, Attendance)\n2. **Table 2:** Student Academic Marks (Roll No, Name, Subject, Marks, Status)\n\n### HTML & CSS Code:\n\n```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Student Data Tables</title>\n    <style>\n        /* Base Reset & Styling */\n        * {\n            box-sizing: border-box;\n            margin: 0;\n            padding: 0;\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n        }\n\n        body {\n            background-color: #f4f7fe;\n            color: #333;\n            padding: 40px 20px;\n        }\n\n        .container {\n            max-width: 1000px;\n            margin: 0 auto;\n        }\n\n        h2 {\n            margin-bottom: 15px;\n            color: #2c3e50;\n            font-size: 1.5rem;\n        }\n\n        .table-card {\n            background: #ffffff;\n            border-radius: 12px;\n            padding: 20px;\n            margin-bottom: 40px;\n            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);\n            overflow-x: auto; /* Responsive scrolling on smaller screens */\n        }\n\n        /* Table Styling */\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            text-align: left;\n        }\n\n        th, td {\n            padding: 12px 16px;\n            border-bottom: 1px solid #edf2f7;\n        }\n\n        th {\n            background-color: #4f46e5;\n            color: #ffffff;\n            font-weight: 600;\n            text-transform: uppercase;\n            font-size: 0.85rem;\n            letter-spacing: 0.5px;\n        }\n\n        th:first-child {\n            border-top-left-radius: 8px;\n        }\n\n        th:last-child {\n            border-top-right-radius: 8px;\n        }\n\n        tr:hover {\n            background-color: #f8fafc;\n        }\n\n        /* Status Badges */\n        .badge {\n            padding: 4px 10px;\n            border-radius: 20px;\n            font-size: 0.8rem;\n            font-weight: 600;\n            display: inline-block;\n        }\n\n        .badge-success {\n            background-color: #d1fae5;\n            color: #065f46;\n        }\n\n        .badge-warning {\n            background-color: #fef3c7;\n            color: #92400e;\n        }\n\n        .badge-danger {\n            background-color: #fee2e2;\n            color: #991b1b;\n        }\n    </style>\n</head>\n<body>\n\n    <div class=\"container\">\n\n        <!-- TABLE 1: Student General Info -->\n        <div class=\"table-card\">\n            <h2>1. Student Info Table</h2>\n            <table>\n                <thead>\n                    <tr>\n                        <th>Roll No</th>\n                        <th>Name</th>\n                        <th>Class</th>\n                        <th>Email</th>\n                        <th>Attendance</th>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr>\n                        <td>101</td>\n                        <td>Aarav Sharma</td>\n                        <td>Class 10-A</td>\n                        <td>aarav@example.com</td>\n                        <td><span class=\"badge badge-success\">92%</span></td>\n                    </tr>\n                    <tr>\n                        <td>102</td>\n                        <td>Riya Verma</td>\n                        <td>Class 10-A</td>\n                        <td>riya@example.com</td>\n                        <td><span class=\"badge badge-success\">88%</span></td>\n                    </tr>\n                    <tr>\n                        <td>103</td>\n                        <td>Kunal Patel</td>\n                        <td>Class 10-B</td>\n                        <td>kunal@example.com</td>\n                        <td><span class=\"badge badge-warning\">71%</span></td>\n                    </tr>\n                    <tr>\n                        <td>104</td>\n                        <td>Ananya Singh</td>\n                        <td>Class 10-B</td>\n                        <td>ananya@example.com</td>\n                        <td><span class=\"badge badge-danger\">55%</span></td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n\n        <!-- TABLE 2: Student Marks & Status -->\n        <div class=\"table-card\">\n            <h2>2. Student Performance / Marks Table</h2>\n            <table>\n                <thead>\n                    <tr>\n                        <th>Roll No</th>\n                        <th>Student Name</th>\n                        <th>Subject</th>\n                        <th>Marks Secured</th>\n                        <th>Status</th>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr>\n                        <td>101</td>\n                        <td>Aarav Sharma</td>\n                        <td>Mathematics</td>\n                        <td>95 / 100</td>\n                        <td><span class=\"badge badge-success\">Pass</span></td>\n                    </tr>\n                    <tr>\n                        <td>102</td>\n                        <td>Riya Verma</td>\n                        <td>Science</td>\n                        <td>82 / 100</td>\n                        <td><span class=\"badge badge-success\">Pass</span></td>\n                    </tr>\n                    <tr>\n                        <td>103</td>\n                        <td>Kunal Patel</td>\n                        <td>English</td>\n                        <td>64 / 100</td>\n                        <td><span class=\"badge badge-success\">Pass</span></td>\n                    </tr>\n                    <tr>\n                        <td>104</td>\n                        <td>Ananya Singh</td>\n                        <td>Mathematics</td>\n                        <td>28 / 100</td>\n                        <td><span class=\"badge badge-danger\">Fail</span></td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n\n    </div>\n\n</body>\n</html>\n```\n\n### Is Code Ke Key Features:\n1. **Modern UI**: Dark indigo header, rounded card style background, and subtle hover effects.\n2. **Responsive Wrapper**: Card ke andar `overflow-x: auto` diya hai taaki mobile screens par horizontal scroll chal sake.\n3. **Badges**: Status/Attendance highlight karne ke liye color-coded badges (`Pass/Fail`, `Attendance %`).\n\nIs code ko save karke `.html` file me chalao. Aur agar isme **FastAPI** backend se dynamic data render karna hai (Jinja2 Templates ke zariye) ya koi CSS customization chahiye, toh batao! 🚀"
+    },
+    {
+      "role": "user",
+      "content": "ok thankyou"
+    },
+    {
+      "role": "assistant",
+      "content": "You're welcome! 😊\n\nAgar aage chalkar is me koi aur enhancement chahiye, jaise:\n- **FastAPI backend** se JSON data fetch karke tables ko dynamic banana,\n- **Search bar** ya **Sorting** add karna,\n- Ya **Add/Edit Student Form** banana,\n\nToh bas bata dena. Happy coding! 🚀"
+    }
+  ],
+  "node_history": [],
+  "updated_at": 1785468165.552809
+}

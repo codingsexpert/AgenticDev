@@ -1,0 +1,100 @@
+{
+  "thread_id": "project-1785527314",
+  "title": "hello",
+  "mode": "build",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hello"
+    },
+    {
+      "role": "assistant",
+      "content": "Hey! Kaise ho aap? \n\nAaj aapke coding ya project me kis cheez me help chahiye? Mujhe batao!"
+    },
+    {
+      "role": "user",
+      "content": "write short noted on freadom fighter of india in 150 words"
+    },
+    {
+      "role": "assistant",
+      "content": "Here is a short note on the **Freedom Fighters of India**:\n\n---\n\nIndia ka Freedom Struggle hazaron deshbhakton ke sacrifices aur courage ki kahani hai. In freedom fighters ne British rule ke khilaf ladai lakar **15 August 1947** ko India ko azaad karwaya.\n\nHar freedom fighter ka tarika alag tha, lekin goal ek hi tha — **Azaadi**. \n\n* **Mahatma Gandhi** ne Ahimsa (non-violence) aur Satyagraha ke zariye poor desh ko ek saath khada kiya. \n* Wahi **Bhagat Singh**, **Chandrashekhar Azad**, aur **Rajguru** jaise revolutionaries ne apni jaan ki baazi lagakar British government ko hilakar rakh diya. \n* **Netaji Subhas Chandra Bose** ne *Indian National Army (INA)* banakar armed struggle se azaadi ki maang ki.\n* **Rani Lakshmibai** aur **Sardar Vallabhbhai Patel** ne outstanding leadership aur bravery ki misaal pesh ki.\n\nIn sabhi veer jawano aur leaders ke sacrifice ki wajah se aaj hum ek free nation me jeere hain. Unka junoon aur desh prem hume hamesha inspire karta rahega. **Jai Hind!**"
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: All Gemini LLM API models are currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: All Gemini LLM API models are currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: All Gemini LLM API models are currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: All Gemini LLM API models are currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: All Gemini LLM API models are currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Hey! Main bilkul theek hoon. \n\nAap batao, aaj kis code ya project pe kaam kar rahe ho? Kaise help karoon aapki?"
+    }
+  ],
+  "node_history": [
+    {
+      "node": "architectStep4",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": {
+          "newCalls": [
+            {
+              "agent": "architectStep4",
+              "input": 4045,
+              "output": 1778,
+              "cost": 0.000837
+            }
+          ],
+          "addedInput": 4045,
+          "addedOutput": 1778,
+          "addedCost": 0.000837
+        },
+        "sandboxId": ""
+      }
+    }
+  ],
+  "user_id": null,
+  "updated_at": 1785527489.943733
+}

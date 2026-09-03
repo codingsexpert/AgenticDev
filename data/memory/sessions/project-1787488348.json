@@ -1,0 +1,71 @@
+{
+  "thread_id": "project-1787488348",
+  "title": "hlo",
+  "mode": "build",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hlo"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! Kaise ho? Aapki kya help kar sakta hoon main aaj?"
+    }
+  ],
+  "node_history": [
+    {
+      "node": "setupSandbox",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": null,
+        "sandboxId": "sandbox-3ff32851f61d"
+      }
+    },
+    {
+      "node": "sandboxHealthCheck",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": null,
+        "sandboxId": "sandbox-3ff32851f61d"
+      }
+    },
+    {
+      "node": "selectNextTask",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": null,
+        "sandboxId": "sandbox-3ff32851f61d"
+      }
+    },
+    {
+      "node": "presentToUser",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": null,
+        "sandboxId": "sandbox-3ff32851f61d"
+      }
+    }
+  ],
+  "user_id": "32da5540-300c-45f1-8d0a-6668b54f4573",
+  "updated_at": 1787488354.8764858
+}

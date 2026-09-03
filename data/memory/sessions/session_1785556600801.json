@@ -1,0 +1,26 @@
+{
+  "thread_id": "session_1785556600801",
+  "title": "hi",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! Main ekdum badhiya hoon, bataiye aaj aapke liye kya code ya development mein madad karun?"
+    },
+    {
+      "role": "user",
+      "content": "write 100 words para on research parper"
+    },
+    {
+      "role": "assistant",
+      "content": "A research paper is a structured academic document that presents original investigation, analysis, or interpretation of a specific topic based on empirical data or extensive literature review. It serves as a primary medium for scholars to share new scientific discoveries, theoretical models, and technological advancements with the global academic community. Writing a compelling research paper requires a systematic approach: formulating a clear thesis, conducting rigorous methodology, analyzing quantitative or qualitative results objectively, and citing credible peer-reviewed sources. Ultimately, these scholarly publications drive innovation, expand human knowledge, and lay the critical groundwork for future technological and scientific breakthroughs."
+    }
+  ],
+  "node_history": [],
+  "user_id": null,
+  "updated_at": 1785556628.754081
+}

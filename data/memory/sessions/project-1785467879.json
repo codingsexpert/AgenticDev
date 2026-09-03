@@ -1,0 +1,103 @@
+{
+  "thread_id": "project-1785467879",
+  "title": "hello",
+  "mode": "build",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hello"
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: All Gemini LLM API models are currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Hey there! 👋 **PixlExpert** yahan hai. \n\nKaise ho aap? Aaj kya build karne ka plan hai? HTML-CSS, FastAPI, ya koi aur coding problem? \n\nBatao, code likhna shuru karte hain! 🚀"
+    }
+  ],
+  "node_history": [
+    {
+      "node": "pmAgent",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": "spec_ready",
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": {
+          "newCalls": [
+            {
+              "agent": "pmAgent",
+              "input": 511,
+              "output": 621,
+              "cost": 0.000225
+            }
+          ],
+          "addedInput": 511,
+          "addedOutput": 621,
+          "addedCost": 0.000225
+        },
+        "sandboxId": ""
+      }
+    },
+    {
+      "node": "setupSandbox",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": null,
+        "sandboxId": "sandbox-d263c01cbbd1"
+      }
+    },
+    {
+      "node": "sandboxHealthCheck",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": null,
+        "sandboxId": "sandbox-d263c01cbbd1"
+      }
+    },
+    {
+      "node": "selectNextTask",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": null,
+        "sandboxId": "sandbox-d263c01cbbd1"
+      }
+    },
+    {
+      "node": "presentToUser",
+      "status": "complete",
+      "state_delta": {
+        "pmStatus": null,
+        "pmQuestions": null,
+        "currentTask": null,
+        "reviewResult": null,
+        "executionResult": null,
+        "tokenUsage": null,
+        "sandboxId": "sandbox-d263c01cbbd1"
+      }
+    }
+  ],
+  "updated_at": 1785467889.737066
+}
