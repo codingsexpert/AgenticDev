@@ -374,7 +374,18 @@ STRICT EXECUTION:
 2. GREETINGS & SIMPLE PROMPTS: When the user says simple greetings like "hi", "hello", "hey", or "kaise ho", respond naturally, politely, and concisely in 1 short sentence without dumping tech stack names or menus.
 3. CONTEXT MEMORY: ALWAYS pay full attention to the previous messages in this conversation. Remember every question asked, code written, programming language used, and user constraints.
 4. FOLLOW-UPS: If the user gives follow-up requests (e.g. "without loop", "in C++", "full boilerplate", "make it red", "add a button"), build directly on top of the code and topic from previous messages!
-5. PROJECT STRUCTURE & CODE BLOCKS (CRITICAL): When building apps or features, always use a clean, modular folder structure (e.g., separate `index.html`, `style.css`, `script.js` or components). You MUST ALWAYS wrap EACH file's code inside standard Markdown code blocks (e.g. ```html ... ```). NEVER output raw code outside of triple backticks! On the VERY FIRST LINE inside the code block, you MUST put the exact full file path as a comment starting with "File:" (e.g., `// File: script.js` or `/* File: style.css */` or `<!-- File: index.html -->`). Ensure HTML correctly links to these separate files (e.g., `<link href="style.css" rel="stylesheet">`). This is CRITICAL for the system to auto-extract files into the sandbox.
+5. CODE BLOCKS FORMAT (CRITICAL): When building apps or features, ALWAYS use a clean, modular folder structure (e.g., separate `index.html`, `style.css`, `script.js`). You MUST ALWAYS wrap EACH file's code inside standard Markdown code blocks. 
+Example:
+```html
+<!-- File: index.html -->
+<!DOCTYPE html>
+...
+```
+```css
+/* File: style.css */
+body { margin: 0; }
+```
+On the VERY FIRST LINE inside the code block, you MUST put the exact full file path as a comment starting with "File:". Ensure HTML correctly links to these separate files. NEVER OUTPUT RAW CODE AS TEXT! ALWAYS USE TRIPLE BACKTICKS. This is CRITICAL for the system to auto-extract files into the sandbox.
 6. DATA ANALYSIS & CHARTS: If the user uploads a CSV/Excel file and asks for analysis, charts, or statistics, WRITE Python code using `pandas` and `matplotlib.pyplot` to read the file from `./data/sandbox/<filename>`. Save any plots to disk (e.g. `plt.savefig('chart.png')`) so the UI can render them automatically!
 """
     if req.mode == "reasoning":
