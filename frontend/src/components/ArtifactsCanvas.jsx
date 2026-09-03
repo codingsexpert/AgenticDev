@@ -97,8 +97,8 @@ const FileTreeNode = ({ node, level, selectedFile, onSelect, onRename, hasUnsave
   );
 };
 
-export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code' }) {
-  const [activeTab, setActiveTab] = useState(initialTab); // 'code' | 'preview'
+export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'split' }) {
+  const [activeTab, setActiveTab] = useState(initialTab); // 'code' | 'split' | 'preview'
   const [files, setFiles] = useState([]);
   const [selectedFile, setSelectedFile] = useState('index.html');
   const [fileContent, setFileContent] = useState('');
@@ -198,6 +198,14 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
         });
         if (!res.ok) throw new Error("Failed to save");
         setOriginalContent(fileContent);
+        
+        // Auto-reload preview
+        const iframes = document.querySelectorAll('iframe');
+        iframes.forEach(iframe => {
+            if (iframe.src.includes(`/api/sandboxes/${sandboxId}/preview`)) {
+                iframe.contentWindow.location.reload();
+            }
+        });
     } catch (err) {
         console.error("Save error:", err);
         alert("Failed to save file.");
@@ -328,6 +336,13 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
               <span>Code Editor</span>
             </button>
             <button
+              onClick={() => setActiveTab('split')}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded-md transition-colors ${activeTab === 'split' ? 'bg-slate-900 text-white font-medium shadow-2xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
+            >
+              <LayoutList className="w-3.5 h-3.5" />
+              <span>Split View</span>
+            </button>
+            <button
               onClick={() => setActiveTab('preview')}
               className={`flex items-center space-x-1.5 px-3 py-1 rounded-md transition-colors ${activeTab === 'preview' ? 'bg-slate-900 text-white font-medium shadow-2xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
             >
@@ -348,7 +363,7 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
             <ExternalLink className="w-3.5 h-3.5" />
             <span>Open Preview</span>
           </a>
-          {(activeTab === 'code' || activeTab === 'review') && (
+          {(activeTab === 'code' || activeTab === 'review' || activeTab === 'split') && (
              <button
               onClick={handleSave}
               disabled={!hasUnsavedChanges || saving}
@@ -381,7 +396,7 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
       </div>
 
       {/* Main Canvas View */}
-      {activeTab === 'code' || activeTab === 'review' ? (
+      {activeTab === 'code' || activeTab === 'review' || activeTab === 'split' ? (
         <div className="flex-1 flex overflow-hidden">
           {/* File Tree Drawer */}
           <div className="w-56 bg-[#181818] border-r border-[#2b2b2b] p-0 overflow-y-auto flex flex-col shrink-0">
@@ -423,35 +438,55 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
           </div>
 
           {/* Editor / Reviewer Viewer */}
-          {activeTab === 'code' ? (
-          <div className="flex-1 flex flex-col bg-[#1e1e1e] overflow-hidden">
-            <div className="text-[10px] font-mono text-slate-400 px-4 py-2 border-b border-[#333] flex items-center justify-between">
-              <span className="flex items-center space-x-2">
-                 <span>{safeSelectedFile}</span>
-                 {hasUnsavedChanges && <span className="w-2 h-2 rounded-full bg-blue-500 inline-block animate-pulse" title="Unsaved changes"></span>}
-              </span>
-              <span>{fileContent.length} bytes</span>
+          {activeTab === 'code' || activeTab === 'split' ? (
+          <>
+            <div className={`${activeTab === 'split' ? 'w-1/2 border-r border-[#333]' : 'flex-1'} flex flex-col bg-[#1e1e1e] overflow-hidden`}>
+              <div className="text-[10px] font-mono text-slate-400 px-4 py-2 border-b border-[#333] flex items-center justify-between">
+                <span className="flex items-center space-x-2">
+                   <span>{safeSelectedFile}</span>
+                   {hasUnsavedChanges && <span className="w-2 h-2 rounded-full bg-blue-500 inline-block animate-pulse" title="Unsaved changes"></span>}
+                </span>
+                <span>{fileContent.length} bytes</span>
+              </div>
+              <div className="flex-1 w-full h-full relative">
+                <Editor
+                  height="100%"
+                  width="100%"
+                  language={getLanguage(safeSelectedFile)}
+                  theme="vs-dark"
+                  value={fileContent}
+                  onChange={(val) => setFileContent(val || '')}
+                  options={{
+                      minimap: { enabled: false },
+                      fontSize: 13,
+                      fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+                      wordWrap: 'on',
+                      scrollBeyondLastLine: false,
+                      smoothScrolling: true,
+                      padding: { top: 16 }
+                  }}
+                />
+              </div>
             </div>
-            <div className="flex-1 w-full h-full relative">
-              <Editor
-                height="100%"
-                width="100%"
-                language={getLanguage(safeSelectedFile)}
-                theme="vs-dark"
-                value={fileContent}
-                onChange={(val) => setFileContent(val || '')}
-                options={{
-                    minimap: { enabled: false },
-                    fontSize: 13,
-                    fontFamily: '"JetBrains Mono", "Fira Code", monospace',
-                    wordWrap: 'on',
-                    scrollBeyondLastLine: false,
-                    smoothScrolling: true,
-                    padding: { top: 16 }
-                }}
-              />
-            </div>
-          </div>
+            {activeTab === 'split' && (
+              <div className="flex-1 flex flex-col bg-slate-100 border-l border-slate-300">
+                <div className="px-3 py-1.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                  <span className="font-mono truncate text-[11px] flex items-center space-x-2">
+                      <span>Preview</span>
+                      <button onClick={() => document.getElementById('split-preview-iframe')?.contentWindow?.location?.reload()} className="hover:text-slate-800 p-1 rounded-full hover:bg-slate-200 transition-colors" title="Reload Frame">
+                          <RefreshCw className="w-3 h-3" />
+                      </button>
+                  </span>
+                </div>
+                <iframe
+                  id="split-preview-iframe"
+                  src={`/api/sandboxes/${sandboxId}/preview/index.html`}
+                  title="Split Preview"
+                  className="w-full flex-1 border-none bg-white"
+                />
+              </div>
+            )}
+          </>
           ) : (
             <div className="flex-1 overflow-y-auto bg-white p-6 md:p-8">
                {safeSelectedFile.endsWith('.md') ? (
