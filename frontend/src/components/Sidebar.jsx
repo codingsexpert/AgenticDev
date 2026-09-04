@@ -79,14 +79,9 @@ export default function Sidebar({
 
         {/* Brand Header inside Left Sidebar */}
         <div className="p-4 border-b border-slate-200/80 flex items-center justify-between bg-white/60 backdrop-blur-md">
-          <div className="flex items-center space-x-3 truncate">
-            <div className="w-8.5 h-8.5 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-sm shrink-0">
-              <Sparkles className="w-4 h-4 text-white" />
-            </div>
-            <div>
-              <h1 className="font-bold text-[17px] tracking-tight text-slate-900 truncate">PixlExpert</h1>
-              <div className="text-[9.5px] font-mono text-slate-400 -mt-0.5 tracking-widest uppercase">AI Dev Suite</div>
-            </div>
+          <div className="truncate">
+            <h1 className="font-bold text-[17px] tracking-tight text-slate-900 truncate">PixlExpert</h1>
+            <div className="text-[9.5px] font-mono text-slate-400 -mt-0.5 tracking-widest uppercase">AI Dev Suite</div>
           </div>
 
           <button

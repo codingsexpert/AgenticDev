@@ -578,9 +578,6 @@ export default function App() {
           ) : (
             /* Perfectly Centered Hero + Input Box View (Unified Claude / ChatGPT Style Layout Width) */
             <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 text-center max-w-3xl sm:max-w-4xl mx-auto w-full h-full my-auto overflow-y-auto px-3 sm:px-5 animate-fade-in">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 flex items-center justify-center text-white shadow-2xl shadow-indigo-500/20 mb-4 transform hover:scale-105 transition-all duration-300 shrink-0">
-                <Sparkles className="w-8 h-8 text-indigo-300" />
-              </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2 shrink-0 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-800 bg-clip-text text-transparent">
                 What do you want to build today?
               </h2>
