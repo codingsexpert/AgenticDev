@@ -80,12 +80,12 @@ export default function Sidebar({
         {/* Brand Header inside Left Sidebar */}
         <div className="p-4 border-b border-slate-200/80 flex items-center justify-between bg-white/60 backdrop-blur-md">
           <div className="flex items-center space-x-3 truncate">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/25 shrink-0">
-              <Sparkles className="w-4.5 h-4.5 text-white" />
+            <div className="w-8.5 h-8.5 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-sm shrink-0">
+              <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-[17.5px] tracking-tight gradient-brand-text truncate">PixlExpert</h1>
-              <div className="text-[10px] font-mono text-slate-400 -mt-0.5 tracking-wider uppercase">AI Dev Suite</div>
+              <h1 className="font-bold text-[17px] tracking-tight text-slate-900 truncate">PixlExpert</h1>
+              <div className="text-[9.5px] font-mono text-slate-400 -mt-0.5 tracking-widest uppercase">AI Dev Suite</div>
             </div>
           </div>
 
@@ -102,9 +102,9 @@ export default function Sidebar({
         <div className="p-3.5">
           <button
             onClick={onNewProject}
-            className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-indigo-600 via-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white py-2.5 px-4 rounded-xl font-semibold text-xs tracking-wide transition-all duration-200 shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/35 active:scale-[0.98]"
+            className="w-full flex items-center justify-center space-x-2 bg-slate-900 hover:bg-slate-800 text-white py-2.5 px-4 rounded-xl font-semibold text-xs tracking-wide transition-all duration-200 shadow-sm border border-slate-800 active:scale-[0.98]"
           >
-            <Plus className="w-4 h-4 shrink-0 text-indigo-100" />
+            <Plus className="w-4 h-4 shrink-0 text-slate-300" />
             <span className="truncate">New Chat / Project</span>
           </button>
         </div>
