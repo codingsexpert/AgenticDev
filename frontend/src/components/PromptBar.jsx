@@ -319,8 +319,8 @@ export default function PromptBar({ onSubmit, isLoading, mode, setMode }) {
           <button
             type="button"
             onClick={() => setMode('reasoning')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md transition-all ${
-              mode === 'reasoning' ? 'bg-white text-zinc-900 font-medium shadow-sm border border-zinc-100' : 'text-zinc-500 hover:text-zinc-800'
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
+              mode === 'reasoning' ? 'bg-white text-amber-950 font-semibold shadow-xs border border-amber-200/80' : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
@@ -329,11 +329,11 @@ export default function PromptBar({ onSubmit, isLoading, mode, setMode }) {
           <button
             type="button"
             onClick={() => setMode('build')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md transition-all ${
-              mode === 'build' ? 'bg-white text-zinc-900 font-medium shadow-sm border border-zinc-100' : 'text-zinc-500 hover:text-zinc-800'
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
+              mode === 'build' ? 'bg-white text-indigo-950 font-semibold shadow-xs border border-indigo-200/80' : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            <Wrench className="w-3.5 h-3.5 text-zinc-600" />
+            <Wrench className="w-3.5 h-3.5 text-indigo-600" />
             <span className="text-xs sm:text-sm">Build</span>
           </button>
         </div>
@@ -342,30 +342,30 @@ export default function PromptBar({ onSubmit, isLoading, mode, setMode }) {
       {/* Floating Prompt Box — Compact Sleek Claude / ChatGPT Style */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-3 sm:p-4 rounded-[20px] border border-zinc-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.04)] focus-within:shadow-[0_8px_30px_rgba(0,0,0,0.08)] focus-within:border-zinc-300 transition-all duration-300 relative w-full"
+        className="bg-white/95 backdrop-blur-xl p-3 sm:p-3.5 rounded-2xl border border-slate-200/90 shadow-[0_12px_35px_-8px_rgba(15,23,42,0.08)] focus-within:shadow-[0_18px_45px_-8px_rgba(99,102,241,0.15)] focus-within:border-indigo-400/60 transition-all duration-300 relative w-full"
       >
         {/* Attachments Preview Area */}
         {attachments.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="flex flex-wrap gap-2 mb-2.5">
             {attachments.map((file, idx) => (
-              <div key={idx} className="relative group flex items-center bg-zinc-50 border border-zinc-200 rounded-lg p-1.5 pr-2 shadow-sm animate-fade-in max-w-[180px]">
+              <div key={idx} className="relative group flex items-center bg-slate-50 border border-slate-200/80 rounded-xl p-1.5 pr-2.5 shadow-xs animate-fade-in max-w-[180px]">
                 {file.type.startsWith('image/') ? (
-                  <div className="w-8 h-8 rounded-md overflow-hidden bg-black/5 shrink-0 flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-lg overflow-hidden bg-slate-100 shrink-0 flex items-center justify-center">
                     <img src={file.data} alt="preview" className="w-full h-full object-cover" />
                   </div>
                 ) : (
-                  <div className="w-8 h-8 rounded-md bg-blue-50 text-blue-500 shrink-0 flex items-center justify-center">
-                    <FileText className="w-4 h-4" />
+                  <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-500 shrink-0 flex items-center justify-center">
+                    <FileText className="w-3.5 h-3.5" />
                   </div>
                 )}
                 <div className="ml-2 overflow-hidden">
-                  <p className="text-[10px] font-medium text-zinc-700 truncate w-full">{file.name}</p>
-                  <p className="text-[9px] text-zinc-400">{(file.size / 1024).toFixed(1)} KB</p>
+                  <p className="text-[10px] font-semibold text-slate-700 truncate w-full">{file.name}</p>
+                  <p className="text-[9px] text-slate-400">{(file.size / 1024).toFixed(1)} KB</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => removeAttachment(idx)}
-                  className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-zinc-200 hover:bg-red-500 hover:text-white text-zinc-600 rounded-full flex items-center justify-center transition-colors shadow-sm opacity-0 group-hover:opacity-100"
+                  className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-slate-200 hover:bg-rose-500 hover:text-white text-slate-600 rounded-full flex items-center justify-center transition-colors shadow-xs opacity-0 group-hover:opacity-100"
                 >
                   <X className="w-2.5 h-2.5" />
                 </button>
@@ -389,10 +389,10 @@ export default function PromptBar({ onSubmit, isLoading, mode, setMode }) {
               ? 'Ask anything, write code, or click the mic icon to speak...'
               : 'Describe the application you want the AI Dev Team to build...'
           }
-          className="w-full bg-transparent text-sm sm:text-base text-zinc-900 placeholder-zinc-400 focus:outline-none resize-none px-1 pt-1 font-sans min-h-[44px] sm:min-h-[50px] max-h-[160px] leading-relaxed"
+          className="w-full bg-transparent text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none resize-none px-1 py-0.5 font-sans min-h-[30px] sm:min-h-[36px] max-h-[160px] leading-normal"
         />
 
-        <div className="flex items-center justify-between pt-3 mt-1 border-t border-zinc-100 relative">
+        <div className="flex items-center justify-between pt-2.5 mt-0.5 border-t border-slate-100/70 relative">
           {/* Interactive Model Selector Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
@@ -495,10 +495,10 @@ export default function PromptBar({ onSubmit, isLoading, mode, setMode }) {
             <button
               type="submit"
               disabled={isLoading || (!input.trim() && attachments.length === 0)}
-              className={`p-2.5 rounded-xl transition-all flex items-center justify-center ${
+              className={`p-2.5 rounded-xl transition-all duration-200 flex items-center justify-center ${
                 (input.trim() || attachments.length > 0) && !isLoading
-                  ? 'bg-zinc-900 text-white hover:bg-zinc-800 shadow-md shadow-zinc-900/10'
-                  : 'bg-zinc-100 text-zinc-300 cursor-not-allowed border border-zinc-200/60'
+                  ? 'bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white hover:from-indigo-600 hover:to-violet-600 shadow-md shadow-indigo-500/25 active:scale-95'
+                  : 'bg-slate-100 text-slate-300 cursor-not-allowed border border-slate-200/60'
               }`}
             >
               <Send className="w-4 h-4" />

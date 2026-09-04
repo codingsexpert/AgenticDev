@@ -96,7 +96,7 @@ compiled_graph = build_graph({"checkpointer": checkpointer})
 
 class ProjectStartRequest(BaseModel):
     requirement: str
-    model: Optional[str] = "gemini-3.6-flash"
+    model: Optional[str] = "gemini-1.5-flash"
     techStack: Optional[str] = "python-fastapi"
     database: Optional[str] = "supabase"
     tokenBudget: Optional[float] = 2.0
@@ -200,7 +200,7 @@ class SaveFileRequest(BaseModel):
 
 class ChatStreamRequest(BaseModel):
     messages: list[ChatMessage]
-    model: Optional[str] = "gemini-3.6-flash"
+    model: Optional[str] = "gemini-1.5-flash"
     thread_id: Optional[str] = None
     attachments: Optional[list[Dict[str, Any]]] = None
     mode: Optional[str] = "chat"
@@ -218,7 +218,7 @@ from src.utils.memory_manager import get_user_preferences, get_long_term_memory,
 @app.post("/api/chat/stream")
 async def chat_stream(req: ChatStreamRequest):
     pass
-    target_model = req.model or "gemini-3.6-flash"
+    target_model = req.model or "gemini-1.5-flash"
 
     # Persistent Session Memory Retrieval
     persistent_msgs = []
@@ -383,7 +383,7 @@ Example:
 ```
 ```css
 /* File: style.css */
-body { margin: 0; }
+body {{ margin: 0; }}
 ```
 On the VERY FIRST LINE inside the code block, you MUST put the exact full file path as a comment starting with "File:". Ensure HTML correctly links to these separate files. NEVER OUTPUT RAW CODE AS TEXT! ALWAYS USE TRIPLE BACKTICKS. This is CRITICAL for the system to auto-extract files into the sandbox.
 6. DATA ANALYSIS & CHARTS: If the user uploads a CSV/Excel file and asks for analysis, charts, or statistics, WRITE Python code using `pandas` and `matplotlib.pyplot` to read the file from `./data/sandbox/<filename>`. Save any plots to disk (e.g. `plt.savefig('chart.png')`) so the UI can render them automatically!
@@ -395,7 +395,7 @@ On the VERY FIRST LINE inside the code block, you MUST put the exact full file p
 
     async def generate_chunks():
         # Fallback to LLM_MODEL in .env if not specified in request
-        model_name = target_model if "/" in target_model else os.getenv("LLM_MODEL", "gemini/gemini-3.6-flash")
+        model_name = target_model if "/" in target_model else os.getenv("LLM_MODEL", "gemini/gemini-1.5-flash")
         stream_success = False
 
         for attempt in range(2):
@@ -451,7 +451,7 @@ def get_status():
     long_term = get_long_term_memory()
     return {
         "status": "online",
-        "model": os.getenv("LLM_MODEL", "gemini/gemini-3.6-flash"),
+        "model": os.getenv("LLM_MODEL", "gemini/gemini-1.5-flash"),
         "tracing": tracer_info,
         "supabaseConfigured": bool(os.getenv("SUPABASE_URL")),
         "userPreferences": prefs,

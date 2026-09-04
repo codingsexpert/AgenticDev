@@ -1,0 +1,30 @@
+{
+  "thread_id": "session_1788552456151",
+  "title": "build snake game using python",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "build snake game using python",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "```python\n# File: snake.py\nimport pygame\nimport random\nimport sys\n\n# Pygame initialize setup\npygame.init()\n\n# Game Constants\nWIDTH, HEIGHT = 600, 400\nGRID_SIZE = 20\nFPS = 12\n\n# Colors\nBLACK = (18, 18, 18)\nWHITE = (255, 255, 255)\nRED = (239, 68, 68)\nGREEN = (34, 197, 94)\nDARK_GREEN = (21, 128, 61)\nGRAY = (38, 38, 38)\n\n# Screen setup\nscreen = pygame.display.set_mode((WIDTH, HEIGHT))\npygame.display.set_caption(\"Classic Snake Game\")\nclock = pygame.time.Clock()\n\nfont = pygame.font.SysFont(\"arial\", 24)\nlarge_font = pygame.font.SysFont(\"arial\", 36, bold=True)\n\nclass SnakeGame:\n    def __init__(self):\n        self.reset()\n\n    def reset(self):\n        self.snake = [\n            (WIDTH // 2, HEIGHT // 2),\n            (WIDTH // 2 - GRID_SIZE, HEIGHT // 2),\n            (WIDTH // 2 - (2 * GRID_SIZE), HEIGHT // 2)\n        ]\n        self.direction = (GRID_SIZE, 0)\n        self.next_direction = self.direction\n        self.score = 0\n        self.game_over = False\n        self.spawn_food()\n\n    def spawn_food(self):\n        while True:\n            x = random.randint(0, (WIDTH - GRID_SIZE) // GRID_SIZE) * GRID_SIZE\n            y = random.randint(0, (HEIGHT - GRID_SIZE) // GRID_SIZE) * GRID_SIZE\n            self.food = (x, y)\n            if self.food not in self.snake:\n                break\n\n    def handle_input(self):\n        for event in pygame.event.get():\n            if event.type == pygame.QUIT:\n                pygame.quit()\n                sys.exit()\n            elif event.type == pygame.KEYDOWN:\n                if self.game_over:\n                    if event.key == pygame.K_SPACE or event.key == pygame.K_r:\n                        self.reset()\n                else:\n                    if (event.key == pygame.K_UP or event.key == pygame.K_w) and self.direction != (0, GRID_SIZE):\n                        self.next_direction = (0, -GRID_SIZE)\n                    elif (event.key == pygame.K_DOWN or event.key == pygame.K_s) and self.direction != (0, -GRID_SIZE):\n                        self.next_direction = (0, GRID_SIZE)\n                    elif (event.key == pygame.K_LEFT or event.key == pygame.K_a) and self.direction != (GRID_SIZE, 0):\n                        self.next_direction = (-GRID_SIZE, 0)\n                    elif (event.key == pygame.K_RIGHT or event.key == pygame.K_d) and self.direction != (-GRID_SIZE, 0):\n                        self.next_direction = (GRID_SIZE, 0)\n\n    def update(self):\n        if self.game_over:\n            return\n\n        self.direction = self.next_direction\n        head_x, head_y = self.snake[0]\n        dir_x, dir_y = self.direction\n        new_head = (head_x + dir_x, head_y + dir_y)\n\n        # Boundary Collision\n        if (new_head[0] < 0 or new_head[0] >= WIDTH or\n            new_head[1] < 0 or new_head[1] >= HEIGHT):\n            self.game_over = True\n            return\n\n        # Self Collision\n        if new_head in self.snake:\n            self.game_over = True\n            return\n\n        self.snake.insert(0, new_head)\n\n        # Food Collision\n        if new_head == self.food:\n            self.score += 10\n            self.spawn_food()\n        else:\n            self.snake.pop()\n\n    def draw(self):\n        screen.fill(BLACK)\n\n        # Draw Grid background\n        for x in range(0, WIDTH, GRID_SIZE):\n            pygame.draw.line(screen, GRAY, (x, 0), (x, HEIGHT), 1)\n        for y in range(0, HEIGHT, GRID_SIZE):\n            pygame.draw.line(screen, GRAY, (0, y), (WIDTH, y), 1)\n\n        # Draw Food\n        food_rect = pygame.Rect(self.food[0], self.food[1], GRID_SIZE - 2, GRID_SIZE - 2)\n        pygame.draw.rect(screen, RED, food_rect, border_radius=4)\n\n        # Draw Snake\n        for idx, segment in enumerate(self.snake):\n            color = DARK_GREEN if idx == 0 else GREEN\n            segment_rect = pygame.Rect(segment[0], segment[1], GRID_SIZE - 2, GRID_SIZE - 2)\n            pygame.draw.rect(screen, color, segment_rect, border_radius=3)\n\n        # Render Score\n        score_surface = font.render(f\"Score: {self.score}\", True, WHITE)\n        screen.blit(score_surface, (10, 10))\n\n        # Game Over Screen\n        if self.game_over:\n            overlay = pygame.Surface((WIDTH, HEIGHT))\n            overlay.set_alpha(180)\n            overlay.fill(BLACK)\n            screen.blit(overlay, (0, 0))\n\n            over_text = large_font.render(\"GAME OVER\", True, RED)\n            score_final = font.render(f\"Final Score: {self.score}\", True, WHITE)\n            restart_text = font.render(\"Press SPACE or R to Restart\", True, WHITE)\n\n            screen.blit(over_text, (WIDTH // 2 - over_text.get_width() // 2, HEIGHT // 3))\n            screen.blit(score_final, (WIDTH // 2 - score_final.get_width() // 2, HEIGHT // 2))\n            screen.blit(restart_text, (WIDTH // 2 - restart_text.get_width() // 2, HEIGHT // 2 + 40))\n\n        pygame.display.flip()\n\n    def run(self):\n        while True:\n            self.handle_input()\n            self.update()\n            self.draw()\n            clock.tick(FPS)\n\nif __name__ == \"__main__\":\n    game = SnakeGame()\n    game.run()\n```\n\n### Game Chalane ke Instructions:\n\n1. **Pygame install karo** (agar pehle se nahi h):\n   ```bash\n   pip install pygame\n   ```\n\n2. **Game run karo**:\n   ```bash\n   python snake.py\n   ```\n\n### Controls:\n- **Arrow Keys** ya **WASD**: Snake move karne ke liye\n- **R** ya **SPACE**: Game Over hone par restart karne ke liye"
+    }
+  ],
+  "node_history": [
+    {
+      "state_delta": {
+        "sandboxId": "sb_1788553237203"
+      }
+    },
+    {
+      "state_delta": {
+        "sandboxId": "sb_1788554181870"
+      }
+    }
+  ],
+  "user_id": null,
+  "updated_at": 1788554181.927968
+}

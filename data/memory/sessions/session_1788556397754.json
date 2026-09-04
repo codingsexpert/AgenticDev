@@ -1,0 +1,28 @@
+{
+  "thread_id": "session_1788556397754",
+  "title": "hi",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Hey! Kaise ho? Aaj kya build ya code karna hai?"
+    },
+    {
+      "role": "user",
+      "content": "write poem on AI  in 100 words",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Silicon minds and digital dreams,\nThinking faster than it seems.\nLines of code in neural space,\nEvolving quick in human race.\n\nData deep aur algorithms fast,\nCreating future, learning past.\nSmarter logic, creative art,\nEvery sector ka bane ye part.\n\nNaye zamane ka naya chiraag,\nHar mushkil ka deta jawab.\nSilent partner in work and play,\nGuiding humanity day by day.\n\nDuniya badal rahi hai aaj,\nAI pe tika hai naya raj.\nA bridge between the soul and mind,\nThe smartest companion of human kind."
+    }
+  ],
+  "node_history": [],
+  "user_id": null,
+  "updated_at": 1788556424.459151
+}

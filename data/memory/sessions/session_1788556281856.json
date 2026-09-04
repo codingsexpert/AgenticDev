@@ -1,0 +1,15 @@
+{
+  "thread_id": "session_1788556281856",
+  "title": "write poem on AI  in 100 words",
+  "mode": "build",
+  "messages": [
+    {
+      "role": "user",
+      "content": "write poem on AI  in 100 words",
+      "attachments": []
+    }
+  ],
+  "node_history": [],
+  "user_id": null,
+  "updated_at": 1788556281.9232152
+}
