@@ -341,6 +341,28 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
   );
 }
 
+const markdownComponents = {
+  h1: ({ node, ...props }) => <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-5 mb-2.5 tracking-tight border-b border-slate-200 pb-1.5" {...props} />,
+  h2: ({ node, ...props }) => <h2 className="text-lg sm:text-xl font-bold text-slate-900 mt-4 mb-2 tracking-tight" {...props} />,
+  h3: ({ node, ...props }) => <h3 className="text-base sm:text-lg font-bold text-slate-900 mt-3.5 mb-1.5 tracking-tight" {...props} />,
+  h4: ({ node, ...props }) => <h4 className="text-sm font-bold text-slate-900 mt-3 mb-1 tracking-tight" {...props} />,
+  p: ({ node, ...props }) => <p className="mb-2.5 leading-relaxed" {...props} />,
+  strong: ({ node, ...props }) => <strong className="font-semibold text-slate-950" {...props} />,
+  em: ({ node, ...props }) => <em className="italic text-slate-800" {...props} />,
+  a: ({ node, ...props }) => <a className="text-indigo-600 hover:text-indigo-700 hover:underline font-medium" target="_blank" rel="noreferrer" {...props} />,
+  ul: ({ node, ...props }) => <ul className="list-disc pl-5 my-2.5 space-y-1 text-slate-800" {...props} />,
+  ol: ({ node, ...props }) => <ol className="list-decimal pl-5 my-2.5 space-y-1 text-slate-800" {...props} />,
+  li: ({ node, ...props }) => <li className="leading-relaxed pl-0.5" {...props} />,
+  blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-indigo-400 bg-indigo-50/50 pl-4 py-2 my-3 rounded-r-xl text-slate-700 font-medium italic" {...props} />,
+  table: ({ node, ...props }) => <div className="overflow-x-auto my-3 rounded-xl border border-slate-200 shadow-xs"><table className="w-full border-collapse text-xs sm:text-sm text-left" {...props} /></div>,
+  thead: ({ node, ...props }) => <thead className="bg-slate-100 text-slate-900 font-bold border-b border-slate-200" {...props} />,
+  tbody: ({ node, ...props }) => <tbody className="divide-y divide-slate-100 bg-white" {...props} />,
+  tr: ({ node, ...props }) => <tr className="hover:bg-slate-50/80 transition-colors" {...props} />,
+  th: ({ node, ...props }) => <th className="px-3.5 py-2.5 font-bold uppercase tracking-wider text-[11px] text-slate-700" {...props} />,
+  td: ({ node, ...props }) => <td className="px-3.5 py-2.5 text-slate-800" {...props} />,
+  hr: ({ node, ...props }) => <hr className="my-5 border-t border-slate-200/80" {...props} />,
+};
+
 export default function FormattedMessage({ content = '', isUser = false, activeSandboxId, onOpenCodeBlock, onQuickAction }) {
   if (!content) return null;
 
@@ -419,13 +441,7 @@ export default function FormattedMessage({ content = '', isUser = false, activeS
               {subParts[0] && subParts[0].trim() && (
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
-                  components={{
-                    p: ({ node, ...props }) => <p className="mb-2 leading-relaxed" {...props} />,
-                    a: ({ node, ...props }) => <a className="text-indigo-600 hover:underline" target="_blank" rel="noreferrer" {...props} />,
-                    ul: ({ node, ...props }) => <ul className="list-disc pl-5 mb-2" {...props} />,
-                    ol: ({ node, ...props }) => <ol className="list-decimal pl-5 mb-2" {...props} />,
-                    li: ({ node, ...props }) => <li className="mb-1" {...props} />
-                  }}
+                  components={markdownComponents}
                 >
                   {subParts[0]}
                 </ReactMarkdown>
@@ -441,13 +457,7 @@ export default function FormattedMessage({ content = '', isUser = false, activeS
               {subParts[1] && subParts[1].trim() && (
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
-                  components={{
-                    p: ({ node, ...props }) => <p className="mb-2 leading-relaxed" {...props} />,
-                    a: ({ node, ...props }) => <a className="text-indigo-600 hover:underline" target="_blank" rel="noreferrer" {...props} />,
-                    ul: ({ node, ...props }) => <ul className="list-disc pl-5 mb-2" {...props} />,
-                    ol: ({ node, ...props }) => <ol className="list-decimal pl-5 mb-2" {...props} />,
-                    li: ({ node, ...props }) => <li className="mb-1" {...props} />
-                  }}
+                  components={markdownComponents}
                 >
                   {subParts[1]}
                 </ReactMarkdown>
@@ -460,13 +470,7 @@ export default function FormattedMessage({ content = '', isUser = false, activeS
           <ReactMarkdown
             key={index}
             remarkPlugins={[remarkGfm]}
-            components={{
-              p: ({ node, ...props }) => <p className="mb-2 leading-relaxed" {...props} />,
-              a: ({ node, ...props }) => <a className="text-indigo-600 hover:underline" target="_blank" rel="noreferrer" {...props} />,
-              ul: ({ node, ...props }) => <ul className="list-disc pl-5 mb-2" {...props} />,
-              ol: ({ node, ...props }) => <ol className="list-decimal pl-5 mb-2" {...props} />,
-              li: ({ node, ...props }) => <li className="mb-1" {...props} />
-            }}
+            components={markdownComponents}
           >
             {part}
           </ReactMarkdown>
