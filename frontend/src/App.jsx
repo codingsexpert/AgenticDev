@@ -443,18 +443,6 @@ export default function App() {
                 <PanelLeft className="w-4 h-4 text-slate-700" />
               </button>
             )}
-            <button
-              onClick={handleNewProject}
-              title="New Workspace"
-              className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-800 font-medium text-xs border border-slate-200 transition-all flex items-center space-x-1.5 shadow-xs"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>New</span>
-            </button>
-
-            <span className="text-xs sm:text-sm font-semibold text-slate-800 tracking-tight">
-              {hasContent ? (mode === 'build' ? 'Active Multi-Agent Project Session' : 'Conversational Chat Session') : 'New AI Workspace'}
-            </span>
           </div>
 
           <div className="flex items-center space-x-2.5">
