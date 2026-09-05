@@ -21,6 +21,8 @@ load_dotenv()
 
 import litellm
 from src.guardrails.input_guardrail import validate_user_input
+from src.guardrails.output_guardrail import redact_sensitive_keys
+from src.guardrails.execution_guardrail import is_safe_sandbox_path
 from src.utils.sandbox_manager import get_file_list, read_file, get_sandbox_path, write_file
 from src.utils.langsmith_tracer import init_langsmith_tracer
 from src.config.graph import build_graph, create_checkpointer
@@ -253,8 +255,19 @@ async def chat_stream(req: ChatStreamRequest):
 
     combined_msgs = sanitized_msgs
 
+    # Input Guardrail Check on latest user message
+    raw_last_user_msg = req.messages[-1].content if req.messages else ""
+    if raw_last_user_msg:
+        is_valid, guardrail_msg, meta = validate_user_input(raw_last_user_msg)
+        if not is_valid:
+            async def guardrail_error_stream():
+                err_text = f"🛡️ **Security Guardrail Notice**: {guardrail_msg}"
+                yield f"data: {json.dumps({'text': err_text})}\n\n"
+                yield f"data: {json.dumps({'done': True})}\n\n"
+            return StreamingResponse(guardrail_error_stream(), media_type="text/event-stream")
+
     import re
-    last_user_msg = req.messages[-1].content.lower() if req.messages else ""
+    last_user_msg = raw_last_user_msg.lower()
     weather_info = None
 
     weather_pattern = r"\b(weather|mausam|temperature|climate)\b"
@@ -416,7 +429,8 @@ On the VERY FIRST LINE inside the code block, you MUST put the exact full file p
                         tokens = re.split(r'(\s+)', delta)
                         for tok in tokens:
                             if tok:
-                                yield f"data: {json.dumps({'text': tok})}\n\n"
+                                sanitized_tok = redact_sensitive_keys(tok)
+                                yield f"data: {json.dumps({'text': sanitized_tok})}\n\n"
                                 await asyncio.sleep(0.005)  # 5ms micro-delay per token for snappy ChatGPT typing
                 
                 # Auto-scaffold physical folders and files on disk from markdown code blocks
@@ -814,6 +828,8 @@ def rename_sandbox_file(sandbox_id: str, req: RenameFileRequest):
     import os
     from src.utils.sandbox_manager import get_sandbox_path
     s_dir = get_sandbox_path(sandbox_id)
+    if not is_safe_sandbox_path(s_dir, req.old_path) or not is_safe_sandbox_path(s_dir, req.new_path):
+        raise HTTPException(status_code=403, detail="Security guardrail blocked attempt to rename outside sandbox boundary.")
     old_full = os.path.join(s_dir, req.old_path)
     new_full = os.path.join(s_dir, req.new_path)
     if os.path.exists(old_full):
@@ -853,6 +869,8 @@ def deploy_sandbox(sandbox_id: str, req: DeployRequest):
 @app.get("/api/sandboxes/{sandbox_id}/preview/{file_path:path}")
 def preview_sandbox_file(sandbox_id: str, file_path: str):
     sandbox_path = get_sandbox_path(sandbox_id)
+    if not is_safe_sandbox_path(sandbox_path, file_path):
+        raise HTTPException(status_code=403, detail="Security guardrail blocked attempt to read outside sandbox boundary.")
     full_path = os.path.abspath(os.path.join(sandbox_path, file_path))
     if os.path.exists(full_path):
         return FileResponse(full_path)

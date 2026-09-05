@@ -12,7 +12,8 @@ import secrets
 import subprocess
 import resource
 from typing import Dict, Any, List, Optional
-from src.guardrails.execution_guardrail import is_safe_sandbox_path, validate_sandbox_command
+from src.guardrails.execution_guardrail import is_safe_sandbox_path, validate_sandbox_command, is_safe_file_extension
+from src.guardrails.output_guardrail import redact_sensitive_keys
 
 _sandboxes: Dict[str, Dict[str, Any]] = {}
 
@@ -152,10 +153,15 @@ def write_file(sandbox_id: str, relative_path: str, content: str) -> bool:
     if not is_safe_sandbox_path(sandbox_path, relative_path):
         raise ValueError(f"Security guardrail blocked attempt to write outside sandbox: {relative_path}")
 
+    if not is_safe_file_extension(relative_path):
+        raise ValueError(f"Security guardrail blocked attempt to write unsafe binary file extension: {relative_path}")
+
+    sanitized_content = redact_sensitive_keys(content)
+
     full_path = os.path.abspath(os.path.join(sandbox_path, relative_path))
     os.makedirs(os.path.dirname(full_path), exist_ok=True)
     with open(full_path, "w", encoding="utf-8") as f:
-        f.write(content)
+        f.write(sanitized_content)
     return True
 
 

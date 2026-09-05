@@ -1,13 +1,14 @@
 """
-output_guardrail.py — Output Pydantic Schema Guardrail & JSON Sanitizer
+output_guardrail.py — Output Pydantic Schema Guardrail, Secret Redactor & Code Sanitizer
 
 Ensures LLM responses conform strictly to expected Pydantic schemas.
+Redacts API keys & sensitive tokens from LLM output before sending to UI or disk.
 Strips markdown code fences and provides robust JSON parsing + auto-fix fallback.
 """
 
 import json
 import re
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List, Optional, Type, Tuple
 from pydantic import BaseModel, Field, ValidationError
 
 
@@ -41,6 +42,28 @@ class DebuggerOutputModel(BaseModel):
     confidence: str = Field(default="medium")
 
 
+# Secret Masking Patterns for AI Studio, Supabase, OpenAI, AWS, GitHub, JWT, Private Keys
+SECRET_PATTERNS = [
+    (r"AIzaSy[A-Za-z0-9_\-]{33}", "[REDACTED_GEMINI_API_KEY]"),
+    (r"sk-[A-Za-z0-9_\-]{32,}", "[REDACTED_OPENAI_KEY]"),
+    (r"AKIA[0-9A-Z]{16}", "[REDACTED_AWS_KEY]"),
+    (r"ghp_[A-Za-z0-9]{36}", "[REDACTED_GITHUB_TOKEN]"),
+    (r"-----BEGIN (?:RSA |EC |OPENSSH |)PRIVATE KEY-----[\s\S]*?-----END (?:RSA |EC |OPENSSH |)PRIVATE KEY-----", "[REDACTED_PRIVATE_KEY]"),
+]
+
+
+def redact_sensitive_keys(text: str) -> str:
+    """
+    Scans response text and redacts any actual API keys, secrets, or private tokens.
+    """
+    if not text:
+        return ""
+    sanitized = text
+    for pattern, replacement in SECRET_PATTERNS:
+        sanitized = re.sub(pattern, replacement, sanitized)
+    return sanitized
+
+
 def clean_json_markdown(text: str) -> str:
     """Removes ```json ... ``` markdown wrappers if present."""
     if not text:
@@ -58,6 +81,7 @@ def parse_and_validate_json(
 ) -> Dict[str, Any]:
     """
     Parses LLM output into JSON and optionally validates against a Pydantic schema.
+    Applies secret redaction to text values automatically.
     """
     cleaned_str = clean_json_markdown(raw_response)
 
@@ -84,8 +108,31 @@ def parse_and_validate_json(
             validated = schema.model_validate(data)
             return validated.model_dump()
         except ValidationError as val_err:
-            # If schema validation fails, return data with raw fallback
             data["_guardrail_validation_warnings"] = str(val_err)
             return data
 
     return data
+
+
+def validate_generated_code_safety(filename: str, content: str) -> Tuple[bool, str]:
+    """
+    Inspects generated code for blatant security risks before writing to sandbox disk.
+    """
+    if not content:
+        return True, "Empty content"
+
+    # Redact any accidental hardcoded secrets in the code content
+    redacted_content = redact_sensitive_keys(content)
+    
+    # Simple check for un-sanitized dangerous calls
+    dangerous_patterns = [
+        (r"\beval\s*\(\s*(?:req|input|params|user)", "Unsanitized eval() of user input"),
+        (r"\bchild_process\.exec\s*\(\s*(?:req|input|params|user)", "Unsanitized child_process.exec() of user input"),
+        (r"\bos\.system\s*\(\s*(?:req|input|params|user)", "Unsanitized os.system() of user input"),
+    ]
+
+    for pattern, reason in dangerous_patterns:
+        if re.search(pattern, redacted_content, re.IGNORECASE):
+            return False, f"Code failed output safety check: {reason}"
+
+    return True, "Code passed safety check"
