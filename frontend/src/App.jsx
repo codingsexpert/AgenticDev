@@ -139,11 +139,10 @@ export default function App() {
         const sandboxNode = loadedHist.find((h) => h?.state_delta?.sandboxId);
         if (sandboxNode?.state_delta?.sandboxId) {
           setActiveSandboxId(sandboxNode.state_delta.sandboxId);
-          setShowCanvas(true);
         } else {
           setActiveSandboxId(null);
-          setShowCanvas(false);
         }
+        setShowCanvas(false);
       }
     } catch (e) {
       console.error('Failed to load chat detail', e);
@@ -370,7 +369,6 @@ export default function App() {
           }
           if (state_delta?.sandboxId) {
             setActiveSandboxId(state_delta.sandboxId);
-            setShowCanvas(true);
           }
         } else if (payload.type === 'complete') {
           setIsLoading(false);
