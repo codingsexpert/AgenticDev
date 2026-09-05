@@ -176,6 +176,22 @@ export default function App() {
     }
   };
 
+  const handleRenameProject = async (threadId, newTitle) => {
+    if (!threadId || !newTitle.trim()) return;
+    try {
+      await fetch(`/api/chats/${threadId}/rename`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: newTitle.trim() }),
+      });
+      setProjects((prev) =>
+        prev.map((p) => (p.thread_id === threadId ? { ...p, title: newTitle.trim() } : p))
+      );
+    } catch (e) {
+      console.error('Rename chat session error', e);
+    }
+  };
+
   const handleOpenCodeInIDE = async (input) => {
     // Generate a temporary sandbox ID
     const newSandboxId = 'sb_' + Date.now();
@@ -414,6 +430,7 @@ export default function App() {
         currentThreadId={currentThreadId}
         onSelectProject={handleSelectChat}
         onDeleteProject={handleDeleteProject}
+        onRenameProject={handleRenameProject}
         onNewProject={handleNewProject}
         statusInfo={statusInfo}
         tokenUsage={tokenUsage}

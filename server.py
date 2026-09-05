@@ -617,6 +617,10 @@ class ChatSaveRequest(BaseModel):
     user_id: Optional[str] = None
 
 
+class ChatRenameRequest(BaseModel):
+    title: str
+
+
 @app.get("/api/chats")
 def get_chats(user_id: Optional[str] = None):
     return list_chat_sessions(user_id=user_id)
@@ -639,6 +643,23 @@ def save_chat(req: ChatSaveRequest):
         mode=req.mode or "chat",
         node_history=req.node_history,
         user_id=req.user_id,
+    )
+
+
+@app.post("/api/chats/{thread_id}/rename")
+def rename_chat(thread_id: str, req: ChatRenameRequest):
+    data = get_chat_session(thread_id)
+    if not data:
+        # Create minimal placeholder if not created yet
+        data = {"messages": [], "mode": "chat", "node_history": [], "user_id": None}
+    
+    return save_chat_session(
+        thread_id=thread_id,
+        title=req.title,
+        messages=data.get("messages", []),
+        mode=data.get("mode", "chat"),
+        node_history=data.get("node_history", []),
+        user_id=data.get("user_id"),
     )
 
 
