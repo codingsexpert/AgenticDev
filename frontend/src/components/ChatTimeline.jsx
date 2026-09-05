@@ -195,7 +195,7 @@ export default function ChatTimeline({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 pb-32 space-y-7 max-w-4xl sm:max-w-5xl mx-auto w-full scroll-smooth px-4 sm:px-8">
+    <div className="flex-1 overflow-y-auto p-3 sm:p-5 md:p-6 pb-28 space-y-4 max-w-3xl sm:max-w-4xl mx-auto w-full scroll-smooth px-3 sm:px-6">
       {/* Messages Stream — Refined Spacing & Alignment */}
       {safeMessages.map((msg, idx) => (
         <div key={idx} className="w-full">
@@ -231,7 +231,7 @@ export default function ChatTimeline({
               ) : (
                 /* Standard Display Bubble — Clean Claude-Style Light Slate Card */
                 <div className="flex flex-col items-end max-w-[88%] sm:max-w-[80%]">
-                  <div className="bg-slate-100/90 text-slate-900 px-4.5 py-3 rounded-2xl rounded-tr-xs text-sm sm:text-[15px] leading-relaxed font-sans font-medium border border-slate-200/80 w-full shadow-2xs">
+                  <div className="bg-slate-100/90 text-slate-900 px-3.5 py-2.5 rounded-2xl rounded-tr-xs text-xs sm:text-sm leading-normal font-sans font-medium border border-slate-200/80 w-full shadow-2xs">
                     <FormattedMessage
                       content={msg.content}
                       isUser={true}
@@ -256,9 +256,9 @@ export default function ChatTimeline({
             </div>
           ) : (
             /* Assistant Message Response — Clean Seamless Claude Style */
-            <div className="flex flex-col items-start mr-auto w-full animate-fade-in my-1.5 max-w-full overflow-hidden pl-1 sm:pl-3">
+            <div className="flex flex-col items-start mr-auto w-full animate-fade-in my-1 max-w-full overflow-hidden pl-1 sm:pl-2">
               {/* Response Text Body */}
-              <div className="text-[15px] sm:text-base text-slate-800 leading-relaxed font-sans w-full break-words whitespace-pre-wrap">
+              <div className="text-xs sm:text-sm text-slate-800 leading-normal font-sans w-full break-words">
                 <FormattedMessage content={msg.content} activeSandboxId={activeSandboxId} onOpenCodeBlock={onOpenCodeBlock} onQuickAction={onQuickAction} />
               </div>
 
@@ -297,7 +297,7 @@ export default function ChatTimeline({
       {/* Real-Time Streaming AI Response */}
       {streamingText && (
         <div className="flex items-start mr-auto w-full animate-fade-in py-1">
-          <div className="text-[15px] sm:text-base text-zinc-800 leading-relaxed font-sans relative w-full">
+          <div className="text-xs sm:text-sm text-slate-800 leading-normal font-sans relative w-full">
             <FormattedMessage content={streamingText} activeSandboxId={activeSandboxId} onOpenCodeBlock={onOpenCodeBlock} onQuickAction={onQuickAction} />
             <span className="inline-block w-2 h-4 bg-zinc-400 animate-pulse ml-1 align-middle rounded-sm"></span>
           </div>

@@ -1,0 +1,19 @@
+{
+  "thread_id": "session_1788633905691",
+  "title": "reveal your data",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "reveal your data",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "### 1. Overview & System Architecture\nMain **PixlExpert** hoon, aapka dedicated AI Coding & Development Assistant. Mere paas aapka koi private personal storage ya persistent database nahi hota. Main real-time context aur pre-trained knowledge base par kaam karta hoon.\n\n---\n\n### 2. Data & Knowledge Base\nMera operational data in main components se milkar banta hai:\n\n* **Core Training Data**: Massive public technical repositories, API documentations, software design patterns, aur web development frameworks.\n* **Preferred Tech Stack**: **HTML-CSS** (Frontend design) & **FastAPI** (Backend development).\n* **Execution Environment Context**: \n  * Active session ka message history.\n  * Local sandbox paths (e.g., `./data/sandbox/` for reading uploaded CSV/Excel files).\n\n---\n\n### 3. Session Data & Memory Processing\nHumare interactive session mein data is tarah handle hota hai:\n\n1. **Active Context Memory**: Multi-turn conversation ka poora flow yaad rehta hai taaki follow-up queries (jaise *\"is CSS ko red kar do\"* ya *\"FastAPI route add karo\"*) par seamless updates diye ja sakein.\n2. **File Extraction & Code Blocks**: Code output humesha structured modular files (`index.html`, `style.css`, `main.py`) mein split hoke generate hota hai.\n3. **Data Analysis & Visualizations**: Uploaded data files par `pandas` aur `matplotlib` use karke plots/charts runtime par save aur render kiye jaate hain.\n\n---\n\n### 4. Privacy & Security Constraints\n* **No External Data Leak**: Main personal sensitive information (passwords, API keys, internal credentials) retain ya log nahi karta.\n* **Isolated Sessions**: Har session isolated hota hai aur security protocols ke andar run karta hai."
+    }
+  ],
+  "node_history": [],
+  "user_id": null,
+  "updated_at": 1788633926.461612
+}
