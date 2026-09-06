@@ -1,0 +1,14 @@
+{
+  "thread_id": "test_thread_1788663997",
+  "title": "User B Private Project",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Secret plan"
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_guest_83c44d2a7b80",
+  "updated_at": 1788663997.540925
+}

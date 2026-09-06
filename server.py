@@ -9,7 +9,7 @@ import time
 import asyncio
 from pathlib import Path
 from typing import Dict, Any, Optional
-from fastapi import FastAPI, Request, HTTPException, BackgroundTasks
+from fastapi import FastAPI, Request, HTTPException, BackgroundTasks, Depends
 from fastapi.responses import StreamingResponse, FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -23,7 +23,26 @@ import litellm
 from src.guardrails.input_guardrail import validate_user_input
 from src.guardrails.output_guardrail import redact_sensitive_keys
 from src.guardrails.execution_guardrail import is_safe_sandbox_path
+from src.guardrails.security_middleware import (
+    global_rate_limiter,
+    validate_url_against_ssrf,
+    get_client_ip,
+    get_current_user_optional,
+    get_current_user_required,
+)
 from src.utils.sandbox_manager import get_file_list, read_file, get_sandbox_path, write_file
+
+
+def _sanitize_sandbox_env() -> Dict[str, str]:
+    """Returns a sanitized copy of os.environ with all API keys and secrets stripped."""
+    sanitized = {}
+    sensitive_keywords = ["KEY", "TOKEN", "SECRET", "PASS", "AUTH", "DATABASE", "CREDENTIAL", "PASSWORD", "URL", "SUPABASE", "GEMINI", "OPENAI", "LANGSMITH", "ANTHROPIC"]
+    for k, v in os.environ.items():
+        k_upper = k.upper()
+        if not any(kw in k_upper for kw in sensitive_keywords):
+            sanitized[k] = v
+    sanitized["PATH"] = os.environ.get("PATH", "/usr/bin:/bin:/usr/local/bin")
+    return sanitized
 from src.utils.langsmith_tracer import init_langsmith_tracer
 from src.config.graph import build_graph, create_checkpointer
 from src.config.state import create_initial_state
@@ -46,12 +65,15 @@ app = FastAPI(title="AI Dev Team Web Dashboard")
 # 1. GZip Compression Middleware (for responses >= 1KB)
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
-# 2. CORS Middleware
+# 2. CORS Middleware (Restricted to trusted origins, preventing wildcard credential vulnerability)
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:8000,http://127.0.0.1:5173,http://127.0.0.1:8000")
+allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -74,13 +96,13 @@ async def add_security_headers_and_latency(request: Request, call_next):
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     return response
 
-# 4. Global Exception Handler for 500 Unhandled Errors
+# 4. Global Exception Handler for 500 Unhandled Errors (Suppresses internal stack trace leakage)
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     print(f"🔥 Unhandled Error at {request.url.path}: {str(exc)}")
     return JSONResponse(
         status_code=500,
-        content={"detail": "An internal server error occurred.", "error": str(exc)},
+        content={"detail": "An internal server error occurred while processing your request."},
     )
 
 # Active streams and queues per thread_id
@@ -117,7 +139,15 @@ class RunCodeRequest(BaseModel):
     language: str
 
 @app.post("/api/run-code")
-async def run_code(req: RunCodeRequest):
+async def run_code(
+    req: RunCodeRequest,
+    request: Request,
+    user: Dict[str, Any] = Depends(get_current_user_optional)
+):
+    allowed, limit_msg = global_rate_limiter.check_rate_limit(user.get("id"), is_user=True, max_requests=20, window_seconds=60)
+    if not allowed:
+        raise HTTPException(status_code=429, detail=limit_msg)
+
     import subprocess
     import tempfile
     import base64
@@ -127,6 +157,7 @@ async def run_code(req: RunCodeRequest):
     lang = req.language.lower()
     sandbox_dir = Path("./data/sandbox")
     sandbox_dir.mkdir(parents=True, exist_ok=True)
+    sanitized_env = _sanitize_sandbox_env()
     
     try:
         if lang in ["python", "python3", "py"]:
@@ -139,13 +170,20 @@ async def run_code(req: RunCodeRequest):
             with open(tmp_path, "w") as f:
                 f.write(code)
             
-            result = subprocess.run(["python3", tmp_path.name], capture_output=True, text=True, timeout=10, cwd=str(sandbox_dir))
+            result = subprocess.run(
+                ["python3", tmp_path.name],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                cwd=str(sandbox_dir),
+                env=sanitized_env
+            )
             try: os.remove(tmp_path)
             except: pass
             
-            output = result.stdout
+            output = redact_sensitive_keys(result.stdout)
             if result.stderr:
-                output += f"\n[Errors]\n{result.stderr}"
+                output += f"\n[Errors]\n{redact_sensitive_keys(result.stderr)}"
                 
             # Scan for newly generated charts/images
             images = []
@@ -165,12 +203,18 @@ async def run_code(req: RunCodeRequest):
                 f.write(code)
                 tmp_path = f.name
                 
-            result = subprocess.run(["node", tmp_path], capture_output=True, text=True, timeout=10)
+            result = subprocess.run(
+                ["node", tmp_path],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                env=sanitized_env
+            )
             os.remove(tmp_path)
             
-            output = result.stdout
+            output = redact_sensitive_keys(result.stdout)
             if result.stderr:
-                output += f"\n[Errors]\n{result.stderr}"
+                output += f"\n[Errors]\n{redact_sensitive_keys(result.stderr)}"
             return {"output": output.strip() or "No output."}
         else:
             return {"output": f"Execution for language '{lang}' is not natively supported yet."}
@@ -185,16 +229,37 @@ from fastapi import UploadFile, File
 from typing import List
 
 @app.post("/api/kb/upload")
-async def kb_upload(files: List[UploadFile] = File(...)):
-    from src.utils.rag_engine import init_kb_dir, KB_DIR
-    init_kb_dir()
+async def kb_upload(
+    files: List[UploadFile] = File(...),
+    request: Request = None,
+    user: Dict[str, Any] = Depends(get_current_user_optional)
+):
+    from src.utils.rag_engine import get_user_kb_dir
+    user_kb_dir = get_user_kb_dir(user.get("id", "default_user"))
     
+    if request:
+        allowed, limit_msg = global_rate_limiter.check_rate_limit(user.get("id"), is_user=True, max_requests=10, window_seconds=60)
+        if not allowed:
+            raise HTTPException(status_code=429, detail=limit_msg)
+
+    MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB limit
+    ALLOWED_EXTENSIONS = {".txt", ".pdf", ".docx", ".csv", ".json", ".md", ".py", ".js", ".ts", ".css", ".html"}
+
     saved_files = []
     for file in files:
-        file_path = KB_DIR / file.filename
+        safe_filename = Path(file.filename).name
+        ext = Path(safe_filename).suffix.lower()
+        if ext not in ALLOWED_EXTENSIONS:
+            raise HTTPException(status_code=400, detail=f"File type '{ext}' is not allowed for security reasons.")
+            
+        content = await file.read()
+        if len(content) > MAX_FILE_SIZE:
+            raise HTTPException(status_code=400, detail=f"File '{safe_filename}' exceeds maximum allowed size of 10MB.")
+
+        file_path = user_kb_dir / safe_filename
         with open(file_path, "wb") as f:
-            f.write(await file.read())
-        saved_files.append(file.filename)
+            f.write(content)
+        saved_files.append(safe_filename)
         
     return {"status": "success", "message": f"Uploaded {len(saved_files)} files to Knowledge Base.", "files": saved_files}
 
@@ -220,8 +285,20 @@ from src.utils.memory_manager import get_user_preferences, get_long_term_memory,
 
 
 @app.post("/api/chat/stream")
-async def chat_stream(req: ChatStreamRequest):
-    pass
+async def chat_stream(
+    req: ChatStreamRequest,
+    request: Request = None,
+    user: Dict[str, Any] = Depends(get_current_user_optional)
+):
+    if request:
+        allowed, limit_msg = global_rate_limiter.check_rate_limit(user.get("id"), is_user=True, max_requests=30, window_seconds=60)
+        if not allowed:
+            async def rate_limit_error_stream():
+                err_text = f"⚠️ **Rate Limit Notice**: {limit_msg}"
+                yield f"data: {json.dumps({'text': err_text})}\n\n"
+                yield f"data: {json.dumps({'done': True})}\n\n"
+            return StreamingResponse(rate_limit_error_stream(), media_type="text/event-stream")
+
     target_model = req.model or "gemini-1.5-flash"
 
     # Persistent Session Memory Retrieval
@@ -300,7 +377,10 @@ async def chat_stream(req: ChatStreamRequest):
                 if results:
                     search_str = f"[LIVE WEB SEARCH RESULTS for '{query}':\n"
                     for r in results:
-                        search_str += f"- {r.get('title', '')}: {r.get('body', '')} ({r.get('href', '')})\n"
+                        safe_url = r.get('href', '')
+                        is_safe_url, _ = validate_url_against_ssrf(safe_url)
+                        if is_safe_url:
+                            search_str += f"- {r.get('title', '')}: {r.get('body', '')} ({safe_url})\n"
                     search_str += "]"
                     contents.append({"role": "user", "content": search_str})
                     contents.append({"role": "assistant", "content": f"Understood, I have the live web search results for '{query}'."})
@@ -310,7 +390,7 @@ async def chat_stream(req: ChatStreamRequest):
     # RAG Engine Knowledge Base Retrieval
     if last_user_msg.strip():
         from src.utils.rag_engine import retrieve_from_kb
-        rag_context = retrieve_from_kb(last_user_msg)
+        rag_context = retrieve_from_kb(last_user_msg, user_id=user.get("id"))
         if rag_context:
             contents.append({"role": "user", "content": rag_context})
             contents.append({"role": "assistant", "content": "I will use this knowledge base context if relevant."})
@@ -531,7 +611,12 @@ def save_users(users_dict):
         json.dump(users_dict, f, indent=2)
 
 @app.post("/api/auth/signup")
-def auth_signup(req: AuthSignUpRequest):
+def auth_signup(req: AuthSignUpRequest, request: Request):
+    client_ip = get_client_ip(request)
+    allowed, limit_msg = global_rate_limiter.check_rate_limit(client_ip, is_user=False, max_requests=10, window_seconds=60)
+    if not allowed:
+        raise HTTPException(status_code=429, detail=limit_msg)
+
     users = load_users()
     email_key = req.email.strip().lower()
     if email_key in users:
@@ -566,7 +651,12 @@ def auth_signup(req: AuthSignUpRequest):
     return {"message": "Account created successfully", "user": user_data, "token": session_token}
 
 @app.post("/api/auth/login")
-def auth_login(req: AuthLoginRequest):
+def auth_login(req: AuthLoginRequest, request: Request):
+    client_ip = get_client_ip(request)
+    allowed, limit_msg = global_rate_limiter.check_rate_limit(client_ip, is_user=False, max_requests=10, window_seconds=60)
+    if not allowed:
+        raise HTTPException(status_code=429, detail=limit_msg)
+
     users = load_users()
     email_key = req.email.strip().lower()
     user_obj = users.get(email_key)
@@ -703,36 +793,62 @@ class ChatRenameRequest(BaseModel):
 
 
 @app.get("/api/chats")
-def get_chats(user_id: Optional[str] = None):
-    return list_chat_sessions(user_id=user_id)
+def get_chats(
+    request: Request,
+    user: Dict[str, Any] = Depends(get_current_user_optional)
+):
+    return list_chat_sessions(user_id=user.get("id"))
 
 
 @app.get("/api/chats/{thread_id}")
-def get_chat(thread_id: str):
+def get_chat(
+    thread_id: str,
+    request: Request,
+    user: Dict[str, Any] = Depends(get_current_user_optional)
+):
     data = get_chat_session(thread_id)
     if not data:
         raise HTTPException(status_code=404, detail="Chat session not found")
+    
+    owner_id = data.get("user_id")
+    if owner_id and owner_id != user.get("id"):
+        raise HTTPException(status_code=403, detail="Access denied: You do not have permission to view this chat session.")
     return data
 
 
 @app.post("/api/chats/save")
-def save_chat(req: ChatSaveRequest):
+def save_chat(
+    req: ChatSaveRequest,
+    request: Request,
+    user: Dict[str, Any] = Depends(get_current_user_optional)
+):
+    existing = get_chat_session(req.thread_id)
+    if existing and existing.get("user_id") and existing.get("user_id") != user.get("id"):
+        raise HTTPException(status_code=403, detail="Access denied: You cannot modify a chat session owned by another user.")
+        
     return save_chat_session(
         thread_id=req.thread_id,
         title=req.title,
         messages=req.messages,
         mode=req.mode or "chat",
         node_history=req.node_history,
-        user_id=req.user_id,
+        user_id=user.get("id"),
     )
 
 
 @app.post("/api/chats/{thread_id}/rename")
-def rename_chat(thread_id: str, req: ChatRenameRequest):
+def rename_chat(
+    thread_id: str,
+    req: ChatRenameRequest,
+    request: Request,
+    user: Dict[str, Any] = Depends(get_current_user_optional)
+):
     data = get_chat_session(thread_id)
+    if data and data.get("user_id") and data.get("user_id") != user.get("id"):
+        raise HTTPException(status_code=403, detail="Access denied: You cannot rename a chat session owned by another user.")
+        
     if not data:
-        # Create minimal placeholder if not created yet
-        data = {"messages": [], "mode": "chat", "node_history": [], "user_id": None}
+        data = {"messages": [], "mode": "chat", "node_history": [], "user_id": user.get("id")}
     
     return save_chat_session(
         thread_id=thread_id,
@@ -740,12 +856,20 @@ def rename_chat(thread_id: str, req: ChatRenameRequest):
         messages=data.get("messages", []),
         mode=data.get("mode", "chat"),
         node_history=data.get("node_history", []),
-        user_id=data.get("user_id"),
+        user_id=user.get("id"),
     )
 
 
 @app.delete("/api/chats/{thread_id}")
-def delete_chat(thread_id: str):
+def delete_chat(
+    thread_id: str,
+    request: Request,
+    user: Dict[str, Any] = Depends(get_current_user_optional)
+):
+    data = get_chat_session(thread_id)
+    if data and data.get("user_id") and data.get("user_id") != user.get("id"):
+        raise HTTPException(status_code=403, detail="Access denied: You cannot delete a chat session owned by another user.")
+
     from src.utils.memory_manager import delete_chat_session
     success = delete_chat_session(thread_id)
     if not success:
@@ -771,7 +895,16 @@ def update_preferences(prefs: Dict[str, Any]):
 
 
 @app.post("/api/projects/start")
-async def start_project(req: ProjectStartRequest, background_tasks: BackgroundTasks):
+async def start_project(
+    req: ProjectStartRequest,
+    background_tasks: BackgroundTasks,
+    request: Request = None,
+    user: Dict[str, Any] = Depends(get_current_user_optional)
+):
+    if request:
+        allowed, limit_msg = global_rate_limiter.check_rate_limit(user.get("id"), is_user=True, max_requests=10, window_seconds=60)
+        if not allowed:
+            raise HTTPException(status_code=429, detail=limit_msg)
     is_valid, msg, meta = validate_user_input(req.requirement)
     if not is_valid:
         raise HTTPException(status_code=400, detail=f"Guardrail check failed: {msg}")

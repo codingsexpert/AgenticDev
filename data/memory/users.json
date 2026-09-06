@@ -102,7 +102,7 @@
     "email": "test_user_prod@example.com",
     "salt": "fdd1d8d772ccefc233406a2d43a55bd5",
     "password_hash": "3bf63f4eeacd8e97ea7fef87c38ebafe14946dd08a22b1181d8f32d531d152a3",
-    "token": "pixl_jwt_0047ab788959fbb369c3c3baa546465651217514a8ada141d4d547df825c6702",
+    "token": "pixl_jwt_32016c5c8c5766e72a2d09d249c1eecc90f67e66a770dbad45d530b455407800",
     "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Prod Test User",
     "created_at": 1786476455.377128
   }

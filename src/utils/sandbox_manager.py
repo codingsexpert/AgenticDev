@@ -201,11 +201,14 @@ MAX_OUTPUT_BYTES = 500 * 1024  # 500 KB limit to prevent memory bloat
 
 def _sanitize_sandbox_env() -> Dict[str, str]:
     """Prepares a sanitized environment copy for child subprocess execution."""
-    env = os.environ.copy()
-    sensitive_keys = ["GEMINI_API_KEY", "OPENAI_API_KEY", "LANGSMITH_API_KEY", "SECRET_KEY"]
-    for key in sensitive_keys:
-        env.pop(key, None)
-    return env
+    sanitized = {}
+    sensitive_keywords = ["KEY", "TOKEN", "SECRET", "PASS", "AUTH", "DATABASE", "CREDENTIAL", "PASSWORD", "URL", "SUPABASE", "GEMINI", "OPENAI", "LANGSMITH", "ANTHROPIC"]
+    for k, v in os.environ.items():
+        k_upper = k.upper()
+        if not any(kw in k_upper for kw in sensitive_keywords):
+            sanitized[k] = v
+    sanitized["PATH"] = os.environ.get("PATH", "/usr/bin:/bin:/usr/local/bin")
+    return sanitized
 
 
 def _truncate_output(text: str, max_bytes: int = MAX_OUTPUT_BYTES) -> str:
