@@ -28,7 +28,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
 
   const currentBlock = blocks[activeTabIndex] || blocks[0];
   const langLower = (currentBlock.language || '').toLowerCase();
-  
+
   const hasWebBlocks = blocks.some(b => {
     const l = (b.language || '').toLowerCase();
     const f = (b.filename || '').toLowerCase();
@@ -63,7 +63,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
   const handleApplyAll = async () => {
     if (!activeSandboxId) return;
     try {
-      await Promise.all(blocks.map(b => 
+      await Promise.all(blocks.map(b =>
         fetch(`/api/sandboxes/${activeSandboxId}/file`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -81,7 +81,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
     let htmlBlock = blocks.find(b => b.language === 'html' || b.filename.endsWith('.html'));
     let cssBlock = blocks.find(b => b.language === 'css' || b.filename.endsWith('.css'));
     let jsBlock = blocks.find(b => b.language === 'javascript' || b.language === 'js' || b.filename.endsWith('.js'));
-    
+
     let html = htmlBlock ? htmlBlock.code : (blocks.length === 1 && hasWebBlocks ? blocks[0].code : '<div id="root"></div>');
     let css = cssBlock ? cssBlock.code : '';
     let js = jsBlock ? jsBlock.code : '';
@@ -193,9 +193,8 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
           {hasWebBlocks && (
             <button
               onClick={() => setShowPreview(!showPreview)}
-              className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all flex items-center space-x-1.5 shadow-sm ${
-                showPreview ? 'bg-emerald-500 text-white' : 'bg-emerald-950/60 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40'
-              }`}
+              className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all flex items-center space-x-1.5 shadow-sm ${showPreview ? 'bg-emerald-500 text-white' : 'bg-emerald-950/60 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40'
+                }`}
             >
               <Eye className="w-3.5 h-3.5" />
               <span>{showPreview ? 'Hide Preview' : 'Live Preview'}</span>
@@ -221,11 +220,10 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
             <button
               key={idx}
               onClick={() => setActiveTabIndex(idx)}
-              className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 ${
-                isActive
+              className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 ${isActive
                   ? 'bg-white text-indigo-950 font-semibold shadow-sm border border-slate-200'
                   : 'text-slate-600 hover:bg-slate-200/60 hover:text-slate-900'
-              }`}
+                }`}
             >
               {getFileIcon(block.filename, block.language)}
               <span>{block.filename}</span>
@@ -350,8 +348,8 @@ const markdownComponents = {
   strong: ({ node, ...props }) => <strong className="font-semibold text-slate-950" {...props} />,
   em: ({ node, ...props }) => <em className="italic text-slate-800" {...props} />,
   a: ({ node, ...props }) => <a className="text-indigo-600 hover:text-indigo-700 hover:underline font-medium" target="_blank" rel="noreferrer" {...props} />,
-  ul: ({ node, ...props }) => <ul className="list-disc pl-5 my-1.5 space-y-0.5 text-xs sm:text-sm text-slate-800 marker:text-indigo-500" {...props} />,
-  ol: ({ node, ...props }) => <ol className="list-decimal pl-5 my-1.5 space-y-0.5 text-xs sm:text-sm text-slate-800 marker:text-indigo-500 font-medium" {...props} />,
+  ul: ({ node, ...props }) => <ul className="list-disc pl-5 my-1.5 space-y-0.5 text-xs sm:text-sm text-slate-800" {...props} />,
+  ol: ({ node, ...props }) => <ol className="list-decimal pl-5 my-1.5 space-y-0.5 text-xs sm:text-sm text-slate-800" {...props} />,
   li: ({ node, ...props }) => <li className="leading-normal pl-0.5 text-xs sm:text-sm" {...props} />,
   blockquote: ({ node, ...props }) => <blockquote className="border-l-3 border-indigo-400 bg-indigo-50/40 pl-3 py-1.5 my-2 rounded-r-lg text-slate-700 text-xs sm:text-sm font-medium italic" {...props} />,
   table: ({ node, ...props }) => <div className="overflow-x-auto my-2 rounded-xl border border-slate-200 shadow-xs"><table className="w-full border-collapse text-xs text-left" {...props} /></div>,
@@ -367,9 +365,6 @@ export default function FormattedMessage({ content = '', isUser = false, activeS
   if (!content) return null;
 
   let sanitizedContent = content;
-
-  // Auto-convert single quote/apostrophe bullets to standard markdown hyphen bullets
-  sanitizedContent = sanitizedContent.replace(/^([ \t]*)[`'’\u2018\u2019]\s+/gm, '$1- ');
 
   // If there's an unclosed code block at the end during streaming, close it
   if ((sanitizedContent.match(/```/g) || []).length % 2 !== 0) {
