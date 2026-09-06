@@ -75,9 +75,10 @@ export default function Sidebar({
       )}
 
       <aside
-        style={{ width: `${sidebarWidth}px` }}
-        className={`fixed inset-y-0 left-0 z-50 bg-white border-r border-slate-200/80 flex flex-col transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto bg-white border-r border-slate-200/80 flex flex-col transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none shrink-0 ${
+          sidebarOpen
+            ? 'translate-x-0 w-72 lg:w-[260px] lg:opacity-100'
+            : '-translate-x-full lg:translate-x-0 lg:w-0 lg:opacity-0 lg:overflow-hidden lg:border-none'
         }`}
       >
         {/* Text Branding */}
