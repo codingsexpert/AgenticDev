@@ -20,6 +20,24 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import litellm
+litellm.drop_params = True
+import re
+
+def is_simple_greeting(text: str) -> bool:
+    """Identify simple conversational messages to bypass expensive RAG/tool execution."""
+    if not text:
+        return False
+    t = text.strip().lower()
+    t_clean = re.sub(r'[^\w\s]', '', t).strip()
+    common_greetings = {
+        "hi", "hey", "hello", "hola", "hallo", "heya", "yo",
+        "good morning", "good afternoon", "good evening", "good night",
+        "how are you", "how are you doing", "kaise ho", "kaise ho aap",
+        "thanks", "thank you", "dhanyawad", "ok", "okay", "cool", "nice",
+        "sup", "whats up", "what is up", "bye", "goodbye"
+    }
+    return t in common_greetings or t_clean in common_greetings
+
 from src.guardrails.input_guardrail import validate_user_input
 from src.guardrails.output_guardrail import redact_sensitive_keys
 from src.guardrails.execution_guardrail import is_safe_sandbox_path
@@ -345,19 +363,20 @@ async def chat_stream(
                 yield f"data: {json.dumps({'done': True})}\n\n"
             return StreamingResponse(guardrail_error_stream(), media_type="text/event-stream")
 
-    import re
     last_user_msg = raw_last_user_msg.lower()
+    is_greeting = is_simple_greeting(raw_last_user_msg)
     weather_info = None
 
-    weather_pattern = r"\b(weather|mausam|temperature|climate)\b"
-    if re.search(weather_pattern, last_user_msg, re.IGNORECASE):
-        cities = ["delhi", "mumbai", "bangalore", "kolkata", "chennai", "hyderabad", "pune", "ahmedabad", "jaipur", "london", "paris", "tokyo", "new york"]
-        found_city = "Delhi"
-        for c in cities:
-            if re.search(rf"\b{c}\b", last_user_msg, re.IGNORECASE):
-                found_city = c.capitalize()
-                break
-        weather_info = get_current_weather(found_city)
+    if not is_greeting:
+        weather_pattern = r"\b(weather|mausam|temperature|climate)\b"
+        if re.search(weather_pattern, last_user_msg, re.IGNORECASE):
+            cities = ["delhi", "mumbai", "bangalore", "kolkata", "chennai", "hyderabad", "pune", "ahmedabad", "jaipur", "london", "paris", "tokyo", "new york"]
+            found_city = "Delhi"
+            for c in cities:
+                if re.search(rf"\b{c}\b", last_user_msg, re.IGNORECASE):
+                    found_city = c.capitalize()
+                    break
+            weather_info = get_current_weather(found_city)
 
     contents = []
     if weather_info and weather_info.get("status") == "success":
@@ -365,35 +384,37 @@ async def chat_stream(
         contents.append({"role": "user", "content": context_str})
         contents.append({"role": "assistant", "content": "Understood, I have the live real-time weather data."})
 
-    # Live Web Search Logic
-    web_search_pattern = r"(?i)\b(search web for|latest news on|current news|search for|who is|what is the latest)\b\s+(.*)"
-    search_match = re.search(web_search_pattern, last_user_msg)
-    if search_match:
-        query = search_match.group(2).strip()
-        try:
-            from duckduckgo_search import DDGS
-            with DDGS() as ddgs:
-                results = list(ddgs.text(query, max_results=3))
-                if results:
-                    search_str = f"[LIVE WEB SEARCH RESULTS for '{query}':\n"
-                    for r in results:
-                        safe_url = r.get('href', '')
-                        is_safe_url, _ = validate_url_against_ssrf(safe_url)
-                        if is_safe_url:
-                            search_str += f"- {r.get('title', '')}: {r.get('body', '')} ({safe_url})\n"
-                    search_str += "]"
-                    contents.append({"role": "user", "content": search_str})
-                    contents.append({"role": "assistant", "content": f"Understood, I have the live web search results for '{query}'."})
-        except Exception as e:
-            print(f"Web search failed: {e}")
+    # Live Web Search Logic (Skip for simple greetings)
+    if not is_greeting:
+        web_search_pattern = r"(?i)\b(search web for|latest news on|current news|search for|who is|what is the latest)\b\s+(.*)"
+        search_match = re.search(web_search_pattern, last_user_msg)
+        if search_match:
+            query = search_match.group(2).strip()
+            try:
+                from duckduckgo_search import DDGS
+                with DDGS() as ddgs:
+                    results = list(ddgs.text(query, max_results=3))
+                    if results:
+                        search_str = f"[LIVE WEB SEARCH RESULTS for '{query}':\n"
+                        for r in results:
+                            safe_url = r.get('href', '')
+                            is_safe_url, _ = validate_url_against_ssrf(safe_url)
+                            if is_safe_url:
+                                search_str += f"- {r.get('title', '')}: {r.get('body', '')} ({safe_url})\n"
+                        search_str += "]"
+                        contents.append({"role": "user", "content": search_str})
+                        contents.append({"role": "assistant", "content": f"Understood, I have the live web search results for '{query}'."})
+            except Exception as e:
+                print(f"Web search failed: {e}")
 
-    # RAG Engine Knowledge Base Retrieval
-    if last_user_msg.strip():
+    # RAG Engine Knowledge Base Retrieval (Skip for simple greetings)
+    if last_user_msg.strip() and not is_greeting:
         from src.utils.rag_engine import retrieve_from_kb
         rag_context = retrieve_from_kb(last_user_msg, user_id=user.get("id"))
         if rag_context:
             contents.append({"role": "user", "content": rag_context})
             contents.append({"role": "assistant", "content": "I will use this knowledge base context if relevant."})
+
 
     import base64
     import io
@@ -492,7 +513,11 @@ On the VERY FIRST LINE inside the code block, you MUST put the exact full file p
 
     async def generate_chunks():
         # Fallback to LLM_MODEL in .env if not specified in request
-        model_name = target_model if "/" in target_model else os.getenv("LLM_MODEL", "gemini/gemini-1.5-flash")
+        raw_model = target_model or os.getenv("LLM_MODEL", "gemini/gemini-2.0-flash")
+        model_name = raw_model if "/" in raw_model else f"gemini/{raw_model}"
+        if "gemini-3.6" in model_name or "gemini-flash-latest" in model_name:
+            model_name = os.getenv("LLM_MODEL", "gemini/gemini-2.0-flash")
+
         stream_success = False
 
         for attempt in range(2):
@@ -502,19 +527,14 @@ On the VERY FIRST LINE inside the code block, you MUST put the exact full file p
                     messages=messages,
                     stream=True,
                 )
-                import re
                 full_text = ""
                 for chunk in response_stream:
                     delta = chunk.choices[0].delta.content or ""
                     if delta:
                         full_text += delta
-                        # Smooth ChatGPT token-by-token typewriter streaming
-                        tokens = re.split(r'(\s+)', delta)
-                        for tok in tokens:
-                            if tok:
-                                sanitized_tok = redact_sensitive_keys(tok)
-                                yield f"data: {json.dumps({'text': sanitized_tok})}\n\n"
-                                await asyncio.sleep(0.005)  # 5ms micro-delay per token for snappy ChatGPT typing
+                        sanitized_delta = redact_sensitive_keys(delta)
+                        yield f"data: {json.dumps({'text': sanitized_delta})}\n\n"
+
                 
                 # Auto-scaffold physical folders and files on disk from markdown code blocks
                 if full_text and req.thread_id:

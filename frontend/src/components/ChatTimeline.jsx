@@ -306,11 +306,17 @@ export default function ChatTimeline({
 
       {/* Thinking Animation */}
       {isLoading && !streamingText && nodeHistory.length === 0 && (
-        <div className="flex items-start mr-auto w-full animate-fade-in py-2">
-          <div className="bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 flex items-center space-x-1.5 w-fit shadow-sm">
-             <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-             <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-             <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"></div>
+        <div className="flex items-center space-x-2 mr-auto w-full animate-fade-in py-2 pl-1">
+          <div className="w-6 h-6 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100 shadow-2xs">
+            <Sparkles className="w-3 h-3 text-indigo-600" />
+          </div>
+          <div className="bg-slate-100/90 border border-slate-200/80 rounded-2xl px-3.5 py-2 flex items-center space-x-2 w-fit shadow-2xs">
+            <span className="text-xs font-semibold text-slate-500">Thinking</span>
+            <div className="flex items-center space-x-1">
+              <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+              <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+              <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce"></div>
+            </div>
           </div>
         </div>
       )}

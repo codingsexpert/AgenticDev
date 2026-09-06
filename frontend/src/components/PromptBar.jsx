@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Sparkles, Layers, Database, ChevronDown, Cpu, MessageSquare, Wrench, Mic, MicOff, Volume2, Paperclip, X, FileText, Book, Image as ImageIcon } from 'lucide-react';
+import { Send, Sparkles, Layers, Database, ChevronDown, Cpu, MessageSquare, Wrench, Mic, MicOff, Volume2, Paperclip, X, FileText, Book, Image as ImageIcon, Square } from 'lucide-react';
 
-export default function PromptBar({ onSubmit, isLoading, mode, setMode }) {
+export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }) {
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState([]);
   const [selectedModel, setSelectedModel] = useState('gemini-flash-latest');
@@ -494,18 +494,30 @@ export default function PromptBar({ onSubmit, isLoading, mode, setMode }) {
               )}
             </button>
 
-            {/* Send Button */}
-            <button
-              type="submit"
-              disabled={isLoading || (!input.trim() && attachments.length === 0)}
-              className={`w-9 h-9 rounded-2xl transition-all duration-200 flex items-center justify-center ${
-                (input.trim() || attachments.length > 0) && !isLoading
-                  ? 'bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-600 text-white hover:opacity-95 shadow-md shadow-indigo-500/30 active:scale-95'
-                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-              }`}
-            >
-              <Send className="w-4 h-4 text-white fill-white" />
-            </button>
+            {/* Send or Stop Button */}
+            {isLoading ? (
+              <button
+                type="button"
+                onClick={onStop}
+                title="Stop generating"
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-semibold transition-all shadow-2xs active:scale-95 cursor-pointer"
+              >
+                <Square className="w-3.5 h-3.5 fill-rose-600 text-rose-600" />
+                <span className="hidden sm:inline">Stop</span>
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={!input.trim() && attachments.length === 0}
+                className={`w-9 h-9 rounded-2xl transition-all duration-200 flex items-center justify-center ${
+                  input.trim() || attachments.length > 0
+                    ? 'bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-600 text-white hover:opacity-95 shadow-md shadow-indigo-500/30 active:scale-95 cursor-pointer'
+                    : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                }`}
+              >
+                <Send className="w-4 h-4 text-white fill-white" />
+              </button>
+            )}
           </div>
         </div>
       </form>

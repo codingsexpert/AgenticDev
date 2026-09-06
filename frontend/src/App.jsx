@@ -58,6 +58,16 @@ export default function App() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
+  const abortControllerRef = useRef(null);
+
+  const handleStopGeneration = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setIsLoading(false);
+  };
+
 
   // Click outside to close top profile dropdown
   useEffect(() => {
@@ -280,6 +290,16 @@ export default function App() {
   const autoSaveChat = async (tId, msgList, nHist, mMode) => {
     if (!tId || msgList.length === 0) return;
     const title = msgList[0]?.content?.slice(0, 32) || 'Chat Session';
+
+    // Optimistically update local project list without triggering full refetch delay
+    setProjects((prev) => {
+      const exists = prev.some((p) => p.thread_id === tId);
+      if (exists) {
+        return prev.map((p) => (p.thread_id === tId ? { ...p, title, updated_at: new Date().toISOString() } : p));
+      }
+      return [{ thread_id: tId, title, messages: msgList, updated_at: new Date().toISOString() }, ...prev];
+    });
+
     try {
       await fetch('/api/chats/save', {
         method: 'POST',
@@ -293,14 +313,21 @@ export default function App() {
           user_id: user?.id || null,
         }),
       });
-      fetchChatsAndRestore();
     } catch (e) {
       console.error('Auto save error', e);
     }
   };
 
   const handlePromptSubmit = async (promptText, modelName, selectedMode, attachments = []) => {
+    if (isLoading) return; // Disable duplicate submissions while processing
+
     setIsLoading(true);
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     const activeThread = currentThreadId || `session_${Date.now()}`;
     if (!currentThreadId) {
       setCurrentThreadId(activeThread);
@@ -317,13 +344,16 @@ export default function App() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ requirement: promptText, model: modelName }),
+        signal: controller.signal,
       })
         .then((res) => res.json())
         .then((data) => {
           if (data.thread_id) connectEventSource(data.thread_id);
         })
         .catch((e) => {
-          console.error('Failed to start project build pipeline', e);
+          if (e.name !== 'AbortError') {
+            console.error('Failed to start project build pipeline', e);
+          }
           setIsLoading(false);
         });
         
@@ -336,7 +366,12 @@ export default function App() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: updatedMessages, model: modelName, thread_id: activeThread, mode: selectedMode }),
+        signal: controller.signal,
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -373,11 +408,27 @@ export default function App() {
       setStreamingText('');
       autoSaveChat(activeThread, finalMsgs, nodeHistory, selectedMode);
     } catch (e) {
-      console.error('Chat stream error', e);
+      if (e.name === 'AbortError') {
+        console.log('Stream generation stopped by user.');
+        setMessages((prevMsgs) => {
+          if (streamingText) {
+            return [...prevMsgs, { role: 'assistant', content: streamingText + ' _(Stopped)_' }];
+          }
+          return prevMsgs;
+        });
+        setStreamingText('');
+      } else {
+        console.error('Chat stream error', e);
+        const errMsgs = [...updatedMessages, { role: 'assistant', content: '⚠️ Network connection interrupted. Please click retry.' }];
+        setMessages(errMsgs);
+        setStreamingText('');
+      }
     } finally {
       setIsLoading(false);
+      abortControllerRef.current = null;
     }
   };
+
 
   const connectEventSource = (threadId) => {
     const sse = new EventSource(`/api/stream/${threadId}`);
@@ -620,7 +671,7 @@ export default function App() {
                 }}
               />
               <div className="p-3 sm:p-4 max-w-4xl mx-auto w-full">
-                <PromptBar onSubmit={handlePromptSubmit} isLoading={isLoading} mode={mode} setMode={setMode} />
+                <PromptBar onSubmit={handlePromptSubmit} isLoading={isLoading} onStop={handleStopGeneration} mode={mode} setMode={setMode} />
               </div>
             </div>
           ) : (
@@ -654,7 +705,7 @@ export default function App() {
 
                 {/* Large Responsive AI Chat Input */}
                 <div className="w-full max-w-3xl mb-8">
-                  <PromptBar onSubmit={handlePromptSubmit} isLoading={isLoading} mode={mode} setMode={setMode} />
+                  <PromptBar onSubmit={handlePromptSubmit} isLoading={isLoading} onStop={handleStopGeneration} mode={mode} setMode={setMode} />
                 </div>
 
                 {/* 4 Feature Suggestion Cards Grid */}

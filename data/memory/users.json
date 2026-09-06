@@ -102,10 +102,10 @@
     "email": "test_user_prod@example.com",
     "salt": "fdd1d8d772ccefc233406a2d43a55bd5",
     "password_hash": "3bf63f4eeacd8e97ea7fef87c38ebafe14946dd08a22b1181d8f32d531d152a3",
-    "token": "pixl_jwt_3880223e0a106b1188adb0ef30750c0151770c3a5eb180c526bbcc0565cfe777",
+    "token": "pixl_jwt_a6c1f7fb0df473ef3b87dbaa2a098d55ef2712436a69989b041663ae59fcc9cb",
     "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Prod Test User",
     "created_at": 1786476455.377128,
-    "token_expires_at": 1788751381.005114
+    "token_expires_at": 1788753582.177593
   },
   "signup_user_1788664935@example.com": {
     "id": "usr_1788664935641",
@@ -181,5 +181,111 @@
     "token_expires_at": 1788751385.31684,
     "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User B",
     "created_at": 1788664985.316848
+  },
+  "signup_user_1788667011@example.com": {
+    "id": "usr_1788667011673",
+    "name": "Valid User",
+    "email": "signup_user_1788667011@example.com",
+    "salt": "43918479dfd0f8f862250b4047a5945d",
+    "password_hash": "6418106131c6e2fd374a3f0c0cd15296fe647b9f371f3950f02ddac6404bae0f",
+    "token": "pixl_jwt_378e16953d28a86f53d8da3d6e45655093b6269e1a7cb4ad7fa4d0d49679c26d",
+    "token_expires_at": 1788753411.673391,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Valid User",
+    "created_at": 1788667011.673415
+  },
+  "auth_test_1788667012@example.com": {
+    "id": "usr_1788667012229",
+    "name": "Auth User",
+    "email": "auth_test_1788667012@example.com",
+    "salt": "0b7ea99a009c5c461b1cf8c8b4c80968",
+    "password_hash": "d71376a6473d3b542c2018f946a349695eca6b6cf86383384a6627dcbde07af0",
+    "token": "pixl_jwt_5dffcbb4b44fac4944856f3659ba116b570d0a50ba179de8488adde7e45a5f89",
+    "token_expires_at": 1788753412.918707,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Auth User",
+    "created_at": 1788667012.229764
+  },
+  "logout_user_1788667013@example.com": {
+    "id": "usr_1788667013260",
+    "name": "Logout User",
+    "email": "logout_user_1788667013@example.com",
+    "salt": "cffba21a375af3c57fe42eb2b176db1b",
+    "password_hash": "fc81a1adf8109569a9295afcebc411c3919f3c990acdd177a4e0a9d35de5bd17",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Logout User",
+    "created_at": 1788667013.2605062
+  },
+  "tenant_a_1788667013@example.com": {
+    "id": "usr_1788667013840",
+    "name": "User A",
+    "email": "tenant_a_1788667013@example.com",
+    "salt": "5c53a68f006c78e7dd4411671912b63f",
+    "password_hash": "8e0618bd7e55779024df01c226db81c1f0c5b749016764935ef54738cf3f8ac1",
+    "token": "pixl_jwt_c2364b1c666af33ad5053cb422005858c4aea5d7c6e4b2cda3c085579ba778f2",
+    "token_expires_at": 1788753413.8409111,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User A",
+    "created_at": 1788667013.840918
+  },
+  "tenant_b_1788667013@example.com": {
+    "id": "usr_1788667014177",
+    "name": "User B",
+    "email": "tenant_b_1788667013@example.com",
+    "salt": "1751323e1b2db1f0d6d02ea23ae84577",
+    "password_hash": "7d02aabe2998f01d03e7a7b4aa5781484fae8a06d97f7c64bdaa942413817eef",
+    "token": "pixl_jwt_806714431d2e7a9f7a8f3e2b28de6063bf9a87c9435a7d466470fa0ef581cc2d",
+    "token_expires_at": 1788753414.17776,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User B",
+    "created_at": 1788667014.1777658
+  },
+  "signup_user_1788667183@example.com": {
+    "id": "usr_1788667183568",
+    "name": "Valid User",
+    "email": "signup_user_1788667183@example.com",
+    "salt": "9bee682d93f9b0f45542b3ab28f06af8",
+    "password_hash": "656cf38a36efd68089b714e32981134b117cde5122e04f3ad68f09654de5c0c9",
+    "token": "pixl_jwt_fdc86eea4c62f38fc9448b4f9fad2819ce92ab30e2745f541db97ddce3466a79",
+    "token_expires_at": 1788753583.568565,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Valid User",
+    "created_at": 1788667183.568585
+  },
+  "auth_test_1788667183@example.com": {
+    "id": "usr_1788667183909",
+    "name": "Auth User",
+    "email": "auth_test_1788667183@example.com",
+    "salt": "0c6956e24b60a1522bb5efadd85eab6f",
+    "password_hash": "f8f078de878e55f2cc5c85b76886c733551cc1309d876127cb29023025f5e3f0",
+    "token": "pixl_jwt_377836a4a68e6efed0c291f42e3fac80111f93220eb1b63ddfdc72638b76838c",
+    "token_expires_at": 1788753584.457809,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Auth User",
+    "created_at": 1788667183.909743
+  },
+  "logout_user_1788667184@example.com": {
+    "id": "usr_1788667184770",
+    "name": "Logout User",
+    "email": "logout_user_1788667184@example.com",
+    "salt": "cb8d0e58c70fb9a4e7e89eafc1dfcea9",
+    "password_hash": "f15297efb344170013ae621556ff2b614f263b0df0d3f2ced056b34105e98d66",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Logout User",
+    "created_at": 1788667184.770999
+  },
+  "tenant_a_1788667185@example.com": {
+    "id": "usr_1788667185319",
+    "name": "User A",
+    "email": "tenant_a_1788667185@example.com",
+    "salt": "f7db5ffbd1a17282129d52e98c8dd63d",
+    "password_hash": "35f9de216113d112123e83b0d010488613e74e62d2eb8f21253d654a1f0be4e7",
+    "token": "pixl_jwt_98f51789a4f5d3ac8857b49bf4ef234551b4164accdd5e121cd0475fb34fd12d",
+    "token_expires_at": 1788753585.319635,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User A",
+    "created_at": 1788667185.319641
+  },
+  "tenant_b_1788667185@example.com": {
+    "id": "usr_1788667185664",
+    "name": "User B",
+    "email": "tenant_b_1788667185@example.com",
+    "salt": "0e06e9901483d887b96849e56e608242",
+    "password_hash": "30f117644d79071b6035582c2f9c7764c10fa515bd53395ca4409c96cf85a29e",
+    "token": "pixl_jwt_07891b4e8adbd1bc48771219716f9968d9f3244b47484181c32676eedb479717",
+    "token_expires_at": 1788753585.6645892,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User B",
+    "created_at": 1788667185.6646001
   }
 }

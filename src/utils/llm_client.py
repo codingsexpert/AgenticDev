@@ -64,7 +64,7 @@ def call_llm(
     if current_cost >= token_budget:
         raise ValueError(f"TOKEN_BUDGET_EXCEEDED: Current cost (${current_cost:.4f}) exceeded budget (${token_budget:.4f})")
 
-    target_model = model or os.getenv("LLM_MODEL", "gemini/gemini-3.6-flash")
+    target_model = model or os.getenv("LLM_MODEL", "gemini/gemini-2.0-flash")
     
     messages = [{"role": "system", "content": system_prompt}]
     
