@@ -1,0 +1,19 @@
+{
+  "thread_id": "session_1788667270443",
+  "title": "hi",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! Aaj main aapki coding ya project me kaise help kar sakta hoon?"
+    }
+  ],
+  "node_history": [],
+  "user_id": null,
+  "updated_at": 1788667276.189236
+}
