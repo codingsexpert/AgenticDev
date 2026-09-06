@@ -6,17 +6,17 @@ import PromptBar from './components/PromptBar';
 import ArtifactsCanvas from './components/ArtifactsCanvas';
 import GraphCanvas from './components/GraphCanvas';
 import AuthModal from './components/AuthModal';
-import { 
-  Menu, 
-  Layers, 
-  Sparkles, 
-  PanelLeft, 
-  User, 
-  LogOut, 
-  ChevronDown, 
-  ShieldCheck, 
-  ExternalLink, 
-  Activity, 
+import {
+  Menu,
+  Layers,
+  Sparkles,
+  PanelLeft,
+  User,
+  LogOut,
+  ChevronDown,
+  ShieldCheck,
+  ExternalLink,
+  Activity,
   Search,
   Crown,
   Sun,
@@ -94,7 +94,7 @@ export default function App() {
     if (savedUser) {
       try {
         setUser(JSON.parse(savedUser));
-      } catch (e) {}
+      } catch (e) { }
     }
   }, []);
 
@@ -105,9 +105,9 @@ export default function App() {
     handleNewProject();
     try {
       import('./utils/supabase').then(({ supabase }) => {
-        if (supabase) supabase.auth.signOut().catch(() => {});
+        if (supabase) supabase.auth.signOut().catch(() => { });
       });
-    } catch (e) {}
+    } catch (e) { }
   };
 
   // Dynamic Responsive Window Resize Listener
@@ -239,11 +239,11 @@ export default function App() {
   const handleOpenCodeInIDE = async (input) => {
     const newSandboxId = 'sb_' + Date.now();
     const blocks = Array.isArray(input) ? input : [input];
-    
+
     try {
       await Promise.all(blocks.map(block => {
         const filename = block.filename || (block.language === 'html' ? 'index.html' : block.language === 'css' ? 'style.css' : block.language === 'javascript' || block.language === 'js' ? 'script.js' : 'file.txt');
-        
+
         return fetch(`/api/sandboxes/${newSandboxId}/file`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -252,7 +252,7 @@ export default function App() {
       }));
       setActiveSandboxId(newSandboxId);
       setShowCanvas(true);
-      
+
       if (currentThreadId) {
         const newNode = { state_delta: { sandboxId: newSandboxId } };
         const updatedHistory = [...nodeHistory, newNode];
@@ -357,7 +357,7 @@ export default function App() {
           }
           setIsLoading(false);
         });
-        
+
       autoSaveChat(activeThread, updatedMessages, nodeHistory, selectedMode);
       return;
     }
@@ -505,7 +505,7 @@ export default function App() {
       />
 
       {/* 2. Main Content Area */}
-      <div 
+      <div
         style={{ paddingLeft: sidebarOpen && typeof window !== 'undefined' && window.innerWidth >= 1024 ? `${sidebarWidth}px` : '0px' }}
         className="flex-1 flex flex-col h-full overflow-hidden transition-all duration-300 ease-in-out relative w-full"
       >
@@ -543,9 +543,8 @@ export default function App() {
             {activeSandboxId && (
               <button
                 onClick={() => { setShowCanvas(!showCanvas); setShowGraph(false); }}
-                className={`flex items-center space-x-1.5 px-3 py-1 rounded-full border text-xs font-medium transition-all ${
-                  showCanvas ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
-                }`}
+                className={`flex items-center space-x-1.5 px-3 py-1 rounded-full border text-xs font-medium transition-all ${showCanvas ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                  }`}
               >
                 <Layers className="w-3.5 h-3.5" />
                 <span>{showCanvas ? 'Hide App' : 'View App'}</span>
@@ -688,7 +687,7 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
@@ -709,7 +708,7 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
@@ -730,7 +729,7 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
@@ -751,20 +750,19 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-600 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>
           )}
 
           {/* 4. Right Sidebar (Recent Chats & Sample Projects) */}
-          <RightSidebar 
+          <RightSidebar
             projects={projects}
             onSelectProject={handleSelectChat}
-            onPromptAction={(p) => handlePromptSubmit(p, 'gemini-1.5-flash', mode)} 
+            onPromptAction={(p) => handlePromptSubmit(p, 'gemini-1.5-flash', mode)}
           />
 
           {/* Sliding Code Canvas / Artifact Preview */}
@@ -777,9 +775,9 @@ export default function App() {
 
           {/* Agent Graph Panel */}
           {showGraph && (
-            <GraphCanvas 
-              nodeHistory={nodeHistory} 
-              onClose={() => setShowGraph(false)} 
+            <GraphCanvas
+              nodeHistory={nodeHistory}
+              onClose={() => setShowGraph(false)}
             />
           )}
         </div>

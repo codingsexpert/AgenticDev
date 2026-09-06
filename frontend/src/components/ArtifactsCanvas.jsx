@@ -323,7 +323,7 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'spli
   }, [files]);
 
   return (
-    <div className="flex-1 h-full bg-white flex flex-col z-30 transition-all duration-300 min-w-0">
+    <div className="fixed inset-0 lg:relative lg:inset-auto z-40 lg:z-30 w-full h-full lg:flex-1 min-w-0 bg-white flex flex-col transition-all duration-300">
       {/* Header */}
       <div className="p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <div className="flex items-center space-x-2">

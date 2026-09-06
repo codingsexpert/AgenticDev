@@ -125,7 +125,7 @@ export default function GraphCanvas({ nodeHistory, onClose }) {
   }, [nodeHistory, setNodes, setEdges]);
 
   return (
-    <div className="w-[500px] max-w-full bg-white border-l border-slate-200 shadow-2xl flex flex-col z-40 animate-slide-left relative h-full">
+    <div className="fixed inset-0 sm:relative sm:inset-auto w-full sm:w-[480px] max-w-full bg-white border-l border-slate-200 shadow-2xl flex flex-col z-40 animate-slide-left h-full">
       <div className="h-14 border-b border-slate-200/90 px-4 flex items-center justify-between bg-white shrink-0">
         <div className="flex items-center space-x-2">
           <Activity className="w-4 h-4 text-indigo-600" />

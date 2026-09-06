@@ -1,9 +1,9 @@
 import React from 'react';
-import { 
-  Code2, 
-  MessageSquare, 
-  FileText, 
-  Folder, 
+import {
+  Code2,
+  MessageSquare,
+  FileText,
+  Folder,
   ChevronRight,
   ArrowRight
 } from 'lucide-react';
@@ -13,45 +13,45 @@ export default function RightSidebar({ projects = [], onSelectProject, onPromptA
 
   // 4 Default Recent Chats if real conversation list is empty
   const defaultRecentChats = [
-    { 
-      thread_id: 'chat-1', 
-      title: 'Build a calculator app', 
-      time: '2 hours ago', 
-      icon: Code2, 
-      color: 'bg-indigo-50 text-indigo-600 border-indigo-100' 
+    {
+      thread_id: 'chat-1',
+      title: 'Build a calculator app',
+      time: '2 hours ago',
+      icon: Code2,
+      color: 'bg-indigo-50 text-indigo-600 border-indigo-100'
     },
-    { 
-      thread_id: 'chat-2', 
-      title: 'Explain React hooks', 
-      time: '4 hours ago', 
-      icon: MessageSquare, 
-      color: 'bg-purple-50 text-purple-600 border-purple-100' 
+    {
+      thread_id: 'chat-2',
+      title: 'Explain React hooks',
+      time: '4 hours ago',
+      icon: MessageSquare,
+      color: 'bg-purple-50 text-purple-600 border-purple-100'
     },
-    { 
-      thread_id: 'chat-3', 
-      title: 'Fix this code error', 
-      time: '6 hours ago', 
-      icon: Code2, 
-      color: 'bg-blue-50 text-blue-600 border-blue-100' 
+    {
+      thread_id: 'chat-3',
+      title: 'Fix this code error',
+      time: '6 hours ago',
+      icon: Code2,
+      color: 'bg-blue-50 text-blue-600 border-blue-100'
     },
-    { 
-      thread_id: 'chat-4', 
-      title: 'Summarize this document', 
-      time: '8 hours ago', 
-      icon: FileText, 
-      color: 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+    {
+      thread_id: 'chat-4',
+      title: 'Summarize this document',
+      time: '8 hours ago',
+      icon: FileText,
+      color: 'bg-emerald-50 text-emerald-600 border-emerald-100'
     },
   ];
 
   // Map real user chats if present to clean display rows
-  const recentChats = safeProjects.length > 0 
+  const recentChats = safeProjects.length > 0
     ? safeProjects.slice(0, 4).map((p, idx) => ({
-        thread_id: p.thread_id,
-        title: p.title || p.requirement || 'Chat Session',
-        time: p.updated_at ? 'Recently' : `${(idx + 1) * 2} hours ago`,
-        icon: idx % 2 === 0 ? Code2 : MessageSquare,
-        color: idx % 3 === 0 ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : idx % 3 === 1 ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-blue-50 text-blue-600 border-blue-100'
-      }))
+      thread_id: p.thread_id,
+      title: p.title || p.requirement || 'Chat Session',
+      time: p.updated_at ? 'Recently' : `${(idx + 1) * 2} hours ago`,
+      icon: idx % 2 === 0 ? Code2 : MessageSquare,
+      color: idx % 3 === 0 ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : idx % 3 === 1 ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-blue-50 text-blue-600 border-blue-100'
+    }))
     : defaultRecentChats;
 
   const sampleProjects = [
@@ -62,14 +62,14 @@ export default function RightSidebar({ projects = [], onSelectProject, onPromptA
   ];
 
   return (
-    <aside className="hidden lg:flex lg:w-80 shrink-0 flex-col gap-6 p-6 border-l border-slate-200/70 overflow-y-auto max-h-full bg-transparent">
-      
+    <aside className="w-full lg:w-80 shrink-0 flex flex-col gap-6 p-4 lg:p-6 bg-white/70 lg:bg-transparent border-t lg:border-t-0 lg:border-l border-slate-200/70 overflow-y-auto max-h-full">
+
       {/* 1. Recent Chats Section */}
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <h3 className="font-bold text-xs text-slate-900 tracking-tight">Recent Chats</h3>
-          <button 
-            type="button" 
+          <button
+            type="button"
             className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 flex items-center space-x-1 transition-colors"
           >
             <span>View all</span>
