@@ -688,7 +688,7 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
@@ -709,7 +709,7 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
@@ -730,7 +730,7 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all" />
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
@@ -751,9 +751,10 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-600 group-hover:translate-x-0.5 transition-all" />
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
+
                 </div>
               </div>
             </div>

@@ -62,7 +62,7 @@ export default function RightSidebar({ projects = [], onSelectProject, onPromptA
   ];
 
   return (
-    <aside className="w-full lg:w-80 shrink-0 flex flex-col gap-6 p-4 lg:p-6 bg-white/70 lg:bg-transparent border-t lg:border-t-0 lg:border-l border-slate-200/70 overflow-y-auto max-h-full">
+    <aside className="hidden lg:flex lg:w-80 shrink-0 flex-col gap-6 p-6 border-l border-slate-200/70 overflow-y-auto max-h-full bg-transparent">
       
       {/* 1. Recent Chats Section */}
       <div className="space-y-3">
