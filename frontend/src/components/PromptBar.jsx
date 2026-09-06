@@ -339,10 +339,10 @@ export default function PromptBar({ onSubmit, isLoading, mode, setMode }) {
         </div>
       </div>
 
-      {/* Floating Prompt Box — Compact Sleek Claude / ChatGPT Style */}
+      {/* Floating Prompt Box — Compact Sleek PixlExpert / Claude Style */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white/95 backdrop-blur-xl p-3 sm:p-3.5 rounded-2xl border border-slate-200/90 shadow-[0_12px_35px_-8px_rgba(15,23,42,0.08)] focus-within:shadow-[0_18px_45px_-8px_rgba(99,102,241,0.15)] focus-within:border-indigo-400/60 transition-all duration-300 relative w-full"
+        className="bg-white/95 backdrop-blur-xl p-3 sm:p-4 rounded-3xl border border-indigo-100/90 shadow-[0_12px_40px_-8px_rgba(99,102,241,0.12)] focus-within:shadow-[0_20px_50px_-8px_rgba(99,102,241,0.22)] focus-within:border-indigo-400/80 transition-all duration-300 relative w-full"
       >
         {/* Attachments Preview Area */}
         {attachments.length > 0 && (
@@ -374,66 +374,80 @@ export default function PromptBar({ onSubmit, isLoading, mode, setMode }) {
           </div>
         )}
 
-        <textarea
-          ref={textareaRef}
-          rows={1}
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-            e.target.style.height = 'auto';
-            e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
-          }}
-          onKeyDown={handleKeyDown}
-          placeholder={
-            mode === 'chat'
-              ? 'Ask anything, write code, or click the mic icon to speak...'
-              : 'Describe the application you want the AI Dev Team to build...'
-          }
-          className="w-full bg-transparent text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none resize-none px-1 py-0.5 font-sans min-h-[30px] sm:min-h-[36px] max-h-[160px] leading-normal"
-        />
+        <div className="flex items-start space-x-2.5">
+          <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white shrink-0 mt-0.5 shadow-2xs">
+            <Sparkles className="w-4 h-4 text-white fill-white" />
+          </div>
+          <textarea
+            ref={textareaRef}
+            rows={1}
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value);
+              e.target.style.height = 'auto';
+              e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
+            }}
+            onKeyDown={handleKeyDown}
+            placeholder="Message PixlExpert..."
+            className="w-full bg-transparent text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none resize-none py-1 font-sans min-h-[36px] max-h-[160px] leading-relaxed"
+          />
+        </div>
 
-        <div className="flex items-center justify-between pt-2.5 mt-0.5 border-t border-slate-100/70 relative">
-          {/* Interactive Model Selector Dropdown */}
-          <div className="relative" ref={dropdownRef}>
+        {/* Bottom Toolbar */}
+        <div className="flex items-center justify-between pt-3 mt-1 border-t border-slate-100/90 gap-2 flex-wrap sm:flex-nowrap">
+          {/* Left Controls: Web & Tools dropdowns */}
+          <div className="flex items-center space-x-2">
+            {/* Web Search Dropdown Pill */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                type="button"
+                onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100/80 hover:bg-slate-200/70 border border-slate-200/80 text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+              >
+                <span className="text-sm">🌐</span>
+                <span>Web</span>
+                <ChevronDown className="w-3 h-3 text-slate-400" />
+              </button>
+
+              {modelDropdownOpen && (
+                <div className="absolute bottom-full mb-2 left-0 w-64 bg-white border border-slate-200/90 rounded-2xl shadow-2xl shadow-slate-900/10 p-2 space-y-1 z-50 animate-fade-in">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 py-1">Web Search Engine</div>
+                  {models.map((m) => (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedModel(m.id);
+                        setModelDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-xl text-xs transition-colors flex flex-col ${
+                        selectedModel === m.id
+                          ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100'
+                          : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span className="font-semibold text-xs">{m.label}</span>
+                      <span className="text-[10px] text-slate-400">{m.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Tools Dropdown Pill */}
             <button
               type="button"
-              onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
-              className="flex items-center space-x-1.5 bg-zinc-50 hover:bg-zinc-100 px-3 py-1.5 rounded-lg border border-zinc-200/80 text-xs sm:text-sm font-medium text-zinc-600 transition-colors"
+              onClick={() => kbInputRef.current?.click()}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100/80 hover:bg-slate-200/70 border border-slate-200/80 text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              <Cpu className="w-3.5 h-3.5 text-zinc-500" />
-              <span className="hidden sm:inline">{currentModelLabel}</span>
-              <span className="sm:hidden">Model</span>
-              <ChevronDown className="w-3 h-3 text-zinc-400" />
+              <span className="text-sm">🛠️</span>
+              <span>Tools</span>
+              <ChevronDown className="w-3 h-3 text-slate-400" />
             </button>
-
-            {modelDropdownOpen && (
-              <div className="absolute bottom-full mb-2 left-0 w-64 bg-white border border-zinc-200 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] p-2 space-y-1 z-50 animate-fade-in">
-                <div className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider px-2.5 py-1">Select Engine</div>
-                {models.map((m) => (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedModel(m.id);
-                      setModelDropdownOpen(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-colors flex flex-col ${
-                      selectedModel === m.id
-                        ? 'bg-zinc-50 text-zinc-900 font-medium border border-zinc-200/60'
-                        : 'text-zinc-600 hover:bg-zinc-50'
-                    }`}
-                  >
-                    <span className="font-medium text-[11px]">{m.label}</span>
-                    <span className="text-[10px] text-zinc-400">{m.desc}</span>
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
-          {/* Controls: Attachments + Microphone Dictation + Send Button */}
-          <div className="flex items-center space-x-2">
+          {/* Right Controls: Attachment + Microphone + Send */}
+          <div className="flex items-center space-x-2 shrink-0 ml-auto">
             <input 
               type="file" 
               multiple 
@@ -443,7 +457,6 @@ export default function PromptBar({ onSubmit, isLoading, mode, setMode }) {
               onChange={handleFileChange} 
             />
             
-            {/* KB Upload Hidden Input */}
             <input 
               type="file" 
               multiple 
@@ -453,55 +466,45 @@ export default function PromptBar({ onSubmit, isLoading, mode, setMode }) {
               onChange={handleKbUpload} 
             />
             
-            {/* KB Button */}
-            <button
-              type="button"
-              onClick={() => kbInputRef.current?.click()}
-              disabled={isUploadingKb}
-              title="Upload to Knowledge Base (RAG)"
-              className={`p-2 rounded-xl transition-all flex items-center justify-center ${isUploadingKb ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-50 text-indigo-500 border border-transparent hover:border-indigo-200'}`}
-            >
-              <Book className={`w-4 h-4 ${isUploadingKb ? 'animate-pulse' : ''}`} />
-            </button>
-            
             {/* Attachment Button */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               title="Attach File (Images, PDF, TXT, CSV, DOCX)"
-              className="p-2 rounded-xl transition-all flex items-center justify-center bg-white hover:bg-zinc-50 text-zinc-500 border border-transparent hover:border-zinc-200"
+              className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 text-slate-500 transition-colors border border-transparent hover:border-slate-200"
             >
-              <Paperclip className="w-4 h-4 text-zinc-500" />
+              <Paperclip className="w-4 h-4 text-slate-500" />
             </button>
-            {/* Voice Microphone Button with Live Audio Wave Animation */}
+
+            {/* Voice Microphone Button */}
             <button
               type="button"
               onClick={toggleListening}
               title={isListening ? 'Listening... Click to stop recording' : 'Voice Dictation'}
-              className={`p-2 rounded-xl transition-all flex items-center justify-center relative ${
+              className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
                 isListening
-                  ? 'bg-red-500 text-white shadow-md shadow-red-500/20'
-                  : 'bg-white hover:bg-zinc-50 text-zinc-500 border border-zinc-200'
+                  ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20'
+                  : 'hover:bg-slate-100 text-slate-500 border border-transparent hover:border-slate-200'
               }`}
             >
               {isListening ? (
                 <MicOff className="w-4 h-4 animate-pulse text-white" />
               ) : (
-                <Mic className="w-4 h-4 text-zinc-500" />
+                <Mic className="w-4 h-4 text-slate-500" />
               )}
             </button>
 
-            {/* Send Prompt Action Button */}
+            {/* Send Button */}
             <button
               type="submit"
               disabled={isLoading || (!input.trim() && attachments.length === 0)}
-              className={`p-2.5 rounded-xl transition-all duration-200 flex items-center justify-center ${
+              className={`w-9 h-9 rounded-2xl transition-all duration-200 flex items-center justify-center ${
                 (input.trim() || attachments.length > 0) && !isLoading
-                  ? 'bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white hover:from-indigo-600 hover:to-violet-600 shadow-md shadow-indigo-500/25 active:scale-95'
-                  : 'bg-slate-100 text-slate-300 cursor-not-allowed border border-slate-200/60'
+                  ? 'bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-600 text-white hover:opacity-95 shadow-md shadow-indigo-500/30 active:scale-95'
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-4 h-4 text-white fill-white" />
             </button>
           </div>
         </div>

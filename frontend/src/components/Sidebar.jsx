@@ -1,5 +1,24 @@
-import React from 'react';
-import { Plus, MessageSquare, ExternalLink, Cpu, ShieldCheck, Database, Bot, Brain, Wrench, X, PanelLeftClose, Sparkles, Trash2, LogOut, User, Pencil, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { 
+  Home, 
+  FolderKanban, 
+  BookOpen, 
+  Brain, 
+  Wrench, 
+  Settings, 
+  MessageSquare, 
+  ChevronLeft, 
+  Plus, 
+  MoreHorizontal, 
+  Trash2, 
+  Pencil, 
+  Check, 
+  X, 
+  Sparkles, 
+  LogOut, 
+  User,
+  PanelLeftClose
+} from 'lucide-react';
 
 function ChatItem({
   proj,
@@ -8,9 +27,10 @@ function ChatItem({
   onDeleteProject,
   onRenameProject,
   setSidebarOpen,
+  timeAgo = '2m'
 }) {
-  const [isEditing, setIsEditing] = React.useState(false);
-  const [titleText, setTitleText] = React.useState(proj.title || proj.requirement || proj.thread_id);
+  const [isEditing, setIsEditing] = useState(false);
+  const [titleText, setTitleText] = useState(proj.title || proj.requirement || proj.thread_id);
   const inputRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -85,45 +105,45 @@ function ChatItem({
         if (onSelectProject) onSelectProject(proj.thread_id);
         if (window.innerWidth < 768) setSidebarOpen(false);
       }}
-      className={`group w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
+      className={`group w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all cursor-pointer ${
         isActive
-          ? 'bg-white text-slate-900 font-semibold shadow-xs border border-slate-200/90'
-          : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-900 font-normal border border-transparent'
+          ? 'bg-indigo-50/90 text-indigo-700 font-semibold border border-indigo-100'
+          : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-900 font-medium border border-transparent'
       }`}
     >
       <div className="flex items-center space-x-2.5 truncate pr-1 flex-1 min-w-0">
-        {proj.mode === 'build' ? (
-          <Wrench className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-600'}`} />
-        ) : (
-          <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-600'}`} />
-        )}
+        <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'}`} />
         <span className="truncate leading-tight flex-1">{proj.title || proj.requirement || proj.thread_id}</span>
       </div>
 
-      <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-        <button
-          type="button"
-          title="Rename Chat Session"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsEditing(true);
-          }}
-          className="p-1 rounded-lg hover:bg-slate-200/80 text-slate-400 hover:text-slate-800 transition-all"
-        >
-          <Pencil className="w-3.5 h-3.5" />
-        </button>
+      <div className="flex items-center space-x-1 shrink-0">
+        <span className="text-[10px] text-slate-400 group-hover:hidden font-mono">{timeAgo}</span>
+        
+        <div className="hidden group-hover:flex items-center space-x-1">
+          <button
+            type="button"
+            title="Rename Chat"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditing(true);
+            }}
+            className="p-1 rounded-lg hover:bg-slate-200/80 text-slate-400 hover:text-slate-800 transition-all"
+          >
+            <Pencil className="w-3 h-3" />
+          </button>
 
-        <button
-          type="button"
-          title="Delete Chat Session"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (onDeleteProject) onDeleteProject(proj.thread_id);
-          }}
-          className="p-1 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-all"
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-        </button>
+          <button
+            type="button"
+            title="Delete Chat"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onDeleteProject) onDeleteProject(proj.thread_id);
+            }}
+            className="p-1 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-all"
+          >
+            <Trash2 className="w-3 h-3" />
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -136,175 +156,173 @@ export default function Sidebar({
   onDeleteProject,
   onRenameProject,
   onNewProject,
-  statusInfo,
-  tokenUsage,
   sidebarOpen,
   setSidebarOpen,
-  sidebarWidth = 280,
+  sidebarWidth = 260,
   setSidebarWidth,
   user,
   onOpenAuth,
   onLogout,
 }) {
-  const [isResizing, setIsResizing] = React.useState(false);
-  const [isHovered, setIsHovered] = React.useState(false);
-
-  const handleMouseDown = (e) => {
-    e.preventDefault();
-    setIsResizing(true);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  };
-
-  const handleMouseMove = (e) => {
-    if (e.clientX >= 220 && e.clientX <= 500) {
-      if (setSidebarWidth) setSidebarWidth(e.clientX);
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsResizing(false);
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-  };
-
+  const [activeTab, setActiveTab] = useState('Home');
   const safeProjects = Array.isArray(projects) ? projects : [];
-  const isVisible = sidebarOpen || isHovered;
+
+  // Default sample chats if none exist yet for initial wow factor matching image
+  const defaultRecentChats = [
+    { thread_id: 'sample-1', title: 'Build a modern portfolio website', time: '2m' },
+    { thread_id: 'sample-2', title: 'RAG system for college syllabus', time: '15m' },
+    { thread_id: 'sample-3', title: 'Python automation script', time: '1h' },
+    { thread_id: 'sample-4', title: 'Study plan for BCA', time: '2h' },
+    { thread_id: 'sample-5', title: 'Image generation for banner', time: '5h' },
+    { thread_id: 'sample-6', title: 'Web development roadmap', time: '3h' },
+  ];
+
+  const displayChats = safeProjects.length > 0 ? safeProjects : defaultRecentChats;
 
   return (
     <>
-      {/* Hover Trigger Zone */}
-      {!sidebarOpen && (
-        <div 
-          className="fixed inset-y-0 left-0 w-3 z-40 bg-transparent cursor-e-resize"
-          onMouseEnter={() => setIsHovered(true)}
-        />
-      )}
-
       {/* Mobile Backdrop Overlay */}
-      {isVisible && (
+      {sidebarOpen && (
         <div
-          onClick={() => {
-            setSidebarOpen(false);
-            setIsHovered(false);
-          }}
-          className="fixed inset-0 bg-zinc-900/20 backdrop-blur-sm z-30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 bg-zinc-900/30 backdrop-blur-xs z-40 lg:hidden transition-opacity"
         />
       )}
 
       <aside
-        onMouseLeave={() => setIsHovered(false)}
         style={{ width: `${sidebarWidth}px` }}
-        className={`fixed inset-y-0 left-0 z-50 bg-slate-50/95 backdrop-blur-xl border-r border-slate-200/90 flex flex-col transition-transform duration-300 ease-in-out shadow-2xl ${
-          isVisible ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed inset-y-0 left-0 z-50 bg-slate-50 border-r border-slate-200/80 flex flex-col transition-transform duration-300 ease-in-out shadow-xl lg:shadow-none ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        {/* Sleek Professional Resizer Edge */}
-        <div
-          onMouseDown={handleMouseDown}
-          className="hidden md:block absolute top-0 -right-1 w-2 h-full cursor-col-resize hover:bg-indigo-500/20 active:bg-indigo-500/40 transition-colors z-50"
-          title="Drag to resize sidebar width"
-        />
-
-        {/* Brand Header inside Left Sidebar */}
-        <div className="p-4 border-b border-slate-200/80 flex items-center justify-between bg-white/60 backdrop-blur-md">
-          <div className="truncate">
-            <h1 className="font-bold text-[17px] tracking-tight text-slate-900 truncate">PixlExpert</h1>
-            <div className="text-[9.5px] font-mono text-slate-400 -mt-0.5 tracking-widest uppercase">AI Dev Suite</div>
+        {/* Brand Header */}
+        <div className="p-4 flex items-center justify-between bg-slate-50 border-b border-slate-200/60">
+          <div className="flex items-center space-x-3 cursor-pointer" onClick={onNewProject}>
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+              <Sparkles className="w-5 h-5 fill-white text-white" />
+            </div>
+            <div>
+              <h1 className="font-extrabold text-base tracking-tight text-slate-900 leading-none">PixlExpert</h1>
+              <span className="text-[11px] font-medium text-slate-400">AI Assistant</span>
+            </div>
           </div>
 
           <button
             onClick={() => setSidebarOpen(false)}
             title="Collapse Sidebar"
-            className="p-1.5 rounded-lg hover:bg-slate-200/70 text-slate-500 hover:text-slate-800 transition-all shrink-0"
+            className="w-7 h-7 rounded-full border border-slate-200 hover:bg-slate-200/70 text-slate-500 flex items-center justify-center transition-all shrink-0"
           >
-            <PanelLeftClose className="w-4.5 h-4.5 text-slate-600" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Action Button */}
-        <div className="p-3.5">
-          <button
-            onClick={onNewProject}
-            className="w-full flex items-center justify-center space-x-2 bg-slate-900 hover:bg-slate-800 text-white py-2.5 px-4 rounded-xl font-semibold text-xs tracking-wide transition-all duration-200 shadow-sm border border-slate-800 active:scale-[0.98]"
-          >
-            <Plus className="w-4 h-4 shrink-0 text-slate-300" />
-            <span className="truncate">New Chat / Project</span>
-          </button>
+        {/* Main Navigation Links */}
+        <div className="px-3 py-3 space-y-1 border-b border-slate-200/60">
+          {[
+            { name: 'Home', icon: Home },
+            { name: 'Projects', icon: FolderKanban },
+            { name: 'Knowledge', icon: BookOpen },
+            { name: 'Memories', icon: Brain },
+            { name: 'Tools', icon: Wrench },
+            { name: 'Settings', icon: Settings },
+          ].map((nav) => {
+            const Icon = nav.icon;
+            const isActive = activeTab === nav.name;
+            return (
+              <button
+                key={nav.name}
+                type="button"
+                onClick={() => {
+                  setActiveTab(nav.name);
+                  if (nav.name === 'Home') onNewProject();
+                }}
+                className={`w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  isActive
+                    ? 'bg-indigo-50 text-indigo-600 shadow-2xs'
+                    : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-900'
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                <span>{nav.name}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* History / Recent Chat Sessions List */}
-        <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1">
-          <div className="px-2 pb-2 pt-1 text-[10.5px] font-bold text-slate-400 uppercase tracking-widest">Chat History</div>
-          {safeProjects.length === 0 ? (
-            <div className="text-xs text-slate-400 px-2 py-6 text-center border border-dashed border-slate-200 rounded-xl my-2">No saved chats yet</div>
-          ) : (
-            safeProjects.map((proj) => (
+        {/* Recent Chats Section */}
+        <div className="flex-1 overflow-y-auto px-3 py-3 space-y-1">
+          <div className="flex items-center justify-between px-2 pb-2">
+            <span className="text-[11px] font-bold text-slate-900 tracking-tight">Recent Chats</span>
+            <button 
+              type="button" 
+              onClick={onNewProject}
+              className="text-[11px] font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+            >
+              View all
+            </button>
+          </div>
+
+          <div className="space-y-0.5">
+            {displayChats.map((proj, idx) => (
               <ChatItem
-                key={proj.thread_id}
+                key={proj.thread_id || idx}
                 proj={proj}
+                timeAgo={proj.time || '2m'}
                 isActive={currentThreadId === proj.thread_id}
                 onSelectProject={onSelectProject}
                 onDeleteProject={onDeleteProject}
                 onRenameProject={onRenameProject}
                 setSidebarOpen={setSidebarOpen}
               />
-            ))
-          )}
+            ))}
+          </div>
         </div>
 
-        {/* Clean Sidebar Footer */}
-        <div className="p-3.5 border-t border-slate-200/80 space-y-2.5 bg-white/60 backdrop-blur-md">
-          <a
-            href="https://smith.langchain.com"
-            target="_blank"
-            rel="noreferrer"
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-white hover:bg-slate-100/80 text-xs text-slate-600 transition-all border border-slate-200/80 shadow-xs group"
-          >
-            <span className="flex items-center space-x-2 truncate">
-              <ShieldCheck className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-              <span className="truncate font-medium text-slate-700">LangSmith Traces</span>
-            </span>
-            <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-indigo-600 transition-colors shrink-0" />
-          </a>
-
-          <div>
-            {user ? (
-              <div className="bg-white p-2 rounded-xl border border-slate-200/80 shadow-xs flex items-center justify-between">
-                <div className="flex items-center space-x-2.5 truncate">
-                  <div className="w-8 h-8 rounded-full bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-700 font-semibold text-xs shrink-0 overflow-hidden">
-                    {user.avatar ? (
-                      <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
-                    ) : (
-                      user.name?.charAt(0) || 'U'
-                    )}
-                  </div>
-                  <div className="truncate text-left leading-tight">
-                    <div className="font-semibold text-xs text-slate-800 truncate">{user.name}</div>
-                    <div className="text-[10px] text-slate-400 truncate">{user.email}</div>
-                  </div>
+        {/* User Profile Footer */}
+        <div className="p-3 border-t border-slate-200/80 bg-slate-50">
+          {user ? (
+            <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs hover:border-slate-300 transition-all cursor-pointer">
+              <div className="flex items-center space-x-2.5 truncate">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                  {user.avatar ? (
+                    <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    user.name?.charAt(0) || 'M'
+                  )}
                 </div>
-
-                <button
-                  type="button"
-                  onClick={onLogout}
-                  title="Sign Out"
-                  className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors shrink-0"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
+                <div className="truncate text-left leading-tight">
+                  <div className="font-bold text-xs text-slate-900 truncate">{user.name || 'Mukesh Singh'}</div>
+                  <div className="text-[10px] text-slate-400 truncate">{user.email || 'mukesh@example.com'}</div>
+                </div>
               </div>
-            ) : (
+
               <button
                 type="button"
-                onClick={onOpenAuth}
-                className="w-full flex items-center justify-center space-x-2 bg-slate-900 hover:bg-slate-800 text-white py-2.5 px-3 rounded-xl font-semibold text-xs transition-all shadow-md shadow-slate-900/10"
+                onClick={onLogout}
+                title="Sign Out"
+                className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
               >
-                <User className="w-3.5 h-3.5" />
-                <span>Sign In / Register</span>
+                <MoreHorizontal className="w-4 h-4" />
               </button>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div 
+              onClick={onOpenAuth}
+              className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs hover:border-slate-300 transition-all cursor-pointer"
+            >
+              <div className="flex items-center space-x-2.5 truncate">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                  MS
+                </div>
+                <div className="truncate text-left leading-tight">
+                  <div className="font-bold text-xs text-slate-900 truncate">Mukesh Singh</div>
+                  <div className="text-[10px] text-slate-400 truncate">mukesh@example.com</div>
+                </div>
+              </div>
+
+              <MoreHorizontal className="w-4 h-4 text-slate-400" />
+            </div>
+          )}
         </div>
       </aside>
     </>
