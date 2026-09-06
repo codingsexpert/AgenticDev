@@ -355,3 +355,52 @@ def update_user_preference(key: str, value: Any) -> Dict[str, Any]:
             print(f"⚠️ Supabase update_user_preference error: {e}")
 
     return prefs
+
+
+# -----------------------------------------------------------------------------
+# Tier 4: User Accounts & Auth Database Storage (Supabase + Local DB)
+# -----------------------------------------------------------------------------
+
+USER_STORE_FILE = os.path.join(MEMORY_DIR, "users.json")
+
+
+def save_user_profile(user_obj: Dict[str, Any]) -> Dict[str, Any]:
+    """Saves user account profile to local DB and Supabase if configured."""
+    users = _load_json(USER_STORE_FILE, {})
+    email_key = user_obj["email"].strip().lower()
+    users[email_key] = user_obj
+    _save_json(USER_STORE_FILE, users)
+
+    if supabase_client:
+        try:
+            db_data = {
+                "id": user_obj.get("id"),
+                "email": email_key,
+                "name": user_obj.get("name"),
+                "avatar": user_obj.get("avatar"),
+                "provider": user_obj.get("provider", "email"),
+                "updated_at": int(time.time() * 1000)
+            }
+            supabase_client.table("users").upsert(db_data).execute()
+        except Exception as e:
+            print(f"⚠️ Supabase save_user_profile notice: {e}")
+
+    return user_obj
+
+
+def get_user_profile(email: str) -> Optional[Dict[str, Any]]:
+    """Retrieves user profile by email address."""
+    email_key = email.strip().lower()
+    users = _load_json(USER_STORE_FILE, {})
+    if email_key in users:
+        return users[email_key]
+
+    if supabase_client:
+        try:
+            res = supabase_client.table("users").select("*").eq("email", email_key).execute()
+            if res.data and len(res.data) > 0:
+                return res.data[0]
+        except Exception as e:
+            print(f"⚠️ Supabase get_user_profile notice: {e}")
+
+    return None

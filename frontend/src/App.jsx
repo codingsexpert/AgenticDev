@@ -64,7 +64,14 @@ export default function App() {
 
   const handleLogout = () => {
     localStorage.removeItem('pixlexpert_user');
+    localStorage.removeItem('active_thread_id');
     setUser(null);
+    handleNewProject();
+    try {
+      import('./utils/supabase').then(({ supabase }) => {
+        if (supabase) supabase.auth.signOut().catch(() => {});
+      });
+    } catch (e) {}
   };
 
   // Dynamic Responsive Window Resize Listener

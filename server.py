@@ -37,6 +37,8 @@ from src.utils.memory_manager import (
     save_chat_session,
     list_chat_sessions,
     get_chat_session,
+    save_user_profile,
+    get_user_profile,
 )
 
 app = FastAPI(title="AI Dev Team Web Dashboard")
@@ -492,6 +494,14 @@ class GoogleAuthRequest(BaseModel):
     name: Optional[str] = None
     avatar: Optional[str] = None
 
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+class ResetPasswordRequest(BaseModel):
+    email: str
+    reset_token: str
+    new_password: str
+
 import hashlib
 import secrets
 
@@ -542,6 +552,7 @@ def auth_signup(req: AuthSignUpRequest):
     }
     users[email_key] = user_obj
     save_users(users)
+    save_user_profile(user_obj)
     
     user_data = {
         "id": user_obj["id"],
@@ -570,6 +581,7 @@ def auth_login(req: AuthLoginRequest):
     user_obj["token"] = session_token
     users[email_key] = user_obj
     save_users(users)
+    save_user_profile(user_obj)
     
     user_data = {
         "id": user_obj["id"],
@@ -609,6 +621,7 @@ def auth_google(req: GoogleAuthRequest):
         users[email_key] = user_obj
         
     save_users(users)
+    save_user_profile(user_obj)
     
     user_data = {
         "id": user_obj["id"],
@@ -620,6 +633,59 @@ def auth_google(req: GoogleAuthRequest):
         "created_at": user_obj.get("created_at", time.time())
     }
     return {"message": "Google authentication successful", "user": user_data, "token": session_token}
+
+@app.post("/api/auth/forgot-password")
+def auth_forgot_password(req: ForgotPasswordRequest):
+    email_key = req.email.strip().lower()
+    if not email_key or "@" not in email_key:
+        raise HTTPException(status_code=400, detail="Please enter a valid email address.")
+    
+    users = load_users()
+    user_obj = users.get(email_key)
+    
+    reset_token = f"rst_{secrets.token_hex(16)}"
+    if user_obj:
+        user_obj["reset_token"] = reset_token
+        user_obj["reset_token_expires"] = time.time() + 3600
+        users[email_key] = user_obj
+        save_users(users)
+        save_user_profile(user_obj)
+        
+    return {
+        "status": "success",
+        "message": f"Password reset instructions have been generated for {email_key}.",
+        "reset_token": reset_token if user_obj else None
+    }
+
+@app.post("/api/auth/reset-password")
+def auth_reset_password(req: ResetPasswordRequest):
+    email_key = req.email.strip().lower()
+    users = load_users()
+    user_obj = users.get(email_key)
+    
+    if not user_obj:
+        raise HTTPException(status_code=404, detail="User account not found.")
+        
+    if user_obj.get("reset_token") != req.reset_token:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token.")
+        
+    if time.time() > user_obj.get("reset_token_expires", 0):
+        raise HTTPException(status_code=400, detail="Reset token has expired. Please request a new one.")
+        
+    if len(req.new_password.strip()) < 6:
+        raise HTTPException(status_code=400, detail="New password must be at least 6 characters long.")
+        
+    salt = secrets.token_hex(16)
+    user_obj["salt"] = salt
+    user_obj["password_hash"] = hash_password(req.new_password.strip(), salt)
+    user_obj.pop("reset_token", None)
+    user_obj.pop("reset_token_expires", None)
+    
+    users[email_key] = user_obj
+    save_users(users)
+    save_user_profile(user_obj)
+    
+    return {"status": "success", "message": "Password reset successfully. You can now sign in with your new password."}
 
 
 class ChatSaveRequest(BaseModel):
