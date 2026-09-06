@@ -509,113 +509,76 @@ export default function App() {
         style={{ paddingLeft: sidebarOpen && typeof window !== 'undefined' && window.innerWidth >= 1024 ? `${sidebarWidth}px` : '0px' }}
         className="flex-1 flex flex-col h-full overflow-hidden transition-all duration-300 ease-in-out relative w-full"
       >
-        {/* Top Header Bar */}
-        <header className="h-16 border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between bg-white/80 backdrop-blur-xl z-20 shrink-0 shadow-xs gap-3">
-          {/* Left: Mobile Drawer Button & Search Bar */}
-          <div className="flex items-center space-x-3 flex-1 max-w-xl">
+        {/* Minimal Top Header Bar matching Reference UI */}
+        <header className="h-14 border-b border-slate-200/70 px-4 sm:px-6 flex items-center justify-between bg-white z-20 shrink-0 gap-4">
+          {/* Left: Sidebar Toggle Button & Wide Search Bar */}
+          <div className="flex items-center space-x-3 flex-1 max-w-lg">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               title="Toggle Navigation Menu"
-              className="p-2 rounded-xl hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all flex items-center justify-center shrink-0"
+              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-all shrink-0"
             >
-              <Menu className="w-5 h-5 text-slate-700" />
+              <Menu className="w-5 h-5" />
             </button>
 
-            {/* Responsive Search Input */}
-            <div className="relative w-full max-w-md hidden sm:block">
+            {/* Clean Search Input with ⌘ K badge */}
+            <div className="relative w-full">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search chats, projects, files..."
-                className="w-full pl-10 pr-12 py-2 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-400 focus:bg-white transition-all"
+                placeholder="Search projects, files, or ask anything..."
+                className="w-full pl-9 pr-12 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-300 focus:bg-white transition-all"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 bg-slate-200/60 px-1.5 py-0.5 rounded border border-slate-300/40">
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                 ⌘ K
               </span>
             </div>
           </div>
 
           {/* Right Header Actions */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Pro Plan Button */}
-            <button
-              type="button"
-              className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 text-xs font-bold transition-all shadow-2xs cursor-pointer"
-            >
-              <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-              <span>Pro Plan</span>
-            </button>
-
-            {/* Agent Graph Toggle */}
-            <button
-              onClick={() => { setShowGraph(!showGraph); setShowCanvas(false); }}
-              className={`hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs ${showGraph ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'}`}
-            >
-              <Activity className="w-3.5 h-3.5 text-indigo-500" />
-              <span>{showGraph ? 'Hide Graph' : 'Agent Graph'}</span>
-            </button>
-
-            {/* Sandbox View App Toggle */}
+          <div className="flex items-center space-x-3">
+            {/* Sandbox App Toggle Button (when active chat sandbox exists) */}
             {activeSandboxId && (
               <button
                 onClick={() => { setShowCanvas(!showCanvas); setShowGraph(false); }}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs ${showCanvas ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'}`}
+                className={`flex items-center space-x-1.5 px-3 py-1 rounded-full border text-xs font-medium transition-all ${
+                  showCanvas ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                }`}
               >
-                <Layers className="w-3.5 h-3.5 text-indigo-600" />
+                <Layers className="w-3.5 h-3.5" />
                 <span>{showCanvas ? 'Hide App' : 'View App'}</span>
               </button>
             )}
 
-            {/* Theme Toggle Button */}
-            <button
-              type="button"
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              title="Toggle Theme Mode"
-              className="p-2 rounded-xl hover:bg-slate-100 text-slate-600 border border-slate-200 transition-all flex items-center justify-center"
-            >
-              {isDarkMode ? <Sun className="w-4 h-4 text-amber-500" /> : <Sun className="w-4 h-4 text-slate-600" />}
-            </button>
-
-            {/* Notification Bell */}
-            <button
-              type="button"
-              title="Notifications"
-              className="p-2 rounded-xl hover:bg-slate-100 text-slate-600 border border-slate-200 transition-all relative flex items-center justify-center"
-            >
-              <Bell className="w-4 h-4 text-slate-600" />
-              <span className="w-2 h-2 rounded-full bg-rose-500 absolute top-1.5 right-1.5 ring-2 ring-white" />
-            </button>
-
-            {/* User Profile Avatar */}
+            {/* Clean User Profile Avatar */}
             {user ? (
               <div className="relative" ref={userMenuRef}>
                 <button
                   type="button"
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center space-x-1 p-0.5 rounded-full hover:bg-slate-100 border border-slate-200 transition-all cursor-pointer"
+                  className="flex items-center space-x-1 p-0.5 rounded-full hover:bg-slate-100 transition-all cursor-pointer"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold text-xs flex items-center justify-center border border-white shadow-2xs overflow-hidden">
+                  <div className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center overflow-hidden">
                     {user.avatar ? (
                       <img src={user.avatar} alt="User" className="w-full h-full object-cover" />
                     ) : (
                       user.name?.charAt(0) || 'M'
                     )}
                   </div>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-500 pr-0.5" />
                 </button>
 
                 {/* Profile Dropdown */}
                 {userMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-2xl p-2 z-50 animate-fade-in space-y-1">
-                    <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 flex items-center space-x-3">
-                      <div className="w-9 h-9 rounded-full bg-indigo-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-50 animate-fade-in space-y-1">
+                    <div className="p-2 bg-slate-50 rounded-xl flex items-center space-x-2.5">
+                      <div className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
                         {user.name?.charAt(0) || 'M'}
                       </div>
                       <div className="truncate text-left leading-tight">
-                        <div className="font-bold text-xs text-slate-900 truncate">{user.name || 'Mukesh Singh'}</div>
-                        <div className="text-[10px] text-slate-500 truncate">{user.email || 'mukesh@example.com'}</div>
+                        <div className="font-semibold text-xs text-slate-900 truncate">{user.name || 'Mukesh Singh'}</div>
+                        <div className="text-[10px] text-slate-400 truncate">{user.email || 'mukesh@gmail.com'}</div>
                       </div>
                     </div>
 
@@ -627,7 +590,7 @@ export default function App() {
                       }}
                       className="w-full flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors"
                     >
-                      <LogOut className="w-4 h-4 shrink-0" />
+                      <LogOut className="w-3.5 h-3.5 shrink-0" />
                       <span>Sign Out</span>
                     </button>
                   </div>
@@ -636,25 +599,25 @@ export default function App() {
             ) : (
               <button
                 onClick={() => setAuthModalOpen(true)}
-                className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold text-xs flex items-center justify-center shadow-md shadow-indigo-500/20"
+                className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center"
               >
-                MS
+                M
               </button>
             )}
           </div>
         </header>
 
         {/* 3. Main Center Workspace Body */}
-        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative min-h-0 bg-slate-50">
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative min-h-0 bg-[#f8fafc]">
           {hasContent ? (
             /* Active Conversation View */
-            <div className="flex-1 flex flex-col h-full overflow-hidden min-h-0 bg-white shadow-[10px_0_15px_-3px_rgba(0,0,0,0.05)] z-30">
-              <div className="p-2 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between px-4">
-                <span className="text-xs font-bold text-slate-700">Active Chat Session</span>
+            <div className="flex-1 flex flex-col h-full overflow-hidden min-h-0 bg-white border-r border-slate-200/70 z-30">
+              <div className="p-2 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between px-4">
+                <span className="text-xs font-semibold text-slate-600">Active Chat</span>
                 <button
                   type="button"
                   onClick={handleNewProject}
-                  className="px-3 py-1 rounded-xl bg-white hover:bg-indigo-50 text-indigo-600 border border-slate-200 hover:border-indigo-200 text-xs font-semibold shadow-2xs transition-all flex items-center space-x-1"
+                  className="px-3 py-1 rounded-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-medium transition-all flex items-center space-x-1"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>New Chat</span>
@@ -678,129 +641,129 @@ export default function App() {
                   setShowCanvas(true);
                 }}
               />
-              <div className="p-3 sm:p-4 max-w-4xl mx-auto w-full">
+              <div className="p-3 sm:p-4 max-w-3xl mx-auto w-full">
                 <PromptBar onSubmit={handlePromptSubmit} isLoading={isLoading} onStop={handleStopGeneration} mode={mode} setMode={setMode} />
               </div>
             </div>
           ) : (
-            /* Welcome Hero View (PixlExpert Dashboard Layout Matching Reference Image) */
-            <div className="flex-1 flex flex-col items-center justify-between p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto w-full h-full overflow-y-auto animate-fade-in">
-              <div className="w-full flex-1 flex flex-col items-center justify-center my-auto py-6">
-                {/* Hero Badge Sparkle Icon */}
-                <div className="w-14 h-14 rounded-3xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 mb-4 shadow-sm animate-bounce-subtle">
-                  <Sparkles className="w-7 h-7 text-indigo-600 fill-indigo-600" />
+            /* Welcome Hero View (Matching Reference UI Exactly) */
+            <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-10 max-w-4xl mx-auto w-full h-full overflow-y-auto">
+              <div className="w-full flex flex-col items-center justify-center my-auto py-4">
+                {/* Very minimal AI Sparkle icon above greeting (NO large colorful background) */}
+                <div className="w-10 h-10 rounded-2xl bg-blue-50/80 border border-blue-100/60 flex items-center justify-center text-blue-500 mb-4 shadow-2xs">
+                  <Sparkles className="w-5 h-5 text-blue-500" />
                 </div>
 
-                {/* Sub-greeting */}
-                <div className="flex items-center space-x-2 text-sm sm:text-base font-semibold text-slate-600 mb-2">
-                  <span>Good morning, Mukesh</span>
-                  <span className="text-lg">👋</span>
-                </div>
-
-                {/* Main Heading with Blue-Purple Gradient Text */}
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 mb-3 text-center">
-                  How can I{' '}
-                  <span className="bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    help you
-                  </span>{' '}
-                  today?
+                {/* Elegant Greeting Heading */}
+                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-2 text-center">
+                  Good morning, <span className="text-blue-600">Mukesh</span> 👋
                 </h1>
 
-                {/* Subtitle */}
-                <p className="text-xs sm:text-sm text-slate-500 max-w-md text-center font-normal mb-8 leading-relaxed">
-                  Ask anything, write code, solve problems, or create something amazing.
+                {/* Short Description */}
+                <p className="text-xs sm:text-sm text-slate-500 text-center font-normal mb-8 max-w-md">
+                  Ask me anything, write code, solve problems, or explore ideas.
                 </p>
 
-                {/* Large Responsive AI Chat Input */}
-                <div className="w-full max-w-3xl mb-8">
+                {/* Centered Message Composer */}
+                <div className="w-full max-w-2xl mb-8">
                   <PromptBar onSubmit={handlePromptSubmit} isLoading={isLoading} onStop={handleStopGeneration} mode={mode} setMode={setMode} />
                 </div>
 
-                {/* 4 Feature Suggestion Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 w-full max-w-4xl">
-                  {/* Card 1: Build a website */}
+                {/* 4 Compact Action Cards Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 w-full max-w-3xl">
+                  {/* Card 1: Write Code */}
                   <div
-                    onClick={() => handlePromptSubmit('Build a modern, responsive website with React + Tailwind', 'gemini-1.5-flash', 'build')}
-                    className="p-4 rounded-2xl bg-white hover:bg-indigo-50/50 border border-slate-200/90 hover:border-indigo-200 shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer group text-left flex flex-col justify-between"
+                    onClick={() => handlePromptSubmit('Write and debug Python code for data processing', 'gemini-1.5-flash', 'chat')}
+                    className="p-3.5 rounded-2xl bg-white hover:bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 shadow-2xs transition-all duration-200 cursor-pointer group text-left flex flex-col justify-between"
                   >
-                    <div className="flex items-center space-x-2.5 mb-2">
-                      <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100 group-hover:scale-105 transition-transform">
-                        <Globe className="w-4 h-4" />
+                    <div>
+                      <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100 mb-2.5">
+                        <Code className="w-3.5 h-3.5" />
                       </div>
-                      <h3 className="font-bold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors">
-                        Build a website
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-blue-600 transition-colors mb-1">
+                        Write Code
                       </h3>
+                      <p className="text-[11px] text-slate-500 leading-snug">
+                        Create, edit and debug code in your project.
+                      </p>
                     </div>
-                    <p className="text-[11px] text-slate-500 leading-snug">
-                      Create a modern, responsive website with React + Tailwind.
-                    </p>
+                    <div className="flex justify-end mt-3">
+                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+                    </div>
                   </div>
 
-                  {/* Card 2: Analyze a document */}
+                  {/* Card 2: Analyze Document */}
                   <div
-                    onClick={() => handlePromptSubmit('Analyze this document and provide a summary with key insights', 'gemini-1.5-flash', 'chat')}
-                    className="p-4 rounded-2xl bg-white hover:bg-purple-50/50 border border-slate-200/90 hover:border-purple-200 shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer group text-left flex flex-col justify-between"
+                    onClick={() => handlePromptSubmit('Analyze this document and extract key insights', 'gemini-1.5-flash', 'chat')}
+                    className="p-3.5 rounded-2xl bg-white hover:bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 shadow-2xs transition-all duration-200 cursor-pointer group text-left flex flex-col justify-between"
                   >
-                    <div className="flex items-center space-x-2.5 mb-2">
-                      <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 border border-purple-100 group-hover:scale-105 transition-transform">
-                        <FileText className="w-4 h-4" />
+                    <div>
+                      <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100 mb-2.5">
+                        <FileText className="w-3.5 h-3.5" />
                       </div>
-                      <h3 className="font-bold text-xs text-slate-900 group-hover:text-purple-600 transition-colors">
-                        Analyze a document
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-emerald-600 transition-colors mb-1">
+                        Analyze Document
                       </h3>
+                      <p className="text-[11px] text-slate-500 leading-snug">
+                        Upload and get insights from your files.
+                      </p>
                     </div>
-                    <p className="text-[11px] text-slate-500 leading-snug">
-                      Upload a PDF and get a summary with key insights.
-                    </p>
+                    <div className="flex justify-end mt-3">
+                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
+                    </div>
                   </div>
 
-                  {/* Card 3: Code & debug */}
+                  {/* Card 3: Solve Problem */}
                   <div
-                    onClick={() => handlePromptSubmit('Write or debug Python code for data processing', 'gemini-1.5-flash', 'chat')}
-                    className="p-4 rounded-2xl bg-white hover:bg-emerald-50/50 border border-slate-200/90 hover:border-emerald-200 shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer group text-left flex flex-col justify-between"
+                    onClick={() => handlePromptSubmit('Help me solve this logic problem step by step', 'gemini-1.5-flash', 'chat')}
+                    className="p-3.5 rounded-2xl bg-white hover:bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 shadow-2xs transition-all duration-200 cursor-pointer group text-left flex flex-col justify-between"
                   >
-                    <div className="flex items-center space-x-2.5 mb-2">
-                      <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100 group-hover:scale-105 transition-transform">
-                        <Code className="w-4 h-4" />
+                    <div>
+                      <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100 mb-2.5">
+                        <Sparkles className="w-3.5 h-3.5" />
                       </div>
-                      <h3 className="font-bold text-xs text-slate-900 group-hover:text-emerald-600 transition-colors">
-                        Code & debug
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-amber-600 transition-colors mb-1">
+                        Solve Problem
                       </h3>
+                      <p className="text-[11px] text-slate-500 leading-snug">
+                        Get help with complex questions and logic.
+                      </p>
                     </div>
-                    <p className="text-[11px] text-slate-500 leading-snug">
-                      Write or debug code in Python, JavaScript, or any language.
-                    </p>
+                    <div className="flex justify-end mt-3">
+                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all" />
+                    </div>
                   </div>
 
-                  {/* Card 4: Create a project plan */}
+                  {/* Card 4: Research */}
                   <div
-                    onClick={() => handlePromptSubmit('Create a comprehensive project plan with tasks and timeline', 'gemini-1.5-flash', 'chat')}
-                    className="p-4 rounded-2xl bg-white hover:bg-amber-50/50 border border-slate-200/90 hover:border-amber-200 shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer group text-left flex flex-col justify-between"
+                    onClick={() => handlePromptSubmit('Search and research information on this topic', 'gemini-1.5-flash', 'chat')}
+                    className="p-3.5 rounded-2xl bg-white hover:bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 shadow-2xs transition-all duration-200 cursor-pointer group text-left flex flex-col justify-between"
                   >
-                    <div className="flex items-center space-x-2.5 mb-2">
-                      <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100 group-hover:scale-105 transition-transform">
-                        <ClipboardList className="w-4 h-4" />
+                    <div>
+                      <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 border border-purple-100 mb-2.5">
+                        <Search className="w-3.5 h-3.5" />
                       </div>
-                      <h3 className="font-bold text-xs text-slate-900 group-hover:text-amber-600 transition-colors">
-                        Create a project plan
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-purple-600 transition-colors mb-1">
+                        Research
                       </h3>
+                      <p className="text-[11px] text-slate-500 leading-snug">
+                        Find information and explore topics.
+                      </p>
                     </div>
-                    <p className="text-[11px] text-slate-500 leading-snug">
-                      Plan your next project with tasks and timeline.
-                    </p>
+                    <div className="flex justify-end mt-3">
+                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-600 group-hover:translate-x-0.5 transition-all" />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* 4. Right Sidebar (Recent Activity, Quick Tools, Usage) */}
+          {/* 4. Right Sidebar (Recent Chats & Sample Projects) */}
           <RightSidebar 
+            projects={projects}
+            onSelectProject={handleSelectChat}
             onPromptAction={(p) => handlePromptSubmit(p, 'gemini-1.5-flash', mode)} 
-            onUploadClick={() => {
-              const fileInput = document.querySelector('input[type="file"]');
-              if (fileInput) fileInput.click();
-            }} 
           />
 
           {/* Sliding Code Canvas / Artifact Preview */}

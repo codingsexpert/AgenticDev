@@ -1,0 +1,15 @@
+{
+  "thread_id": "session_1788718487656",
+  "title": "Build a modern, responsive websi",
+  "mode": "build",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Build a modern, responsive website with React + Tailwind",
+      "attachments": []
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_guest_f528764d624d",
+  "updated_at": 1788718488.967245
+}

@@ -1,0 +1,28 @@
+{
+  "thread_id": "session_1788718390506",
+  "title": "Search web for latest AI news an",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Search web for latest AI news and updates",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: The LLM API is currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    },
+    {
+      "role": "user",
+      "content": "Search RAG knowledge base for uploaded notes",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: The LLM API is currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_guest_f528764d624d",
+  "updated_at": 1788718400.094631
+}

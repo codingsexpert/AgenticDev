@@ -339,22 +339,22 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
         </div>
       </div>
 
-      {/* Floating Prompt Box — Compact Sleek PixlExpert / Claude Style */}
+      {/* Clean Rounded Rectangular Composer matching Reference Design */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white/95 backdrop-blur-xl p-3 sm:p-4 rounded-3xl border border-indigo-100/90 shadow-[0_12px_40px_-8px_rgba(99,102,241,0.12)] focus-within:shadow-[0_20px_50px_-8px_rgba(99,102,241,0.22)] focus-within:border-indigo-400/80 transition-all duration-300 relative w-full"
+        className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs focus-within:shadow-md focus-within:border-slate-300 transition-all duration-200 relative w-full"
       >
         {/* Attachments Preview Area */}
         {attachments.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-2.5">
+          <div className="flex flex-wrap gap-2 mb-3">
             {attachments.map((file, idx) => (
-              <div key={idx} className="relative group flex items-center bg-slate-50 border border-slate-200/80 rounded-xl p-1.5 pr-2.5 shadow-xs animate-fade-in max-w-[180px]">
+              <div key={idx} className="relative group flex items-center bg-slate-50 border border-slate-200 rounded-xl p-1.5 pr-2.5 max-w-[180px]">
                 {file.type.startsWith('image/') ? (
                   <div className="w-7 h-7 rounded-lg overflow-hidden bg-slate-100 shrink-0 flex items-center justify-center">
                     <img src={file.data} alt="preview" className="w-full h-full object-cover" />
                   </div>
                 ) : (
-                  <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-500 shrink-0 flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 shrink-0 flex items-center justify-center">
                     <FileText className="w-3.5 h-3.5" />
                   </div>
                 )}
@@ -374,10 +374,18 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
           </div>
         )}
 
-        <div className="flex items-start space-x-2.5">
-          <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white shrink-0 mt-0.5 shadow-2xs">
-            <Sparkles className="w-4 h-4 text-white fill-white" />
-          </div>
+        {/* Text Area with Paperclip Icon on Left */}
+        <div className="flex items-start space-x-3 mb-2">
+          {/* Attachment Paperclip Button */}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            title="Attach File"
+            className="p-1 text-slate-400 hover:text-slate-600 transition-colors mt-0.5"
+          >
+            <Paperclip className="w-4 h-4" />
+          </button>
+
           <textarea
             ref={textareaRef}
             rows={1}
@@ -388,30 +396,30 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
               e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Message PixlExpert..."
-            className="w-full bg-transparent text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none resize-none py-1 font-sans min-h-[36px] max-h-[160px] leading-relaxed"
+            placeholder="Type your message here..."
+            className="w-full bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none resize-none font-sans min-h-[36px] max-h-[160px] leading-relaxed"
           />
         </div>
 
-        {/* Bottom Toolbar */}
-        <div className="flex items-center justify-between pt-3 mt-1 border-t border-slate-100/90 gap-2 flex-wrap sm:flex-nowrap">
-          {/* Left Controls: Web & Tools dropdowns */}
+        {/* Bottom Bar Controls: Dropdown Pills Left | Mic + Circular Blue Send Right */}
+        <div className="flex items-center justify-between pt-2 gap-2 flex-wrap sm:flex-nowrap">
+          {/* Left Controls: Web & Tools dropdown pills */}
           <div className="flex items-center space-x-2">
             {/* Web Search Dropdown Pill */}
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
                 onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100/80 hover:bg-slate-200/70 border border-slate-200/80 text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+                className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-medium text-slate-700 transition-colors cursor-pointer"
               >
-                <span className="text-sm">🌐</span>
+                <span className="text-xs">🌐</span>
                 <span>Web</span>
                 <ChevronDown className="w-3 h-3 text-slate-400" />
               </button>
 
               {modelDropdownOpen && (
-                <div className="absolute bottom-full mb-2 left-0 w-64 bg-white border border-slate-200/90 rounded-2xl shadow-2xl shadow-slate-900/10 p-2 space-y-1 z-50 animate-fade-in">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 py-1">Web Search Engine</div>
+                <div className="absolute bottom-full mb-2 left-0 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 space-y-1 z-50 animate-fade-in">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 py-1">Search Engine</div>
                   {models.map((m) => (
                     <button
                       key={m.id}
@@ -422,7 +430,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
                       }}
                       className={`w-full text-left px-3 py-2 rounded-xl text-xs transition-colors flex flex-col ${
                         selectedModel === m.id
-                          ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100'
+                          ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-100'
                           : 'text-slate-700 hover:bg-slate-50'
                       }`}
                     >
@@ -438,15 +446,15 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
             <button
               type="button"
               onClick={() => kbInputRef.current?.click()}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100/80 hover:bg-slate-200/70 border border-slate-200/80 text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+              className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-medium text-slate-700 transition-colors cursor-pointer"
             >
-              <span className="text-sm">🛠️</span>
+              <span className="text-xs">🛠️</span>
               <span>Tools</span>
               <ChevronDown className="w-3 h-3 text-slate-400" />
             </button>
           </div>
 
-          {/* Right Controls: Attachment + Microphone + Send */}
+          {/* Right Controls: Microphone + Circular Blue Send Button */}
           <div className="flex items-center space-x-2 shrink-0 ml-auto">
             <input 
               type="file" 
@@ -465,26 +473,16 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
               ref={kbInputRef} 
               onChange={handleKbUpload} 
             />
-            
-            {/* Attachment Button */}
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              title="Attach File (Images, PDF, TXT, CSV, DOCX)"
-              className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 text-slate-500 transition-colors border border-transparent hover:border-slate-200"
-            >
-              <Paperclip className="w-4 h-4 text-slate-500" />
-            </button>
 
             {/* Voice Microphone Button */}
             <button
               type="button"
               onClick={toggleListening}
               title={isListening ? 'Listening... Click to stop recording' : 'Voice Dictation'}
-              className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+              className={`p-2 rounded-full transition-all ${
                 isListening
-                  ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20'
-                  : 'hover:bg-slate-100 text-slate-500 border border-transparent hover:border-slate-200'
+                  ? 'bg-rose-500 text-white'
+                  : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
               }`}
             >
               {isListening ? (
@@ -500,18 +498,17 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
                 type="button"
                 onClick={onStop}
                 title="Stop generating"
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-semibold transition-all shadow-2xs active:scale-95 cursor-pointer"
+                className="w-9 h-9 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center transition-all cursor-pointer"
               >
                 <Square className="w-3.5 h-3.5 fill-rose-600 text-rose-600" />
-                <span className="hidden sm:inline">Stop</span>
               </button>
             ) : (
               <button
                 type="submit"
                 disabled={!input.trim() && attachments.length === 0}
-                className={`w-9 h-9 rounded-2xl transition-all duration-200 flex items-center justify-center ${
+                className={`w-9 h-9 rounded-full transition-all flex items-center justify-center ${
                   input.trim() || attachments.length > 0
-                    ? 'bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-600 text-white hover:opacity-95 shadow-md shadow-indigo-500/30 active:scale-95 cursor-pointer'
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-xs cursor-pointer'
                     : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 }`}
               >
