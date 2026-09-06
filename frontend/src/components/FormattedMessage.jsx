@@ -350,8 +350,8 @@ const markdownComponents = {
   strong: ({ node, ...props }) => <strong className="font-semibold text-slate-950" {...props} />,
   em: ({ node, ...props }) => <em className="italic text-slate-800" {...props} />,
   a: ({ node, ...props }) => <a className="text-indigo-600 hover:text-indigo-700 hover:underline font-medium" target="_blank" rel="noreferrer" {...props} />,
-  ul: ({ node, ...props }) => <ul className="list-disc pl-5 my-1.5 space-y-0.5 text-xs sm:text-sm text-slate-800" {...props} />,
-  ol: ({ node, ...props }) => <ol className="list-decimal pl-5 my-1.5 space-y-0.5 text-xs sm:text-sm text-slate-800" {...props} />,
+  ul: ({ node, ...props }) => <ul className="list-disc pl-5 my-1.5 space-y-0.5 text-xs sm:text-sm text-slate-800 marker:text-indigo-500" {...props} />,
+  ol: ({ node, ...props }) => <ol className="list-decimal pl-5 my-1.5 space-y-0.5 text-xs sm:text-sm text-slate-800 marker:text-indigo-500 font-medium" {...props} />,
   li: ({ node, ...props }) => <li className="leading-normal pl-0.5 text-xs sm:text-sm" {...props} />,
   blockquote: ({ node, ...props }) => <blockquote className="border-l-3 border-indigo-400 bg-indigo-50/40 pl-3 py-1.5 my-2 rounded-r-lg text-slate-700 text-xs sm:text-sm font-medium italic" {...props} />,
   table: ({ node, ...props }) => <div className="overflow-x-auto my-2 rounded-xl border border-slate-200 shadow-xs"><table className="w-full border-collapse text-xs text-left" {...props} /></div>,
@@ -367,6 +367,9 @@ export default function FormattedMessage({ content = '', isUser = false, activeS
   if (!content) return null;
 
   let sanitizedContent = content;
+
+  // Auto-convert single quote/apostrophe bullets to standard markdown hyphen bullets
+  sanitizedContent = sanitizedContent.replace(/^([ \t]*)[`'’\u2018\u2019]\s+/gm, '$1- ');
 
   // If there's an unclosed code block at the end during streaming, close it
   if ((sanitizedContent.match(/```/g) || []).length % 2 !== 0) {
