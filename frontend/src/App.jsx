@@ -395,6 +395,9 @@ export default function App() {
               if (payload.routing) {
                 setRoutingInfo(payload.routing);
               }
+              if (payload.sandbox && payload.sandbox.sandbox_id) {
+                setActiveSandboxId(payload.sandbox.sandbox_id);
+              }
               if (payload.text) {
                 accumulatedText += payload.text;
                 setStreamingText(accumulatedText);

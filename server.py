@@ -550,6 +550,7 @@ On the VERY FIRST LINE inside the code block, you MUST put the exact full file p
                     written = extract_and_write_code_files(sandbox_id, full_text)
                     if written:
                         print(f"   📁 Auto-scaffolded {len(written)} physical files & folders on disk in sandbox '{sandbox_id}'")
+                        yield f"data: {json.dumps({'sandbox': {'sandbox_id': sandbox_id, 'files': written}})}\n\n"
 
                 stream_success = True
                 break

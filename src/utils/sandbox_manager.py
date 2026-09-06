@@ -314,29 +314,68 @@ def extract_and_write_code_files(sandbox_id: str, markdown_text: str) -> List[Di
     """
     Parses code blocks containing file path metadata (e.g. ```python file="src/server.py" or // File: src/main.py)
     and automatically writes those files and creates parent folders physically on disk.
+    If no explicit file annotations exist, infers sensible default paths (index.html, style.css, script.js, main.py).
     """
     if not sandbox_id or not markdown_text:
         return []
 
     written_files = []
+
+    # Pattern 1: ```python file="app.py"
     p1 = r'```[\w\-]*\s+(?:file|path)=["\']?([^\n"\'\s]+)["\']?\n(.*?)```'
     for rel_path, content in re.findall(p1, markdown_text, re.DOTALL):
         rel_path = rel_path.strip().lstrip("./")
         if rel_path:
             try:
                 write_file(sandbox_id, rel_path, content.strip())
-                written_files.append({"path": rel_path, "bytes": len(content)})
+                written_files.append({"path": rel_path, "bytes": len(content), "content": content.strip()})
             except Exception:
                 pass
 
+    # Pattern 2: ```html\n<!-- File: index.html -->
     p2 = r'```[\w\-]*\n\s*(?://|#|/\*|<!--)\s*(?:File|Path):\s*([^\n\s]+?)(?:\s*\*/|\s*-->)?\n(.*?)```'
     for rel_path, content in re.findall(p2, markdown_text, re.DOTALL):
         rel_path = rel_path.strip().lstrip("./")
         if rel_path and not any(f["path"] == rel_path for f in written_files):
             try:
                 write_file(sandbox_id, rel_path, content.strip())
-                written_files.append({"path": rel_path, "bytes": len(content)})
+                written_files.append({"path": rel_path, "bytes": len(content), "content": content.strip()})
             except Exception:
                 pass
+
+    # Pattern 3: Fallback inference for unannotated code blocks (```html, ```css, ```js, ```python)
+    p3 = r'```([\w\-]+)\n(.*?)```'
+    idx = 1
+    for lang, content in re.findall(p3, markdown_text, re.DOTALL):
+        lang_clean = lang.strip().lower()
+        content_clean = content.strip()
+        if not content_clean or lang_clean in ["json", "bash", "sh", "text", "console"]:
+            continue
+
+        # Skip if content already written
+        if any(f.get("content") == content_clean for f in written_files):
+            continue
+
+        inferred_path = None
+        if lang_clean in ["html"]:
+            inferred_path = "index.html" if not any(f["path"] == "index.html" for f in written_files) else f"index_{idx}.html"
+        elif lang_clean in ["css"]:
+            inferred_path = "style.css" if not any(f["path"] == "style.css" for f in written_files) else f"style_{idx}.css"
+        elif lang_clean in ["javascript", "js", "jsx"]:
+            inferred_path = "script.js" if not any(f["path"] == "script.js" for f in written_files) else f"script_{idx}.js"
+        elif lang_clean in ["python", "py"]:
+            inferred_path = "main.py" if not any(f["path"] == "main.py" for f in written_files) else f"main_{idx}.py"
+
+        if inferred_path and not any(f["path"] == inferred_path for f in written_files):
+            try:
+                write_file(sandbox_id, inferred_path, content_clean)
+                written_files.append({"path": inferred_path, "bytes": len(content_clean), "content": content_clean})
+                idx += 1
+            except Exception:
+                pass
+
+    # Clean out internal 'content' key before returning
+    for f in written_files:
+        f.pop("content", None)
 
     return written_files

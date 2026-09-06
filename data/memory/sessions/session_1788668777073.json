@@ -1,0 +1,24 @@
+{
+  "thread_id": "session_1788668777073",
+  "title": "hi",
+  "mode": "build",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! Aaj hum kis project ya coding task par kaam karne wale hain?"
+    },
+    {
+      "role": "user",
+      "content": "build calculator using html css javascript",
+      "attachments": []
+    }
+  ],
+  "node_history": [],
+  "user_id": "32da5540-300c-45f1-8d0a-6668b54f4573",
+  "updated_at": 1788668828.8098078
+}
