@@ -8,7 +8,7 @@ import json
 import time
 import asyncio
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Tuple
 from fastapi import FastAPI, Request, HTTPException, BackgroundTasks, Depends
 from fastapi.responses import StreamingResponse, FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -587,6 +587,27 @@ import hashlib
 import secrets
 
 USER_STORE_FILE = Path("./data/memory/users.json")
+TOKEN_TTL_SECONDS = 86400  # 24 hours session expiration
+
+
+def validate_email_format(email: str) -> bool:
+    """Validates email format RFC compliance."""
+    if not email or not isinstance(email, str):
+        return False
+    import re
+    return bool(re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", email.strip()))
+
+
+def validate_password_strength(password: str) -> Tuple[bool, str]:
+    """Validates password strength rules."""
+    if not password or len(password) < 8:
+        return False, "Password must be at least 8 characters long."
+    if not any(c.isalpha() for c in password):
+        return False, "Password must contain at least one letter."
+    if not any(c.isdigit() for c in password):
+        return False, "Password must contain at least one number."
+    return True, "Valid password"
+
 
 def hash_password(password: str, salt: str) -> str:
     return hashlib.pbkdf2_hmac(
@@ -595,6 +616,7 @@ def hash_password(password: str, salt: str) -> str:
         salt.encode('utf-8'),
         100000
     ).hex()
+
 
 def load_users():
     if USER_STORE_FILE.exists():
@@ -605,10 +627,12 @@ def load_users():
             return {}
     return {}
 
+
 def save_users(users_dict):
     USER_STORE_FILE.parent.mkdir(parents=True, exist_ok=True)
     with open(USER_STORE_FILE, "w") as f:
         json.dump(users_dict, f, indent=2)
+
 
 @app.post("/api/auth/signup")
 def auth_signup(req: AuthSignUpRequest, request: Request):
@@ -616,6 +640,15 @@ def auth_signup(req: AuthSignUpRequest, request: Request):
     allowed, limit_msg = global_rate_limiter.check_rate_limit(client_ip, is_user=False, max_requests=10, window_seconds=60)
     if not allowed:
         raise HTTPException(status_code=429, detail=limit_msg)
+
+    # 1. Email Format Validation
+    if not validate_email_format(req.email):
+        raise HTTPException(status_code=400, detail="Invalid email address format.")
+
+    # 2. Password Strength Validation
+    valid_pwd, pwd_err = validate_password_strength(req.password)
+    if not valid_pwd:
+        raise HTTPException(status_code=400, detail=pwd_err)
 
     users = load_users()
     email_key = req.email.strip().lower()
@@ -625,6 +658,7 @@ def auth_signup(req: AuthSignUpRequest, request: Request):
     salt = secrets.token_hex(16)
     pwd_hash = hash_password(req.password, salt)
     session_token = f"pixl_jwt_{secrets.token_hex(32)}"
+    expires_at = time.time() + TOKEN_TTL_SECONDS
     
     user_obj = {
         "id": f"usr_{int(time.time()*1000)}",
@@ -633,6 +667,7 @@ def auth_signup(req: AuthSignUpRequest, request: Request):
         "salt": salt,
         "password_hash": pwd_hash,
         "token": session_token,
+        "token_expires_at": expires_at,
         "avatar": f"https://api.dicebear.com/7.x/avataaars/svg?seed={req.name.strip()}",
         "created_at": time.time(),
     }
@@ -646,9 +681,11 @@ def auth_signup(req: AuthSignUpRequest, request: Request):
         "email": user_obj["email"],
         "avatar": user_obj["avatar"],
         "token": session_token,
+        "expires_at": expires_at,
         "created_at": user_obj["created_at"]
     }
     return {"message": "Account created successfully", "user": user_data, "token": session_token}
+
 
 @app.post("/api/auth/login")
 def auth_login(req: AuthLoginRequest, request: Request):
@@ -656,6 +693,9 @@ def auth_login(req: AuthLoginRequest, request: Request):
     allowed, limit_msg = global_rate_limiter.check_rate_limit(client_ip, is_user=False, max_requests=10, window_seconds=60)
     if not allowed:
         raise HTTPException(status_code=429, detail=limit_msg)
+
+    if not req.email or not req.password:
+        raise HTTPException(status_code=401, detail="Invalid email or password.")
 
     users = load_users()
     email_key = req.email.strip().lower()
@@ -669,7 +709,9 @@ def auth_login(req: AuthLoginRequest, request: Request):
         raise HTTPException(status_code=401, detail="Invalid email or password.")
     
     session_token = f"pixl_jwt_{secrets.token_hex(32)}"
+    expires_at = time.time() + TOKEN_TTL_SECONDS
     user_obj["token"] = session_token
+    user_obj["token_expires_at"] = expires_at
     users[email_key] = user_obj
     save_users(users)
     save_user_profile(user_obj)
@@ -680,9 +722,32 @@ def auth_login(req: AuthLoginRequest, request: Request):
         "email": user_obj["email"],
         "avatar": user_obj["avatar"],
         "token": session_token,
+        "expires_at": expires_at,
         "created_at": user_obj.get("created_at", time.time())
     }
     return {"message": "Logged in successfully", "user": user_data, "token": session_token}
+
+
+@app.post("/api/auth/logout")
+def auth_logout(
+    request: Request,
+    user: Dict[str, Any] = Depends(get_current_user_optional)
+):
+    client_ip = get_client_ip(request)
+    global_rate_limiter.check_rate_limit(client_ip, is_user=False, max_requests=20, window_seconds=60)
+    
+    if user.get("authenticated"):
+        users = load_users()
+        email_key = user.get("email", "").lower()
+        if email_key in users:
+            users[email_key].pop("token", None)
+            users[email_key].pop("token_expires_at", None)
+            save_users(users)
+            save_user_profile(users[email_key])
+            
+    response = JSONResponse(content={"status": "success", "message": "Logged out successfully."})
+    response.delete_cookie("session_token")
+    return response
 
 @app.post("/api/auth/google")
 def auth_google(req: GoogleAuthRequest):

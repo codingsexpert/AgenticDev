@@ -120,7 +120,8 @@ def get_current_user_optional(
     credentials: Optional[HTTPAuthorizationCredentials] = Security(security_scheme)
 ) -> Dict[str, Any]:
     """
-    Verifies Bearer token if provided. If not provided, assigns a consistent guest session identifier.
+    Verifies Bearer token or HTTP session cookie if provided.
+    Rejects expired tokens. If invalid or unauthenticated, assigns a consistent guest session identifier.
     Guarantees that user_id is ALWAYS derived server-side.
     """
     token = None
@@ -130,14 +131,21 @@ def get_current_user_optional(
         auth_header = request.headers.get("Authorization", "")
         if auth_header.startswith("Bearer "):
             token = auth_header[7:].strip()
+    elif "session_token" in request.cookies:
+        token = request.cookies.get("session_token")
 
     if token:
-        # Verify custom JWT token or Supabase session token
+        # Verify token in persistent user store
         if token.startswith("pixl_jwt_") or len(token) > 10:
             from src.utils.memory_manager import USER_STORE_FILE, _load_json
             users = _load_json(USER_STORE_FILE, {})
+            now = time.time()
             for u in users.values():
                 if u.get("token") == token:
+                    expires_at = u.get("token_expires_at")
+                    # Check server-side token expiration
+                    if expires_at and now > float(expires_at):
+                        break  # Expired token, fall through to unauthenticated
                     return {
                         "id": u.get("id"),
                         "email": u.get("email"),
