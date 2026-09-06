@@ -363,20 +363,23 @@ async def chat_stream(
                 yield f"data: {json.dumps({'done': True})}\n\n"
             return StreamingResponse(guardrail_error_stream(), media_type="text/event-stream")
 
+    from src.utils.task_router import classify_task
+    last_user_attachments = []
+    if req.messages and hasattr(req.messages[-1], "attachments"):
+        last_user_attachments = req.messages[-1].attachments or []
+
+    task_classification = classify_task(raw_last_user_msg, req.mode or "chat", last_user_attachments)
     last_user_msg = raw_last_user_msg.lower()
-    is_greeting = is_simple_greeting(raw_last_user_msg)
     weather_info = None
 
-    if not is_greeting:
-        weather_pattern = r"\b(weather|mausam|temperature|climate)\b"
-        if re.search(weather_pattern, last_user_msg, re.IGNORECASE):
-            cities = ["delhi", "mumbai", "bangalore", "kolkata", "chennai", "hyderabad", "pune", "ahmedabad", "jaipur", "london", "paris", "tokyo", "new york"]
-            found_city = "Delhi"
-            for c in cities:
-                if re.search(rf"\b{c}\b", last_user_msg, re.IGNORECASE):
-                    found_city = c.capitalize()
-                    break
-            weather_info = get_current_weather(found_city)
+    if task_classification.category == "weather_query":
+        cities = ["delhi", "mumbai", "bangalore", "kolkata", "chennai", "hyderabad", "pune", "ahmedabad", "jaipur", "london", "paris", "tokyo", "new york"]
+        found_city = "Delhi"
+        for c in cities:
+            if re.search(rf"\b{c}\b", last_user_msg, re.IGNORECASE):
+                found_city = c.capitalize()
+                break
+        weather_info = get_current_weather(found_city)
 
     contents = []
     if weather_info and weather_info.get("status") == "success":
@@ -384,8 +387,8 @@ async def chat_stream(
         contents.append({"role": "user", "content": context_str})
         contents.append({"role": "assistant", "content": "Understood, I have the live real-time weather data."})
 
-    # Live Web Search Logic (Skip for simple greetings)
-    if not is_greeting:
+    # Live Web Search Logic (Only executed if task classification requires web search)
+    if not task_classification.skip_web_search:
         web_search_pattern = r"(?i)\b(search web for|latest news on|current news|search for|who is|what is the latest)\b\s+(.*)"
         search_match = re.search(web_search_pattern, last_user_msg)
         if search_match:
@@ -407,8 +410,8 @@ async def chat_stream(
             except Exception as e:
                 print(f"Web search failed: {e}")
 
-    # RAG Engine Knowledge Base Retrieval (Skip for simple greetings)
-    if last_user_msg.strip() and not is_greeting:
+    # RAG Engine Knowledge Base Retrieval (Only executed if task classification requires RAG)
+    if last_user_msg.strip() and not task_classification.skip_rag:
         from src.utils.rag_engine import retrieve_from_kb
         rag_context = retrieve_from_kb(last_user_msg, user_id=user.get("id"))
         if rag_context:
@@ -512,6 +515,9 @@ On the VERY FIRST LINE inside the code block, you MUST put the exact full file p
     messages = [{"role": "system", "content": system_instruction}] + contents
 
     async def generate_chunks():
+        # Emit intelligent task classification event first
+        yield f"data: {json.dumps({'routing': task_classification.to_dict()})}\n\n"
+
         # Fallback to LLM_MODEL in .env if not specified in request
         raw_model = target_model or os.getenv("LLM_MODEL", "gemini/gemini-2.0-flash")
         model_name = raw_model if "/" in raw_model else f"gemini/{raw_model}"

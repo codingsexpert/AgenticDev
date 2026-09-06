@@ -40,6 +40,7 @@ export default function App() {
   const [streamingText, setStreamingText] = useState('');
   const [mode, setMode] = useState('chat'); // 'chat' | 'build'
   const [isLoading, setIsLoading] = useState(false);
+  const [routingInfo, setRoutingInfo] = useState(null);
   const [statusInfo, setStatusInfo] = useState(null);
   const [tokenUsage, setTokenUsage] = useState({ totalInput: 0, totalOutput: 0, estimatedCost: 0 });
   const [activeSandboxId, setActiveSandboxId] = useState(null);
@@ -391,6 +392,9 @@ export default function App() {
           if (trimmed.startsWith('data: ')) {
             try {
               const payload = JSON.parse(trimmed.slice(6));
+              if (payload.routing) {
+                setRoutingInfo(payload.routing);
+              }
               if (payload.text) {
                 accumulatedText += payload.text;
                 setStreamingText(accumulatedText);
@@ -658,6 +662,7 @@ export default function App() {
                 nodeHistory={nodeHistory}
                 pmQuestions={pmQuestions}
                 streamingText={streamingText}
+                routingInfo={routingInfo}
                 isLoading={isLoading}
                 activeSandboxId={activeSandboxId}
                 onAnswerQuestions={handleAnswerQuestions}
