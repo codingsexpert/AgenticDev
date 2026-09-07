@@ -152,12 +152,10 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
 
     setLoading(true);
     try {
-      // Try Supabase password reset email
       if (supabase) {
         supabase.auth.resetPasswordForEmail(cleanEmail).catch(() => {});
       }
 
-      // Backend API Forgot Password
       const res = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -230,13 +228,13 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fade-in">
-      <div className="bg-white w-full max-w-sm rounded-3xl border border-slate-200/90 shadow-2xl shadow-slate-900/20 overflow-hidden relative transition-all p-6 sm:p-7 space-y-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-fade-in">
+      <div className="bg-white/95 backdrop-blur-2xl w-full max-w-sm rounded-3xl border border-white/80 shadow-2xl shadow-slate-900/15 overflow-hidden relative transition-all p-6 sm:p-7 space-y-4">
         {/* Close Button */}
         <button
           onClick={onClose}
           type="button"
-          className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full border border-slate-200/60 bg-slate-50/80 hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
@@ -244,7 +242,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
         <div className="space-y-4">
           {/* Header Titles */}
           <div className="text-left pt-1">
-            <h2 className="text-xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-xl font-extrabold tracking-tight text-slate-900">
               {authMode === 'signup' && 'Create your account'}
               {authMode === 'signin' && 'Welcome back'}
               {authMode === 'forgot' && 'Reset your password'}
@@ -284,7 +282,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             {/* Sign Up Name Input */}
             {authMode === 'signup' && (
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Full Name</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
                 <div className="relative">
                   <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                   <input
@@ -292,7 +290,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Mukesh Singh"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white transition-all font-sans"
+                    className="w-full bg-slate-50/80 border border-slate-200/80 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all font-sans"
                   />
                 </div>
               </div>
@@ -301,7 +299,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             {/* Email Input */}
             {authMode !== 'reset' && (
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Email Address</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                   <input
@@ -309,7 +307,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white transition-all font-sans"
+                    className="w-full bg-slate-50/80 border border-slate-200/80 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all font-sans"
                   />
                 </div>
               </div>
@@ -319,7 +317,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             {(authMode === 'signin' || authMode === 'signup') && (
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-medium text-slate-700">Password</label>
+                  <label className="text-xs font-semibold text-slate-700">Password</label>
                   {authMode === 'signin' && (
                     <button
                       type="button"
@@ -337,7 +335,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white transition-all font-sans"
+                    className="w-full bg-slate-50/80 border border-slate-200/80 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all font-sans"
                   />
                 </div>
               </div>
@@ -346,7 +344,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             {/* Reset Password Form Step */}
             {authMode === 'reset' && (
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">New Password</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">New Password</label>
                 <div className="relative">
                   <KeyRound className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                   <input
@@ -354,7 +352,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter at least 6 characters"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white transition-all font-sans"
+                    className="w-full bg-slate-50/80 border border-slate-200/80 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all font-sans"
                   />
                 </div>
               </div>
@@ -364,7 +362,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm transition-all shadow-md shadow-slate-900/15 hover:shadow-lg flex items-center justify-center space-x-2 active:scale-[0.99]"
+              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-semibold text-sm transition-all shadow-md shadow-indigo-500/20 hover:shadow-lg flex items-center justify-center space-x-2 active:scale-[0.99] cursor-pointer"
             >
               {loading ? (
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -384,18 +382,20 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             {/* OAuth Dividers & Social Login (Only in Sign In / Sign Up modes) */}
             {(authMode === 'signin' || authMode === 'signup') && (
               <>
-                <div className="relative flex items-center justify-center my-3">
-                  <div className="border-t border-slate-200 w-full" />
-                  <span className="bg-white px-2.5 text-[10px] text-slate-400 uppercase font-semibold tracking-wider">
+                <div className="relative flex items-center justify-center my-3.5">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-200/80" />
+                  </div>
+                  <span className="relative bg-white/95 px-3 text-[10px] text-slate-400 uppercase font-bold tracking-wider">
                     Or continue with
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2.5">
                   <button
                     type="button"
                     onClick={() => handleOAuthSubmit('google')}
-                    className="w-full py-2 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition-all flex items-center justify-center space-x-2 shadow-2xs hover:shadow-xs"
+                    className="w-full py-2 px-3 rounded-xl border border-slate-200/80 hover:bg-slate-50/90 text-slate-700 text-xs font-semibold transition-all flex items-center justify-center space-x-2 shadow-2xs hover:shadow-xs cursor-pointer"
                   >
                     <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                       <path
@@ -421,7 +421,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                   <button
                     type="button"
                     onClick={() => handleOAuthSubmit('github')}
-                    className="w-full py-2 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition-all flex items-center justify-center space-x-2 shadow-2xs hover:shadow-xs"
+                    className="w-full py-2 px-3 rounded-xl border border-slate-200/80 hover:bg-slate-50/90 text-slate-700 text-xs font-semibold transition-all flex items-center justify-center space-x-2 shadow-2xs hover:shadow-xs cursor-pointer"
                   >
                     <Github className="w-4 h-4 shrink-0" />
                     <span>GitHub</span>
@@ -438,7 +438,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                   <button
                     type="button"
                     onClick={() => handleResetFormState('signup')}
-                    className="text-slate-900 font-semibold hover:underline"
+                    className="text-indigo-600 font-semibold hover:underline"
                   >
                     Sign Up
                   </button>
@@ -451,7 +451,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                   <button
                     type="button"
                     onClick={() => handleResetFormState('signin')}
-                    className="text-slate-900 font-semibold hover:underline"
+                    className="text-indigo-600 font-semibold hover:underline"
                   >
                     Sign In
                   </button>
@@ -462,7 +462,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                 <button
                   type="button"
                   onClick={() => handleResetFormState('signin')}
-                  className="text-slate-900 font-semibold hover:underline inline-flex items-center space-x-1"
+                  className="text-indigo-600 font-semibold hover:underline inline-flex items-center space-x-1"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Back to Sign In</span>
