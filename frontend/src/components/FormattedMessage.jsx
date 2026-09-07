@@ -5,8 +5,24 @@ import { Check, Copy, Code2, Eye, Play, Save, Sparkles, Bug, RefreshCw, MessageC
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
+const getCleanFilename = (filename = '', language = '') => {
+  let name = (filename || '').trim();
+  name = name.replace(/^[\/\*<\!#>\-]+\s*/g, '').replace(/^file:\s*/i, '').replace(/^file:\s*/i, '').trim();
+  if (!name) {
+    const l = (language || '').toLowerCase();
+    if (l === 'html') return 'index.html';
+    if (l === 'css') return 'style.css';
+    if (l === 'js' || l === 'javascript' || l === 'jsx') return 'script.js';
+    if (l === 'py' || l === 'python') return 'main.py';
+    if (l === 'cpp' || l === 'c++' || l === 'c') return 'main.cpp';
+    if (l === 'bash' || l === 'sh') return 'script.sh';
+    return `main.${l || 'txt'}`;
+  }
+  return name;
+};
+
 const getFileIcon = (filename = '', language = '') => {
-  const name = (filename || '').toLowerCase();
+  const name = getCleanFilename(filename, language).toLowerCase();
   const lang = (language || '').toLowerCase();
   if (name.endsWith('.html') || lang === 'html') return <FileCode className="w-3.5 h-3.5 text-orange-400" />;
   if (name.endsWith('.css') || lang === 'css') return <FileCode className="w-3.5 h-3.5 text-sky-400" />;
@@ -31,16 +47,25 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
 
   if (!blocks || blocks.length === 0) return null;
 
-  const currentBlock = blocks[activeTabIndex] || blocks[0];
-  const langLower = (currentBlock.language || '').toLowerCase();
+  // Filter out .bash and .sh helper blocks from the tab bar unless they are the only code blocks
+  const displayBlocks = blocks.filter(b => {
+    const f = (b.filename || '').toLowerCase();
+    const l = (b.language || '').toLowerCase();
+    return !f.endsWith('.bash') && !f.endsWith('.sh') && l !== 'bash' && l !== 'sh';
+  });
+  const validBlocks = displayBlocks.length > 0 ? displayBlocks : blocks;
 
-  const hasWebBlocks = blocks.some(b => {
+  const currentBlock = validBlocks[activeTabIndex] || validBlocks[0] || blocks[0];
+  const langLower = (currentBlock.language || '').toLowerCase();
+  const cleanCurrentFilename = getCleanFilename(currentBlock.filename, currentBlock.language);
+
+  const hasWebBlocks = validBlocks.some(b => {
     const l = (b.language || '').toLowerCase();
     const f = (b.filename || '').toLowerCase();
     return l === 'html' || l === 'css' || l === 'javascript' || l === 'js' || f.endsWith('.html') || f.endsWith('.css') || f.endsWith('.js');
   });
 
-  const isExecutable = ['python', 'py', 'python3', 'javascript', 'js', 'node', 'cpp', 'c++', 'c', 'bash', 'sh', 'zsh', 'java', 'go', 'rust', 'php'].includes(langLower) || true;
+  const isExecutable = true;
 
   const handleRunCode = async () => {
     setIsExecuting(true);
@@ -68,11 +93,11 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
   const handleApplyAll = async () => {
     if (!activeSandboxId) return;
     try {
-      await Promise.all(blocks.map(b =>
+      await Promise.all(validBlocks.map(b =>
         fetch(`/api/sandboxes/${activeSandboxId}/file`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: b.code, path: b.filename })
+          body: JSON.stringify({ content: b.code, path: getCleanFilename(b.filename, b.language) })
         })
       ));
       setApplied(true);
@@ -83,11 +108,11 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
   };
 
   const getCombinedSrcDoc = () => {
-    let htmlBlock = blocks.find(b => b.language === 'html' || b.filename.endsWith('.html'));
-    let cssBlock = blocks.find(b => b.language === 'css' || b.filename.endsWith('.css'));
-    let jsBlock = blocks.find(b => b.language === 'javascript' || b.language === 'js' || b.filename.endsWith('.js'));
+    let htmlBlock = validBlocks.find(b => b.language === 'html' || b.filename.endsWith('.html'));
+    let cssBlock = validBlocks.find(b => b.language === 'css' || b.filename.endsWith('.css'));
+    let jsBlock = validBlocks.find(b => b.language === 'javascript' || b.language === 'js' || b.filename.endsWith('.js'));
 
-    let html = htmlBlock ? htmlBlock.code : (blocks.length === 1 && hasWebBlocks ? blocks[0].code : '<div id="root"></div>');
+    let html = htmlBlock ? htmlBlock.code : (validBlocks.length === 1 && hasWebBlocks ? validBlocks[0].code : '<div id="root"></div>');
     let css = cssBlock ? cssBlock.code : '';
     let js = jsBlock ? jsBlock.code : '';
 
@@ -154,239 +179,194 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
 </html>`;
   };
 
-  const projectTitle = blocks.length > 1
-    ? `Workspace Project (${blocks.length} Files)`
-    : (currentBlock.filename || `${currentBlock.language || 'Code'} File`);
+  const projectTitle = validBlocks.length > 1
+    ? `Workspace Project (${validBlocks.length} Files)`
+    : cleanCurrentFilename;
 
   return (
-    <div className="my-6 p-[1.5px] bg-gradient-to-r from-indigo-500 via-purple-500 via-pink-500 via-emerald-500 to-cyan-500 rounded-2xl shadow-[0_20px_60px_-15px_rgba(99,102,241,0.35)] hover:shadow-[0_25px_70px_-10px_rgba(168,85,247,0.45)] transition-all duration-300 transform hover:-translate-y-0.5">
-      <div className="flex flex-col bg-[#0b0d14] rounded-[15px] overflow-hidden">
-        {/* macOS Window Bar + Top Card Header */}
-        <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-gradient-to-r from-[#0d0f19] via-[#141727] to-[#0d0f19] border-b border-indigo-500/20 gap-3">
-          <div className="flex items-center space-x-3.5">
-            {/* Mac Window Controls */}
-            <div className="flex items-center space-x-2 mr-1">
-              <span className="w-3 h-3 rounded-full bg-rose-500/90 shadow-[0_0_8px_rgba(244,63,94,0.6)] inline-block"></span>
-              <span className="w-3 h-3 rounded-full bg-amber-500/90 shadow-[0_0_8px_rgba(245,158,11,0.6)] inline-block"></span>
-              <span className="w-3 h-3 rounded-full bg-emerald-500/90 shadow-[0_0_8px_rgba(16,185,129,0.6)] inline-block"></span>
-            </div>
-
-            <div className="w-8 h-8 rounded-xl bg-indigo-500/15 border border-indigo-400/30 flex items-center justify-center shrink-0 shadow-inner">
-              <Folder className="w-4 h-4 text-indigo-300" />
-            </div>
-
-            <div>
-              <div className="text-sm font-bold tracking-tight text-white flex items-center space-x-2.5">
-                <span className="bg-gradient-to-r from-white via-slate-100 to-indigo-200 bg-clip-text text-transparent">
-                  {projectTitle}
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-[10px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded-full font-mono uppercase tracking-wider font-semibold shadow-xs">
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-                  </span>
-                  CONNECTED
-                </span>
-              </div>
-              <div className="text-[11px] text-slate-400 mt-0.5 flex items-center space-x-2 font-mono">
-                <span className="text-indigo-300/80">Saved in workspace sandbox</span>
-                <span className="text-slate-600">•</span>
-                <span className="text-slate-400 truncate max-w-[200px] sm:max-w-md">{blocks.map(b => b.filename).join(', ')}</span>
-              </div>
-            </div>
+    <div className="my-5 flex flex-col bg-[#0d0f17] border border-slate-800/80 shadow-xl rounded-2xl overflow-hidden transition-all duration-200">
+      {/* macOS Window Bar + Top Card Header */}
+      <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-[#131625] border-b border-slate-800/80 gap-3">
+        <div className="flex items-center space-x-3.5">
+          {/* Mac Window Controls */}
+          <div className="flex items-center space-x-2 mr-1">
+            <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
+            <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
+            <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
           </div>
 
-          {/* Primary Neon Action Buttons */}
-          <div className="flex items-center space-x-2 shrink-0 flex-wrap gap-2">
+          <div className="w-8 h-8 rounded-xl bg-indigo-500/15 border border-indigo-400/30 flex items-center justify-center shrink-0 shadow-inner">
+            <Folder className="w-4 h-4 text-indigo-300" />
+          </div>
+
+          <div>
+            <div className="text-sm font-bold tracking-tight text-white flex items-center space-x-2.5">
+              <span>{projectTitle}</span>
+            </div>
+            <div className="text-[11px] text-slate-400 mt-0.5 flex items-center space-x-2 font-mono">
+              <span className="text-indigo-300/80">Saved in workspace sandbox</span>
+              <span className="text-slate-600">•</span>
+              <span className="text-slate-400 truncate max-w-[220px] sm:max-w-md">
+                {validBlocks.map(b => getCleanFilename(b.filename, b.language)).join(', ')}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Header Action Buttons (Only 1 Run Code Button) */}
+        <div className="flex items-center space-x-2 shrink-0 flex-wrap gap-2">
+          {isExecutable && (
             <button
               onClick={handleRunCode}
               disabled={isExecuting}
-              className="text-xs px-4 py-1.5 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 text-slate-950 rounded-xl font-bold transition-all duration-200 shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] hover:scale-[1.02] flex items-center space-x-2 disabled:opacity-50 cursor-pointer border border-emerald-300/50 active:scale-95"
+              className="text-xs px-4 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-xl font-bold transition-all duration-200 shadow-md flex items-center space-x-2 disabled:opacity-50 cursor-pointer border border-emerald-400/40 active:scale-95"
               title="Execute code natively and view output console"
             >
               {isExecuting ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-950" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
               ) : (
-                <Play className="w-3.5 h-3.5 fill-slate-950 text-slate-950" />
+                <Play className="w-3.5 h-3.5 fill-white text-white" />
               )}
               <span className="tracking-wide">{isExecuting ? 'Executing...' : 'Run Code'}</span>
             </button>
+          )}
 
-            {hasWebBlocks && (
-              <button
-                onClick={() => setShowPreview(!showPreview)}
-                className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-all duration-200 flex items-center space-x-2 cursor-pointer border hover:scale-[1.02] active:scale-95 ${
-                  showPreview
-                    ? 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white border-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.5)]'
-                    : 'bg-indigo-950/70 hover:bg-indigo-900/90 text-indigo-200 border-indigo-500/40 shadow-sm'
-                }`}
-                title="Toggle interactive live web preview"
-              >
-                <Eye className="w-3.5 h-3.5" />
-                <span>{showPreview ? 'Hide Preview' : 'Live Preview'}</span>
-              </button>
-            )}
-
-            {activeSandboxId && (
-              <button
-                onClick={handleApplyAll}
-                className="text-xs px-3.5 py-1.5 bg-indigo-600/90 hover:bg-indigo-500 text-white rounded-xl font-semibold transition-all duration-200 border border-indigo-400/40 flex items-center space-x-2 cursor-pointer hover:scale-[1.02] active:scale-95 shadow-md"
-                title="Save all files directly to sandbox workspace"
-              >
-                {applied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Save className="w-3.5 h-3.5" />}
-                <span>{applied ? 'Saved All' : 'Save All'}</span>
-              </button>
-            )}
-
+          {hasWebBlocks && (
             <button
-              onClick={() => onOpenCodeBlock && onOpenCodeBlock(blocks)}
-              className="text-xs px-3.5 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-indigo-300 hover:text-white rounded-xl font-semibold transition-all duration-200 border border-indigo-500/40 hover:border-indigo-400 flex items-center space-x-2 shadow-md cursor-pointer hover:scale-[1.02] active:scale-95"
-              title="Open full interactive Workspace IDE canvas"
+              onClick={() => setShowPreview(!showPreview)}
+              className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-all duration-200 flex items-center space-x-2 cursor-pointer border active:scale-95 ${
+                showPreview
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md'
+                  : 'bg-indigo-950/70 hover:bg-indigo-900/90 text-indigo-200 border-indigo-500/40 shadow-sm'
+              }`}
+              title="Toggle interactive live web preview"
             >
-              <Layers className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Open Workspace IDE</span>
+              <Eye className="w-3.5 h-3.5" />
+              <span>{showPreview ? 'Hide Preview' : 'Live Preview'}</span>
             </button>
-          </div>
-        </div>
+          )}
 
-        {/* Multi-File VSCode-Style Tab Bar */}
-        <div className="flex items-center space-x-1 px-3 pt-2 bg-[#0c0d12] border-b border-slate-800/80 overflow-x-auto no-scrollbar">
-          {blocks.map((block, idx) => {
-            const isActive = idx === activeTabIndex;
-            return (
-              <button
-                key={idx}
-                onClick={() => setActiveTabIndex(idx)}
-                className={`flex items-center space-x-2.5 px-4 py-2 rounded-t-xl text-xs font-mono transition-all duration-200 shrink-0 cursor-pointer relative ${
-                  isActive
-                    ? 'bg-[#161824] text-white font-semibold border-t border-x border-slate-700/60 shadow-lg'
-                    : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
-                }`}
-              >
-                {getFileIcon(block.filename, block.language)}
-                <span>{block.filename}</span>
-                {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-400 via-indigo-500 to-pink-500 rounded-full"></span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* File Quick Actions Ribbon Toolbar */}
-        <div className="flex items-center space-x-2 px-4 py-2 border-b border-slate-800/60 bg-[#11131c]/90 backdrop-blur-md overflow-x-auto no-scrollbar justify-between">
-          <div className="flex items-center space-x-2">
+          {activeSandboxId && (
             <button
-              onClick={() => onQuickAction && onQuickAction('Explain', currentBlock.code)}
-              className="text-[11px] px-3 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:border-amber-400/60 hover:shadow-[0_0_15px_rgba(245,158,11,0.35)] rounded-lg transition-all flex items-center space-x-1.5 whitespace-nowrap cursor-pointer font-medium"
+              onClick={handleApplyAll}
+              className="text-xs px-3.5 py-1.5 bg-indigo-600/90 hover:bg-indigo-500 text-white rounded-xl font-semibold transition-all duration-200 border border-indigo-400/40 flex items-center space-x-2 cursor-pointer active:scale-95 shadow-md"
+              title="Save all files directly to sandbox workspace"
             >
-              <MessageCircle className="w-3 h-3 text-amber-400" />
-              <span>Explain</span>
+              {applied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Save className="w-3.5 h-3.5" />}
+              <span>{applied ? 'Saved All' : 'Save All'}</span>
             </button>
-            <button
-              onClick={() => onQuickAction && onQuickAction('Debug', currentBlock.code)}
-              className="text-[11px] px-3 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:border-rose-400/60 hover:shadow-[0_0_15px_rgba(244,63,94,0.35)] rounded-lg transition-all flex items-center space-x-1.5 whitespace-nowrap cursor-pointer font-medium"
-            >
-              <Bug className="w-3 h-3 text-rose-400" />
-              <span>Debug</span>
-            </button>
-            <button
-              onClick={() => onQuickAction && onQuickAction('Refactor', currentBlock.code)}
-              className="text-[11px] px-3 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 hover:border-indigo-400/60 hover:shadow-[0_0_15px_rgba(99,102,241,0.35)] rounded-lg transition-all flex items-center space-x-1.5 whitespace-nowrap cursor-pointer font-medium"
-            >
-              <RefreshCw className="w-3 h-3 text-indigo-400" />
-              <span>Refactor</span>
-            </button>
-          </div>
+          )}
 
           <button
-            onClick={handleRunCode}
-            disabled={isExecuting}
-            className="text-[11px] px-3.5 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium rounded-lg transition-all flex items-center space-x-1.5 whitespace-nowrap shadow-xs disabled:opacity-50 cursor-pointer border border-emerald-400/30"
+            onClick={() => onOpenCodeBlock && onOpenCodeBlock(validBlocks)}
+            className="text-xs px-3.5 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-indigo-300 hover:text-white rounded-xl font-semibold transition-all duration-200 border border-indigo-500/40 hover:border-indigo-400 flex items-center space-x-2 shadow-md cursor-pointer active:scale-95"
+            title="Open full interactive Workspace IDE canvas"
           >
-            {isExecuting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3 fill-white" />}
-            <span>{isExecuting ? 'Running...' : 'Run Code'}</span>
+            <Layers className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Open Workspace IDE</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Multi-File Tab Bar (Clean, No multi-color rainbow line) */}
+      <div className="flex items-center space-x-1 px-3 pt-2 bg-[#0c0d12] border-b border-slate-800/80 overflow-x-auto no-scrollbar">
+        {validBlocks.map((block, idx) => {
+          const isActive = idx === activeTabIndex;
+          const cleanName = getCleanFilename(block.filename, block.language);
+          return (
+            <button
+              key={idx}
+              onClick={() => setActiveTabIndex(idx)}
+              className={`flex items-center space-x-2.5 px-4 py-2 rounded-t-xl text-xs font-mono transition-all duration-200 shrink-0 cursor-pointer ${
+                isActive
+                  ? 'bg-[#181b28] text-white font-semibold border-t border-x border-slate-700/80 shadow-md'
+                  : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
+              }`}
+            >
+              {getFileIcon(cleanName, block.language)}
+              <span>{cleanName}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Syntax Editor Box Container (Clean Header with NO "FILE: FILE: MAIN.CPP") */}
+      <div className="bg-[#07080c] relative">
+        <div className="bg-[#13151f] px-4 py-2 border-b border-slate-800/80 flex items-center justify-between text-slate-300 font-mono text-[11px]">
+          <span className="flex items-center space-x-2 font-bold text-indigo-300 tracking-wider">
+            {getFileIcon(cleanCurrentFilename, currentBlock.language)}
+            <span>{cleanCurrentFilename}</span>
+          </span>
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 text-slate-200 text-[11px] transition-all cursor-pointer font-sans active:scale-95 shadow-sm"
+          >
+            {copied ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-emerald-400 font-bold">Copied!</span>
+              </>
+            ) : (
+              <>
+                <Copy className="w-3.5 h-3.5 text-slate-400" />
+                <span>Copy code</span>
+              </>
+            )}
           </button>
         </div>
 
-        {/* Syntax Editor Box Container */}
-        <div className="bg-[#07080c] relative">
-          <div className="bg-[#13151f] px-4 py-2 border-b border-slate-800/80 flex items-center justify-between text-slate-300 font-mono text-[11px]">
-            <span className="flex items-center space-x-2 font-bold uppercase text-indigo-300 tracking-wider">
-              {getFileIcon(currentBlock.filename, currentBlock.language)}
-              <span>FILE: {currentBlock.filename}</span>
-            </span>
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 text-slate-200 text-[11px] transition-all cursor-pointer font-sans active:scale-95 shadow-sm"
-            >
-              {copied ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-emerald-400 font-bold">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Copy code</span>
-                </>
-              )}
-            </button>
-          </div>
-
-          <div className="overflow-x-auto selection:bg-indigo-500/40 font-mono text-[13px] p-2">
-            <SyntaxHighlighter
-              language={langLower === 'html' ? 'xml' : langLower === 'jsx' ? 'javascript' : langLower || 'javascript'}
-              style={vscDarkPlus}
-              customStyle={{ margin: 0, padding: '18px', background: 'transparent', fontSize: '13px', lineHeight: '1.6' }}
-              wrapLines={true}
-            >
-              {currentBlock.code}
-            </SyntaxHighlighter>
-          </div>
-
-          {/* Integrated High-Tech Terminal Console */}
-          {executionResult !== null && (
-            <div className="border-t border-slate-800/80 bg-[#050609] p-4 font-mono text-[11.5px] sm:text-xs">
-              <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-800/60">
-                <div className="flex items-center space-x-2 text-emerald-400">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                  <Terminal className="w-3.5 h-3.5" />
-                  <span className="font-bold uppercase tracking-wider text-[11px]">TERMINAL CONSOLE OUTPUT</span>
-                </div>
-                <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-semibold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                  {executionResult.exit_code === 0 ? 'EXIT CODE: 0 (SUCCESS)' : executionResult.exit_code ? `EXIT CODE: ${executionResult.exit_code}` : 'EXECUTED'}
-                </span>
-              </div>
-              <div className="text-slate-200 whitespace-pre-wrap font-mono p-4 bg-[#0c0e17] rounded-xl border border-slate-800/80 max-h-[320px] overflow-y-auto leading-relaxed shadow-inner">
-                {executionResult.output || 'No output produced.'}
-              </div>
-            </div>
-          )}
+        <div className="overflow-x-auto selection:bg-indigo-500/40 font-mono text-[13px] p-2">
+          <SyntaxHighlighter
+            language={langLower === 'html' ? 'xml' : langLower === 'jsx' ? 'javascript' : langLower || 'javascript'}
+            style={vscDarkPlus}
+            customStyle={{ margin: 0, padding: '18px', background: 'transparent', fontSize: '13px', lineHeight: '1.6' }}
+            wrapLines={true}
+          >
+            {currentBlock.code}
+          </SyntaxHighlighter>
         </div>
 
-        {/* Interactive Combined Live Preview Panel */}
-        {showPreview && (
-          <div ref={previewRef} className="border-t border-slate-800/80 bg-slate-900">
-            <div className="flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-slate-900 via-indigo-950/60 to-slate-900 border-b border-slate-800 text-xs text-slate-200 font-mono">
-              <span className="flex items-center space-x-2 font-bold text-white">
-                <Play className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
-                <span>Interactive Live Web Sandbox Preview ({blocks.length} File{blocks.length > 1 ? 's' : ''})</span>
+        {/* Integrated High-Tech Terminal Console */}
+        {executionResult !== null && (
+          <div className="border-t border-slate-800/80 bg-[#050609] p-4 font-mono text-[11.5px] sm:text-xs">
+            <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-800/60">
+              <div className="flex items-center space-x-2 text-emerald-400">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <Terminal className="w-3.5 h-3.5" />
+                <span className="font-bold uppercase tracking-wider text-[11px]">TERMINAL CONSOLE OUTPUT</span>
+              </div>
+              <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-semibold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                {executionResult.exit_code === 0 ? 'EXIT CODE: 0 (SUCCESS)' : executionResult.exit_code ? `EXIT CODE: ${executionResult.exit_code}` : 'EXECUTED'}
               </span>
             </div>
-            <iframe
-              srcDoc={getCombinedSrcDoc()}
-              title="Combined Live Code Preview"
-              className="w-full h-80 sm:h-96 border-none bg-white shadow-2xl"
-              sandbox="allow-scripts allow-modals"
-            />
+            <div className="text-slate-200 whitespace-pre-wrap font-mono p-4 bg-[#0c0e17] rounded-xl border border-slate-800/80 max-h-[320px] overflow-y-auto leading-relaxed shadow-inner">
+              {executionResult.output || 'No output produced.'}
+            </div>
           </div>
         )}
       </div>
+
+      {/* Interactive Combined Live Preview Panel */}
+      {showPreview && (
+        <div ref={previewRef} className="border-t border-slate-800/80 bg-slate-900">
+          <div className="flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-slate-900 via-indigo-950/60 to-slate-900 border-b border-slate-800 text-xs text-slate-200 font-mono">
+            <span className="flex items-center space-x-2 font-bold text-white">
+              <Play className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
+              <span>Interactive Live Web Sandbox Preview ({validBlocks.length} File{validBlocks.length > 1 ? 's' : ''})</span>
+            </span>
+          </div>
+          <iframe
+            srcDoc={getCombinedSrcDoc()}
+            title="Combined Live Code Preview"
+            className="w-full h-80 sm:h-96 border-none bg-white shadow-2xl"
+            sandbox="allow-scripts allow-modals"
+          />
+        </div>
+      )}
     </div>
   );
 }
