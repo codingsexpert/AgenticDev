@@ -9,6 +9,7 @@ __pycache__/
 
 # Local Sandboxes directory (generated code output)
 sandboxes/
+data/sandbox/
 
 # Testing & Cache
 .pytest_cache/

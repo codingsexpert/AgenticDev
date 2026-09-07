@@ -1,60 +1,71 @@
-# 🤖 AI Dev Team — Multi-Agent Software Development System (Python Edition)
+# 🤖 AI Dev Team — Multi-Agent Software Development System
 
-An autonomous multi-agent software development system built with **LangGraph Python**, **Google GenAI (Gemini)**, **Pydantic Guardrails**, and a **Docker-Free Pure Local Sandbox**.
+An autonomous multi-agent software development system built with **LangGraph Python**, **FastAPI**, **React (Vite)**, **Litellm**, and a **Docker-Free Pure Local Sandbox**. 
+
+It features an interactive **Claude-like Web Dashboard** with real-time streaming, artifact code scaffolding, and a live preview IDE workspace.
 
 ---
 
-## Key Features
+## 🌟 Key Features
 
-1. **Python Native**: Built on LangGraph Python (`langgraph`), Pydantic v2, and `google-genai`.
-2. **Built-in Guardrails Framework**:
+1. **Full-Stack Intelligent Agents**: Powered by LangGraph Python and Litellm (supporting Gemini, OpenAI, Anthropic).
+2. **Interactive Web Dashboard**:
+   - Modern **React (Vite)** frontend with TailwindCSS.
+   - Claude-style Artifact cards for code rendering.
+   - **Live Sandbox IDE** with multi-file tabs, syntax highlighting, and live rendering.
+3. **Built-in Safety & Guardrails**:
    - **Input Guardrail**: Requirement sanitization & prompt injection prevention.
    - **Output Guardrail**: Strict JSON markdown cleaner & Pydantic schema validator.
    - **Execution Guardrail**: Local sandbox path boundaries & unsafe command blocking.
-3. **Docker-Free Pure Local Sandbox**:
-   - Runs isolated file operations and local process checks in `./sandboxes/sandbox-<id>`.
-   - Uses local Git for automatic task snapshotting (`git tag`) and 3-tier rollback.
-4. **Dynamic Tech Stack Support**:
-   - No hardcoded tech stack restrictions. System adapts to Python FastAPI/Flask, Node.js Express, React/Vite, HTML/CSS/JS, SQLite, PostgreSQL, etc.
-5. **No Hardcoded Secrets**: Dynamic JWT secret generation and configurable environment variables.
+4. **Docker-Free Pure Local Sandbox**:
+   - Runs isolated file operations and local process checks in `sandboxes/sandbox-<id>`.
+5. **RAG Knowledge Base & Memory**: 
+   - Context-aware chats with document uploads (PDF, DOCX, CSV) and vector retrieval.
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. Prerequisites
 
 - Python 3.10+
-- A Gemini API Key ([Get one from Google AI Studio](https://aistudio.google.com/apikey))
+- Node.js 18+
+- API Key for your preferred LLM (e.g., Gemini API Key)
 
-### 2. Setup
+### 2. Backend Setup
 
 ```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Set your GEMINI_API_KEY in .env file
-echo "GEMINI_API_KEY=your_gemini_api_key_here" > .env
+# Configure your environment
+cp .env.example .env
+# Edit .env and add your GEMINI_API_KEY (or other LLM keys)
+
+# Start the FastAPI Backend Server (with hot-reload)
+uvicorn server:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### 3. Run CLI
+### 3. Frontend Setup
 
 ```bash
-# Option 1: Pass requirement directly
-python main.py "Build a task manager web app with categories and due dates"
+# Navigate to frontend directory
+cd frontend
 
-# Option 2: Interactive mode
-python main.py
+# Install dependencies
+npm install
 
-# Option 3: Resume thread checkpoint
-python main.py --resume project-1774880000
+# Start the Vite Dev Server
+npm run dev
 ```
+
+Visit `http://localhost:5173` in your browser to access the AI Dev Team Dashboard.
 
 ---
 
-## Testing
+## 🧪 Testing
 
-Run the automated Pytest test suite:
+Run the automated Pytest test suite for the backend:
 
 ```bash
 python -m pytest tests/
@@ -62,45 +73,35 @@ python -m pytest tests/
 
 - `test_graph_skeleton.py`: Verifies LangGraph Python state machine graph wiring.
 - `test_guardrails.py`: Verifies Input, Output, and Execution safety guardrails.
-- `test_sandbox_manager.py`: Verifies local filesystem sandbox & subprocess execution without Docker.
+- `test_sandbox_manager.py`: Verifies local filesystem sandbox.
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
-```
+```text
 ai-dev-team/
-├── main.py                     # Main CLI entry point
+├── server.py                   # FastAPI Web Server entry point
+├── main.py                     # CLI entry point (optional)
 ├── requirements.txt            # Python dependencies
 ├── .env                        # Environment configuration
-├── src/
-│   ├── config/
-│   │   ├── state.py            # AgentState definition & Annotated reducers
-│   │   └── graph.py            # LangGraph Python (27 nodes + routers)
-│   ├── guardrails/
-│   │   ├── input_guardrail.py  # Prompt injection & input validation
-│   │   ├── output_guardrail.py # Pydantic schema validation & JSON cleaner
-│   │   └── execution_guardrail.py # Sandbox path & command safety boundaries
-│   ├── agents/
-│   │   ├── pm_agent.py         # PM Agent — requirement → spec
-│   │   ├── architect_agent.py  # 5-step architect agent
-│   │   ├── blueprint_validator.py # Blueprint consistency check
-│   │   ├── planner_agent.py    # Task queue generator
-│   │   ├── coder_agent.py      # Code generator
-│   │   ├── reviewer_agent.py   # Code reviewer
-│   │   ├── executor_agent.py   # Local syntax & runtime checker
-│   │   └── debugger_agent.py   # 3-tier error debugger
-│   ├── nodes/
-│   │   ├── human_input.py      # Terminal input node
-│   │   ├── setup_sandbox.py    # Local sandbox workspace scaffold
-│   │   ├── select_next_task.py # Task queue scheduler
-│   │   └── ...                 # Context, snapshot, compaction nodes
-│   └── utils/
-│       ├── gemini_client.py    # Gemini API wrapper with budget controls
-│       ├── sandbox_manager.py  # Docker-free local filesystem manager
-│       └── token_tracker.py    # Token cost tracker
-└── tests/
-    ├── test_graph_skeleton.py
-    ├── test_guardrails.py
-    └── test_sandbox_manager.py
+├── frontend/                   # React + Vite Web UI
+│   ├── src/                    
+│   │   ├── components/         # UI Components (Artifacts, Chat, etc.)
+│   │   ├── routes/             # App routing
+│   │   └── App.jsx             # Main React Application
+│   └── package.json
+├── src/                        # Python Backend
+│   ├── routes/                 # FastAPI Endpoints (/chats, /projects, /sandboxes)
+│   ├── config/                 # AgentState definition & LangGraph wiring
+│   ├── guardrails/             # Security validations
+│   ├── agents/                 # PM, Architect, Planner, Coder, Reviewer agents
+│   ├── nodes/                  # LangGraph operational nodes
+│   └── utils/                  # LLM clients, Sandbox manager, Token tracker
+├── data/                       # Local DB, Memory sessions, and RAG Knowledge Base
+└── tests/                      # Pytest automation suite
 ```
+
+---
+
+> **Note**: The `sandboxes/` and `data/sandbox/` directories are used purely for local practice and dynamic code generation by the agents. They are excluded from version control to keep the repository clean.

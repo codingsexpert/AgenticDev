@@ -311,8 +311,6 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
         full_text = ""
 
         gemini_api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-        if gemini_api_key and not gemini_api_key.startswith("AIzaSy"):
-            gemini_api_key = None
 
         acompletion_kwargs = {}
         if gemini_api_key:
@@ -409,7 +407,7 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
 
             if full_text == "":
                 if any(g in user_msg_clean for g in greetings):
-                    fallback_reply = "Hello! 👋 I am **PixiExpert**, your AI software assistant. How can I help you build your project or answer your questions today?"
+                    fallback_reply = "Hello! 👋 How can I help you build your project or answer your questions today?"
                 elif "weather" in user_msg_clean:
                     fallback_reply = """```html
 <!-- File: index.html -->
@@ -684,15 +682,21 @@ function calculateResult() { try { currentInput = eval(currentInput).toString();
 </body>
 </html>
 ```"""
-                elif any(w in user_msg_clean for w in ["build", "create", "make", "app", "website", "application", "dashboard", "portfolio"]):
-                    fallback_reply = """```html
+                elif req.mode == "build" or any(w in user_msg_clean for w in ["build", "create", "make", "app", "website", "application", "dashboard", "portfolio", "system"]):
+                    # Smart dynamic builder for fallback scenarios
+                    import re
+                    app_name = re.sub(r'\b(build|create|make|a|an|the|app|website|application)\b', '', user_msg_clean, flags=re.IGNORECASE).strip().title()
+                    if not app_name:
+                        app_name = "Web Application"
+                        
+                    fallback_reply = f"""```html
 <!-- File: index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Application</title>
+    <title>{app_name}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -701,13 +705,13 @@ function calculateResult() { try { currentInput = eval(currentInput).toString();
         <div class="w-16 h-16 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center mx-auto mb-4">
             <span class="text-2xl">⚡</span>
         </div>
-        <h1 class="text-2xl font-extrabold text-white mb-2">Web Application Workspace</h1>
-        <p class="text-sm text-slate-400 mb-6">Your custom application has been initialized and is ready for live development.</p>
+        <h1 class="text-2xl font-extrabold text-white mb-2">{app_name} Workspace</h1>
+        <p class="text-sm text-slate-400 mb-6">Your custom application "{app_name}" has been generated and is ready for live development.</p>
         
         <div class="flex justify-center gap-3">
-            <button onclick="triggerAction()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md cursor-pointer">Explore App</button>
+            <button onclick="triggerAction()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md cursor-pointer">Explore {app_name}</button>
         </div>
-        <div id="actionResult" class="mt-4 text-xs font-semibold text-emerald-400 hidden">Interactive application workspace loaded successfully!</div>
+        <div id="actionResult" class="mt-4 text-xs font-semibold text-emerald-400 hidden">Interactive workspace loaded successfully!</div>
     </div>
     <script src="script.js"></script>
 </body>
@@ -716,18 +720,18 @@ function calculateResult() { try { currentInput = eval(currentInput).toString();
 
 ```css
 /* File: style.css */
-body { font-family: system-ui, -apple-system, sans-serif; }
+body {{ font-family: system-ui, -apple-system, sans-serif; }}
 ```
 
 ```javascript
 // File: script.js
-function triggerAction() {
+function triggerAction() {{
     const res = document.getElementById('actionResult');
     res.classList.remove('hidden');
-}
+}}
 ```"""
                 else:
-                    fallback_reply = "I am **PixiExpert**, your AI software assistant. I can help you build full-stack web applications, write and debug code, analyze data, and manage your project workspace."
+                    fallback_reply = "I am ready to help you build and manage your workspace. Please configure your LLM API Key in settings to enable full-stack generation, or use the 'build' mode for scaffolding."
 
                 full_text = fallback_reply
                 if req.thread_id:

@@ -311,15 +311,11 @@ export default function ChatTimeline({
       {/* Intelligent Router Task Classification Badge */}
       {routingInfo && routingInfo.level > 0 && isLoading && !streamingText && (
         <div className="flex items-center space-x-2 mr-auto animate-fade-in my-1 pl-1">
-          <div className="bg-indigo-50/90 border border-indigo-100/90 rounded-xl px-3 py-1.5 flex items-center space-x-2 text-[11px] font-sans text-indigo-700 shadow-2xs">
-            <span className="font-bold text-indigo-900 bg-indigo-200/60 px-1.5 py-0.5 rounded-md text-[10px]">Level {routingInfo.level}</span>
-            <span className="capitalize font-semibold text-slate-700">{routingInfo.category?.replace('_', ' ')}</span>
-            {routingInfo.required_agents?.length > 0 && (
-              <>
-                <span className="text-slate-300">•</span>
-                <span className="text-slate-500 font-mono text-[10px]">{routingInfo.required_agents.join(', ')}</span>
-              </>
-            )}
+          <div className="bg-indigo-50/90 border border-indigo-100/90 rounded-xl px-3 py-1.5 flex items-center space-x-2 text-[12px] font-sans text-indigo-700 shadow-2xs">
+            <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
+            <span className="font-semibold text-slate-700">
+              {routingInfo.category === 'full_app_build' ? 'Orchestrating AI Agents...' : 'Analyzing Request...'}
+            </span>
           </div>
         </div>
       )}
