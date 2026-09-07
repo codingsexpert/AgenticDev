@@ -18,6 +18,7 @@ import {
   Sliders,
   Lock
 } from 'lucide-react';
+import { useToast } from './Toast';
 
 export default function SettingsModal({
   isOpen,
@@ -27,8 +28,9 @@ export default function SettingsModal({
   onLogout,
   tokenUsage
 }) {
-  const [activeTab, setActiveTab] = useState('model'); // 'model' | 'guardrails' | 'budget' | 'account' | 'appearance'
-  
+  const toast = useToast();
+  const [activeTab, setActiveTab] = useState('model'); // 'model' | 'guardrails' | 'budget' | 'account'
+
   // Model Settings State
   const [selectedModel, setSelectedModel] = useState('gemini-2.0-flash');
   const [geminiApiKey, setGeminiApiKey] = useState('');
@@ -42,45 +44,48 @@ export default function SettingsModal({
   // Budget Settings State
   const [tokenBudget, setTokenBudget] = useState(2.0);
 
-  // Appearance State
-  const [themeMode, setThemeMode] = useState(() => localStorage.getItem('pixlexpert_theme') || 'light');
-  const [monacoTheme, setMonacoTheme] = useState('vs-dark');
-
   const [savedStatus, setSavedStatus] = useState(false);
 
   useEffect(() => {
     const savedApiKey = localStorage.getItem('pixlexpert_gemini_key') || '';
     const savedModel = localStorage.getItem('pixlexpert_model') || 'gemini-2.0-flash';
     const savedBudget = localStorage.getItem('pixlexpert_budget') || '2.0';
-    const savedTheme = localStorage.getItem('pixlexpert_theme') || 'light';
 
     setGeminiApiKey(savedApiKey);
     setSelectedModel(savedModel);
     setTokenBudget(parseFloat(savedBudget));
-    setThemeMode(savedTheme);
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const handleSaveSettings = (e) => {
+  const handleSaveSettings = async (e) => {
     e.preventDefault();
     localStorage.setItem('pixlexpert_gemini_key', geminiApiKey);
     localStorage.setItem('pixlexpert_model', selectedModel);
     localStorage.setItem('pixlexpert_budget', tokenBudget.toString());
-    localStorage.setItem('pixlexpert_theme', themeMode);
 
-    const root = document.documentElement;
-    if (themeMode === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
+    try {
+      await fetch('/api/memory/preferences', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          preferred_model: selectedModel,
+          token_budget: tokenBudget,
+          gemini_key: geminiApiKey,
+          input_guardrail: inputGuardrail,
+          output_guardrail: outputGuardrail
+        })
+      });
+    } catch (err) {
+      console.warn('Backend preferences sync note:', err);
     }
 
     setSavedStatus(true);
+    toast.success('System preferences saved successfully!');
     setTimeout(() => {
       setSavedStatus(false);
       onClose();
-    }, 1000);
+    }, 800);
   };
 
   return (
