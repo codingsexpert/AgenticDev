@@ -677,9 +677,7 @@ export default function App() {
                     className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
-                      <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100 mb-2.5">
-                        <Code className="w-3.5 h-3.5" />
-                      </div>
+                      <Code className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-2.5" />
                       <h3 className="font-semibold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
                         Write Code
                       </h3>
@@ -698,10 +696,8 @@ export default function App() {
                     className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
-                      <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100 mb-2.5">
-                        <FileText className="w-3.5 h-3.5" />
-                      </div>
-                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-emerald-600 transition-colors mb-1">
+                      <FileText className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-2.5" />
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
                         Analyze Document
                       </h3>
                       <p className="text-[11px] text-slate-500 leading-snug">
@@ -709,7 +705,7 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
@@ -719,10 +715,8 @@ export default function App() {
                     className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
-                      <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100 mb-2.5">
-                        <Sparkles className="w-3.5 h-3.5" />
-                      </div>
-                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-amber-600 transition-colors mb-1">
+                      <Sparkles className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-2.5" />
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
                         Solve Problem
                       </h3>
                       <p className="text-[11px] text-slate-500 leading-snug">
@@ -730,7 +724,7 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
@@ -740,10 +734,8 @@ export default function App() {
                     className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
-                      <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 border border-purple-100 mb-2.5">
-                        <Search className="w-3.5 h-3.5" />
-                      </div>
-                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-purple-600 transition-colors mb-1">
+                      <Search className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-2.5" />
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
                         Research
                       </h3>
                       <p className="text-[11px] text-slate-500 leading-snug">
@@ -751,7 +743,7 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-600 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
                 </div>
