@@ -376,7 +376,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
 
         {/* Modal Footer */}
         <div className="px-6 py-3 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center text-xs">
-          <span className="text-slate-400">PixiExpert AI v2.5 • ChatGPT Style Interface</span>
+          <span className="text-slate-400 font-medium">PixiExpert AI Studio v2.5</span>
           <button
             type="button"
             onClick={onClose}
