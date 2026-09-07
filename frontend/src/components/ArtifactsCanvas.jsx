@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, Code, Eye, Copy, Check, FileText, Folder, RefreshCw, ExternalLink, Save, Rocket, LayoutList, ChevronRight, ChevronDown, FileJson, FileCode, FileType, File, FolderOpen, FilePlus, FolderPlus, Play, Terminal, Loader2, Maximize2, Minimize2, Trash2 } from 'lucide-react';
-import Editor from '@monaco-editor/react';
+import { Search, X, Code, Eye, Copy, Check, FileText, Folder, RefreshCw, ExternalLink, Save, Rocket, LayoutList, ChevronRight, ChevronDown, FileJson, FileCode, FileType, File, FolderOpen, FilePlus, FolderPlus, Play, Terminal, Loader2, Maximize2, Minimize2, Trash2, GitCompare, Split, Columns, Undo2 } from 'lucide-react';
+import Editor, { DiffEditor } from '@monaco-editor/react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -108,6 +108,8 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
   const [selectedFile, setSelectedFile] = useState('index.html');
   const [fileContent, setFileContent] = useState('');
   const [originalContent, setOriginalContent] = useState('');
+  const [editorMode, setEditorMode] = useState('editor'); // 'editor' | 'diff'
+  const [diffSideBySide, setDiffSideBySide] = useState(true);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -546,12 +548,73 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
 
           {/* Editor Viewer */}
           <div className="flex-1 flex flex-col bg-[#1e202e] overflow-hidden relative">
-            <div className="text-[10px] font-mono text-slate-300 px-4 py-2 border-b border-[#262a3c] bg-[#171926] flex items-center justify-between">
-              <span className="flex items-center space-x-2">
-                 <span className="font-semibold text-slate-200">{getCleanFilename(safeSelectedFile)}</span>
-                 {hasUnsavedChanges && <span className="w-2 h-2 rounded-full bg-blue-400 inline-block animate-pulse" title="Unsaved changes"></span>}
-              </span>
+            <div className="text-[10px] font-mono text-slate-300 px-4 py-2 border-b border-[#262a3c] bg-[#171926] flex items-center justify-between gap-2 flex-wrap">
+              {/* Left Side: Filename, Unsaved Badge & View Switcher (Editor vs Git Diff) */}
               <div className="flex items-center space-x-3">
+                <span className="flex items-center space-x-2">
+                   <span className="font-semibold text-slate-200">{getCleanFilename(safeSelectedFile)}</span>
+                   {hasUnsavedChanges && <span className="w-2 h-2 rounded-full bg-blue-400 inline-block animate-pulse" title="Unsaved changes"></span>}
+                </span>
+
+                {/* View Mode Switcher Pills */}
+                <div className="flex items-center space-x-1 bg-[#10121d] p-0.5 rounded-lg border border-[#2b3044]">
+                  <button
+                    type="button"
+                    onClick={() => setEditorMode('editor')}
+                    className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-[11px] font-sans font-semibold transition-all ${
+                      editorMode === 'editor'
+                        ? 'bg-indigo-600 text-white shadow-2xs'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-[#1a1d2e]'
+                    }`}
+                  >
+                    <Code className="w-3.5 h-3.5" />
+                    <span>Editor</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setEditorMode('diff')}
+                    className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-[11px] font-sans font-semibold transition-all ${
+                      editorMode === 'diff'
+                        ? 'bg-indigo-600 text-white shadow-2xs'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-[#1a1d2e]'
+                    }`}
+                    title="View Git-style code differences between original and modified code"
+                  >
+                    <GitCompare className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Git Diff View</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Side: Diff Format Switcher, Revert Button & Actions */}
+              <div className="flex items-center space-x-3">
+                 {editorMode === 'diff' && (
+                   <>
+                     <button
+                       type="button"
+                       onClick={() => setDiffSideBySide(!diffSideBySide)}
+                       className="text-xs text-slate-300 hover:text-white flex items-center space-x-1 font-sans bg-[#282c40] px-2 py-1 rounded-md border border-[#373d57] transition-all"
+                       title={diffSideBySide ? "Switch to Unified inline diff view" : "Switch to Side-by-Side split diff view"}
+                     >
+                       {diffSideBySide ? <Split className="w-3 h-3 text-indigo-400" /> : <Columns className="w-3 h-3 text-indigo-400" />}
+                       <span>{diffSideBySide ? 'Split' : 'Unified'}</span>
+                     </button>
+
+                     {hasUnsavedChanges && (
+                       <button
+                         type="button"
+                         onClick={() => setFileContent(originalContent)}
+                         className="text-xs text-rose-300 hover:text-rose-200 flex items-center space-x-1 font-sans bg-rose-950/40 border border-rose-900/60 px-2 py-1 rounded-md transition-all"
+                         title="Discard all changes and revert to original code"
+                       >
+                         <Undo2 className="w-3 h-3 text-rose-400" />
+                         <span>Revert</span>
+                       </button>
+                     )}
+                   </>
+                 )}
+
                  <button
                    onClick={handleOpenFind}
                    className="text-xs text-indigo-300 hover:text-indigo-200 flex items-center space-x-1 font-mono font-medium hover:underline cursor-pointer"
@@ -575,29 +638,50 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
             </div>
 
             <div className="flex-1 min-h-0 w-full relative">
-              <Editor
-                height="100%"
-                width="100%"
-                language={getLanguage(safeSelectedFile)}
-                theme="vs-dark"
-                value={fileContent}
-                onChange={(val) => setFileContent(val || '')}
-                onMount={handleEditorDidMount}
-                options={{
-                    minimap: { enabled: false },
-                    fontSize: 13,
-                    fontFamily: '"JetBrains Mono", "Fira Code", monospace',
-                    wordWrap: 'on',
-                    scrollBeyondLastLine: false,
-                    smoothScrolling: true,
-                    padding: { top: 16 },
-                    find: {
-                      addExtraSpaceOnTop: false,
-                      autoFindInSelection: 'never',
-                      seedSearchStringFromSelection: 'always'
-                    }
-                }}
-              />
+              {editorMode === 'editor' ? (
+                <Editor
+                  height="100%"
+                  width="100%"
+                  language={getLanguage(safeSelectedFile)}
+                  theme="vs-dark"
+                  value={fileContent}
+                  onChange={(val) => setFileContent(val || '')}
+                  onMount={handleEditorDidMount}
+                  options={{
+                      minimap: { enabled: false },
+                      fontSize: 13,
+                      fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+                      wordWrap: 'on',
+                      scrollBeyondLastLine: false,
+                      smoothScrolling: true,
+                      padding: { top: 16 },
+                      find: {
+                        addExtraSpaceOnTop: false,
+                        autoFindInSelection: 'never',
+                        seedSearchStringFromSelection: 'always'
+                      }
+                  }}
+                />
+              ) : (
+                <DiffEditor
+                  height="100%"
+                  width="100%"
+                  language={getLanguage(safeSelectedFile)}
+                  theme="vs-dark"
+                  original={originalContent}
+                  modified={fileContent}
+                  options={{
+                      minimap: { enabled: false },
+                      fontSize: 13,
+                      fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+                      renderSideBySide: diffSideBySide,
+                      readOnly: false,
+                      scrollBeyondLastLine: false,
+                      smoothScrolling: true,
+                      padding: { top: 16 }
+                  }}
+                />
+              )}
             </div>
 
             {/* Integrated Terminal Console Drawer (VS Code Resizable Panel) */}
