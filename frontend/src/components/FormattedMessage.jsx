@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Check, Copy, Code2, Eye, Play, Save, Sparkles, Bug, RefreshCw, MessageCircle, Terminal, Loader2, Folder, FileCode, FileJson, FileText, File, ExternalLink, Layers } from 'lucide-react';
+import { Check, Copy, Code2, Eye, Play, Save, Sparkles, Bug, RefreshCw, MessageCircle, Terminal, Loader2, Folder, FileCode, FileJson, FileText, File, ExternalLink, Layers, ChevronDown, ChevronUp } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { getCleanFilename } from '../utils/fileUtils';
@@ -28,6 +28,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
   const [copied, setCopied] = useState(false);
   const [applied, setApplied] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [showCode, setShowCode] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionResult, setExecutionResult] = useState(null);
   const previewRef = useRef(null);
@@ -57,6 +58,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
   const handleRunCode = async () => {
     setIsExecuting(true);
     setExecutionResult(null);
+    setShowCode(true);
     try {
       const res = await fetch('/api/run-code', {
         method: 'POST',
@@ -179,15 +181,15 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
     : cleanCurrentFilename;
 
   return (
-    <div className="my-5 flex flex-col bg-[#0d0f17] border border-slate-800/80 shadow-xl rounded-2xl overflow-hidden transition-all duration-200">
-      {/* macOS Window Bar + Top Card Header */}
+    <div className="my-4 flex flex-col bg-[#0d0f17] border border-slate-800/80 shadow-xl rounded-2xl overflow-hidden transition-all duration-200">
+      {/* Top Card Header (Claude Artifact Style Card) */}
       <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-[#131625] border-b border-slate-800/80 gap-3">
-        <div className="flex items-center space-x-3.5">
+        <div className="flex items-center space-x-3">
           {/* Mac Window Controls */}
-          <div className="flex items-center space-x-2 mr-1">
-            <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
-            <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
-            <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
+          <div className="flex items-center space-x-1.5 mr-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80 inline-block"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 inline-block"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 inline-block"></span>
           </div>
 
           <div className="w-8 h-8 rounded-xl bg-indigo-500/15 border border-indigo-400/30 flex items-center justify-center shrink-0 shadow-inner">
@@ -195,157 +197,88 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
           </div>
 
           <div>
-            <div className="text-sm font-bold tracking-tight text-white flex items-center space-x-2.5">
+            <div className="text-xs sm:text-sm font-bold tracking-tight text-white flex items-center space-x-2">
               <span>{projectTitle}</span>
-            </div>
-            <div className="text-[11px] text-slate-400 mt-0.5 flex items-center space-x-2 font-mono">
-              <span className="text-indigo-300/80">Saved in workspace sandbox</span>
-              <span className="text-slate-600">•</span>
-              <span className="text-slate-400 truncate max-w-[220px] sm:max-w-md">
-                {validBlocks.map(b => getCleanFilename(b.filename, b.language)).join(', ')}
+              <span className="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full font-mono border border-indigo-500/30">
+                {validBlocks.length} File{validBlocks.length > 1 ? 's' : ''}
               </span>
+            </div>
+            {/* File pills summary row */}
+            <div className="flex items-center space-x-1.5 mt-1 overflow-x-auto no-scrollbar">
+              {validBlocks.map((b, i) => (
+                <span key={i} className="inline-flex items-center space-x-1 text-[11px] font-mono bg-slate-900/90 text-slate-300 px-2 py-0.5 rounded-md border border-slate-800 shrink-0">
+                  {getFileIcon(getCleanFilename(b.filename, b.language), b.language)}
+                  <span>{getCleanFilename(b.filename, b.language)}</span>
+                </span>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Header Action Buttons (Only 1 Run Code Button) */}
+        {/* Action Controls */}
         <div className="flex items-center gap-2 shrink-0 flex-wrap">
-          {isExecutable && (
-            <button
-              onClick={handleRunCode}
-              disabled={isExecuting}
-              className="text-xs px-4 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-xl font-bold transition-colors duration-150 shadow-md flex items-center space-x-2 shrink-0 disabled:opacity-50 cursor-pointer border border-emerald-400/40 active:scale-95 hover:shadow-lg"
-              title="Execute code natively and view output console"
-            >
-              {isExecuting ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
-              ) : (
-                <Play className="w-3.5 h-3.5 fill-white text-white" />
-              )}
-              <span className="tracking-wide">{isExecuting ? 'Executing...' : 'Run Code'}</span>
-            </button>
-          )}
-
           {hasWebBlocks && (
             <button
-              onClick={() => setShowPreview(!showPreview)}
-              className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-colors duration-150 shrink-0 flex items-center space-x-2 cursor-pointer border active:scale-95 ${showPreview
-                ? 'bg-indigo-600 text-white border-indigo-400 shadow-md'
-                : 'bg-indigo-950/70 hover:bg-indigo-900/90 text-indigo-200 border-indigo-500/40 shadow-sm'
-                }`}
-              title="Toggle interactive live web preview"
+              onClick={() => {
+                setShowPreview(!showPreview);
+                if (!showPreview) setShowCode(false);
+              }}
+              className={`text-xs px-3 py-1.5 rounded-xl font-bold transition-all duration-150 shrink-0 flex items-center space-x-1.5 cursor-pointer border active:scale-95 ${
+                showPreview
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md'
+                  : 'bg-indigo-950/70 hover:bg-indigo-900/90 text-indigo-200 border-indigo-500/40 shadow-sm'
+              }`}
+              title="Show interactive live web preview"
             >
               <Eye className="w-3.5 h-3.5" />
-              <span>{showPreview ? 'Hide Preview' : 'Live Preview'}</span>
-            </button>
-          )}
-
-          {activeSandboxId && (
-            <button
-              onClick={handleApplyAll}
-              className="text-xs px-3.5 py-1.5 bg-indigo-600/90 hover:bg-indigo-500 text-white rounded-xl font-semibold transition-colors duration-150 shrink-0 border border-indigo-400/40 flex items-center space-x-2 cursor-pointer active:scale-95 shadow-md"
-              title="Save all files directly to sandbox workspace"
-            >
-              {applied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Save className="w-3.5 h-3.5" />}
-              <span>{applied ? 'Saved All' : 'Save All'}</span>
+              <span>{showPreview ? 'Hide Preview' : 'Show Preview'}</span>
             </button>
           )}
 
           <button
             onClick={() => onOpenCodeBlock && onOpenCodeBlock(validBlocks)}
-            className="text-xs px-3.5 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-indigo-300 hover:text-white rounded-xl font-semibold transition-colors duration-150 shrink-0 border border-indigo-500/40 hover:border-indigo-400 flex items-center space-x-2 shadow-md cursor-pointer active:scale-95"
-            title="Open full interactive Workspace IDE canvas"
+            className="text-xs px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl font-semibold transition-all duration-150 shrink-0 border border-indigo-400/40 flex items-center space-x-1.5 shadow-md cursor-pointer active:scale-95"
+            title="Open full interactive Workspace IDE"
           >
-            <Layers className="w-3.5 h-3.5 text-indigo-400" />
+            <Layers className="w-3.5 h-3.5 text-indigo-200" />
             <span>Open Workspace IDE</span>
           </button>
-        </div>
-      </div>
 
-      {/* Multi-File Tab Bar (Clean, No multi-color rainbow line) */}
-      <div className="flex items-center space-x-1 px-3 pt-2 bg-[#0c0d12] border-b border-slate-800/80 overflow-x-auto no-scrollbar">
-        {validBlocks.map((block, idx) => {
-          const isActive = idx === activeTabIndex;
-          const cleanName = getCleanFilename(block.filename, block.language);
-          return (
-            <button
-              key={idx}
-              onClick={() => setActiveTabIndex(idx)}
-              className={`flex items-center space-x-2.5 px-4 py-2 rounded-t-xl text-xs font-mono transition-all duration-200 shrink-0 cursor-pointer ${isActive
-                ? 'bg-[#181b28] text-white font-semibold border-t border-x border-slate-700/80 shadow-md'
-                : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
-                }`}
-            >
-              {getFileIcon(cleanName, block.language)}
-              <span>{cleanName}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Syntax Editor Box Container (Clean Header with NO "FILE: FILE: MAIN.CPP") */}
-      <div className="bg-[#07080c] relative">
-        <div className="bg-[#13151f] px-4 py-2 border-b border-slate-800/80 flex items-center justify-between text-slate-300 font-mono text-[11px]">
-          <span className="flex items-center space-x-2 font-bold text-indigo-300 tracking-wider">
-            {getFileIcon(cleanCurrentFilename, currentBlock.language)}
-            <span>{cleanCurrentFilename}</span>
-          </span>
           <button
-            type="button"
-            onClick={handleCopy}
-            className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 text-slate-200 text-[11px] transition-all cursor-pointer font-sans active:scale-95 shadow-sm"
+            onClick={() => setShowCode(!showCode)}
+            className={`text-xs px-3 py-1.5 rounded-xl font-medium transition-all duration-150 shrink-0 flex items-center space-x-1.5 cursor-pointer border active:scale-95 ${
+              showCode
+                ? 'bg-slate-800 text-white border-slate-600'
+                : 'bg-slate-900/90 text-slate-400 hover:text-slate-200 border-slate-800'
+            }`}
+            title="Toggle raw code drawer in chat"
           >
-            {copied ? (
-              <>
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-400 font-bold">Copied!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="w-3.5 h-3.5 text-slate-400" />
-                <span>Copy code</span>
-              </>
-            )}
+            <Code2 className="w-3.5 h-3.5 text-indigo-400" />
+            <span>{showCode ? 'Hide Code' : 'Show Code'}</span>
+            {showCode ? <ChevronUp className="w-3 h-3 ml-0.5" /> : <ChevronDown className="w-3 h-3 ml-0.5" />}
           </button>
-        </div>
 
-        <div className="overflow-x-auto selection:bg-indigo-500/40 font-mono text-[13px] p-2">
-          <SyntaxHighlighter
-            language={langLower === 'html' ? 'xml' : langLower === 'jsx' ? 'javascript' : langLower || 'javascript'}
-            style={vscDarkPlus}
-            customStyle={{ margin: 0, padding: '18px', background: 'transparent', fontSize: '13px', lineHeight: '1.6' }}
-            wrapLines={true}
-          >
-            {currentBlock.code}
-          </SyntaxHighlighter>
+          {isExecutable && (
+            <button
+              onClick={handleRunCode}
+              disabled={isExecuting}
+              className="text-xs px-3 py-1.5 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-xl font-bold transition-all duration-150 shadow-md flex items-center space-x-1.5 shrink-0 border border-emerald-400/40 cursor-pointer active:scale-95"
+              title="Execute code natively"
+            >
+              {isExecuting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5 fill-white" />}
+              <span>{isExecuting ? 'Running...' : 'Run Code'}</span>
+            </button>
+          )}
         </div>
-
-        {/* Integrated High-Tech Terminal Console */}
-        {executionResult !== null && (
-          <div className="border-t border-slate-800/80 bg-[#050609] p-4 font-mono text-[11.5px] sm:text-xs">
-            <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-800/60">
-              <div className="flex items-center space-x-2 text-slate-300">
-                <Terminal className="w-3.5 h-3.5 text-indigo-400" />
-                <span className="font-semibold uppercase tracking-wider text-[11px] text-slate-200">Terminal Output</span>
-              </div>
-              <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-semibold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                {executionResult.exit_code === 0 ? 'EXIT CODE: 0 (SUCCESS)' : executionResult.exit_code ? `EXIT CODE: ${executionResult.exit_code}` : 'EXECUTED'}
-              </span>
-            </div>
-            <div className="text-slate-200 whitespace-pre-wrap font-mono p-4 bg-[#0c0e17] rounded-xl border border-slate-800/80 max-h-[320px] overflow-y-auto leading-relaxed shadow-inner">
-              {executionResult.output || 'No output produced.'}
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Interactive Combined Live Preview Panel */}
+      {/* Interactive Live Web Sandbox Preview (If showPreview is ON) */}
       {showPreview && (
         <div ref={previewRef} className="border-t border-slate-800/80 bg-slate-900">
-          <div className="flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-slate-900 via-indigo-950/60 to-slate-900 border-b border-slate-800 text-xs text-slate-200 font-mono">
+          <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-slate-900 via-indigo-950/60 to-slate-900 border-b border-slate-800 text-xs text-slate-200 font-mono">
             <span className="flex items-center space-x-2 font-bold text-white">
               <Play className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
-              <span>Interactive Live Web Sandbox Preview ({validBlocks.length} File{validBlocks.length > 1 ? 's' : ''})</span>
+              <span>Live Web Preview ({validBlocks.length} File{validBlocks.length > 1 ? 's' : ''})</span>
             </span>
             {activeSandboxId && (
               <a
@@ -353,7 +286,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-white flex items-center space-x-1 font-semibold text-indigo-300 bg-indigo-900/60 hover:bg-indigo-800 px-2.5 py-1 rounded-md border border-indigo-500/40 text-[11px] transition-colors"
-                title="Open Web App in New Browser Tab"
+                title="Open Web App in New Tab"
               >
                 <ExternalLink className="w-3 h-3" />
                 <span>Open in New Tab</span>
@@ -362,10 +295,92 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
           </div>
           <iframe
             srcDoc={getCombinedSrcDoc()}
-            title="Combined Live Code Preview"
+            title="Live Code Preview"
             className="w-full h-80 sm:h-96 border-none bg-white shadow-2xl"
             sandbox="allow-scripts allow-modals"
           />
+        </div>
+      )}
+
+      {/* Code Drawer Container (Only visible when showCode is TRUE) */}
+      {showCode && (
+        <div className="border-t border-slate-800/80 bg-[#07080c]">
+          {/* Multi-File Tab Bar */}
+          <div className="flex items-center space-x-1 px-3 pt-2 bg-[#0c0d12] border-b border-slate-800/80 overflow-x-auto no-scrollbar">
+            {validBlocks.map((block, idx) => {
+              const isActive = idx === activeTabIndex;
+              const cleanName = getCleanFilename(block.filename, block.language);
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setActiveTabIndex(idx)}
+                  className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-t-xl text-xs font-mono transition-all duration-200 shrink-0 cursor-pointer ${
+                    isActive
+                      ? 'bg-[#181b28] text-white font-semibold border-t border-x border-slate-700/80 shadow-md'
+                      : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
+                  }`}
+                >
+                  {getFileIcon(cleanName, block.language)}
+                  <span>{cleanName}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="bg-[#13151f] px-4 py-2 border-b border-slate-800/80 flex items-center justify-between text-slate-300 font-mono text-[11px]">
+            <span className="flex items-center space-x-2 font-bold text-indigo-300 tracking-wider">
+              {getFileIcon(cleanCurrentFilename, currentBlock.language)}
+              <span>{cleanCurrentFilename}</span>
+            </span>
+            <div className="flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={handleCopy}
+                className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 text-slate-200 text-[11px] transition-all cursor-pointer font-sans active:scale-95 shadow-sm"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="text-emerald-400 font-bold">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Copy code</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto selection:bg-indigo-500/40 font-mono text-[13px] p-2 max-h-[450px]">
+            <SyntaxHighlighter
+              language={langLower === 'html' ? 'xml' : langLower === 'jsx' ? 'javascript' : langLower || 'javascript'}
+              style={vscDarkPlus}
+              customStyle={{ margin: 0, padding: '18px', background: 'transparent', fontSize: '13px', lineHeight: '1.6' }}
+              wrapLines={true}
+            >
+              {currentBlock.code}
+            </SyntaxHighlighter>
+          </div>
+
+          {/* Integrated Terminal Console */}
+          {executionResult !== null && (
+            <div className="border-t border-slate-800/80 bg-[#050609] p-4 font-mono text-[11.5px] sm:text-xs">
+              <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-800/60">
+                <div className="flex items-center space-x-2 text-slate-300">
+                  <Terminal className="w-3.5 h-3.5 text-indigo-400" />
+                  <span className="font-semibold uppercase tracking-wider text-[11px] text-slate-200">Terminal Output</span>
+                </div>
+                <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-semibold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                  {executionResult.exit_code === 0 ? 'EXIT CODE: 0 (SUCCESS)' : executionResult.exit_code ? `EXIT CODE: ${executionResult.exit_code}` : 'EXECUTED'}
+                </span>
+              </div>
+              <div className="text-slate-200 whitespace-pre-wrap font-mono p-4 bg-[#0c0e17] rounded-xl border border-slate-800/80 max-h-[320px] overflow-y-auto leading-relaxed shadow-inner">
+                {executionResult.output || 'No output produced.'}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

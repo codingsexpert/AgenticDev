@@ -350,12 +350,68 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
 
         if not stream_success:
             user_msg_clean = raw_last_user_msg.strip().lower()
+
+            # Smart active workspace fallback interceptor for multi-turn edits & follow-ups
+            if sandbox_id:
+                try:
+                    from src.utils.sandbox_manager import list_files, read_file, get_sandbox_path
+                    sb_path = get_sandbox_path(sandbox_id)
+                    if os.path.exists(sb_path):
+                        existing_files = list_files(sandbox_id)
+                        if existing_files:
+                            html_content = ""
+                            css_content = ""
+                            js_content = ""
+                            for f in existing_files:
+                                fp = f.get("path", "")
+                                if fp == "index.html":
+                                    html_content = read_file(sandbox_id, fp)
+                                elif fp == "style.css":
+                                    css_content = read_file(sandbox_id, fp)
+                                elif fp == "script.js":
+                                    js_content = read_file(sandbox_id, fp)
+
+                            # Check for theme / style / modification requests
+                            is_light = any(w in user_msg_clean for w in ["light", "white", "bright", "halka"])
+                            is_dark = any(w in user_msg_clean for w in ["dark", "black", "night", "kala"])
+                            is_mod = any(w in user_msg_clean for w in ["theme", "color", "change", "modify", "update", "fix", "add", "bnao", "karo", "make", "edit", "style"])
+
+                            if (is_light or is_dark or is_mod) and (html_content or css_content or js_content):
+                                if is_light and html_content:
+                                    html_content = html_content.replace("bg-slate-950", "bg-slate-50")
+                                    html_content = html_content.replace("text-slate-100", "text-slate-900")
+                                    html_content = html_content.replace("bg-slate-900/90", "bg-white/90")
+                                    html_content = html_content.replace("bg-slate-900", "bg-white")
+                                    html_content = html_content.replace("border-slate-800", "border-slate-200")
+                                    html_content = html_content.replace("text-white", "text-slate-900")
+                                    html_content = html_content.replace("bg-slate-800", "bg-slate-100")
+                                    html_content = html_content.replace("text-slate-400", "text-slate-600")
+                                    if css_content:
+                                        css_content = css_content.replace("#0f172a", "#f8fafc").replace("#1e1b4b", "#e0e7ff").replace("color: #ffffff", "color: #0f172a")
+
+                                elif is_dark and html_content:
+                                    html_content = html_content.replace("bg-slate-50", "bg-slate-950")
+                                    html_content = html_content.replace("text-slate-900", "text-slate-100")
+                                    html_content = html_content.replace("bg-white/90", "bg-slate-900/90")
+                                    html_content = html_content.replace("border-slate-200", "border-slate-800")
+
+                                fallback_reply = "Updated the project workspace files as requested!\n\n"
+                                if html_content:
+                                    fallback_reply += f"```html\n<!-- File: index.html -->\n{html_content}\n```\n\n"
+                                if css_content:
+                                    fallback_reply += f"```css\n/* File: style.css */\n{css_content}\n```\n\n"
+                                if js_content:
+                                    fallback_reply += f"```javascript\n// File: script.js\n{js_content}\n```\n"
+                except Exception as ex:
+                    print(f"Fallback workspace edit error: {ex}")
+
             greetings = ["hi", "hlo", "hello", "hey", "namaste", "kaise ho", "good morning", "good evening", "who are you", "help"]
-            
-            if any(g in user_msg_clean for g in greetings):
-                fallback_reply = "Hello! 👋 I am **PixiExpert**, your AI software assistant. How can I help you build your project or answer your questions today?"
-            elif "weather" in user_msg_clean:
-                fallback_reply = """```html
+
+            if full_text == "":
+                if any(g in user_msg_clean for g in greetings):
+                    fallback_reply = "Hello! 👋 I am **PixiExpert**, your AI software assistant. How can I help you build your project or answer your questions today?"
+                elif "weather" in user_msg_clean:
+                    fallback_reply = """```html
 <!-- File: index.html -->
 <!DOCTYPE html>
 <html lang="en">
@@ -439,8 +495,8 @@ function getWeather() {
     document.getElementById('wind').textContent = city.wind;
 }
 ```"""
-            elif "to do" in user_msg_clean or "todo" in user_msg_clean or "task" in user_msg_clean:
-                fallback_reply = """```html
+                elif "to do" in user_msg_clean or "todo" in user_msg_clean or "task" in user_msg_clean:
+                    fallback_reply = """```html
 <!-- File: index.html -->
 <!DOCTYPE html>
 <html lang="en">
@@ -530,8 +586,8 @@ function deleteTask(index) {
 
 renderTasks();
 ```"""
-            elif "calculator" in user_msg_clean or "buil" in user_msg_clean:
-                fallback_reply = """```html
+                elif "calculator" in user_msg_clean or "buil" in user_msg_clean:
+                    fallback_reply = """```html
 <!-- File: index.html -->
 <!DOCTYPE html>
 <html lang="en">
@@ -600,8 +656,8 @@ function appendNumber(num) { currentInput = (currentInput === '0' || currentInpu
 function appendOperator(op) { if (currentInput === 'Error') return; const last = currentInput.slice(-1); if (['+','-','*','/'].includes(last)) currentInput = currentInput.slice(0,-1) + op; else currentInput += op; updateDisplay(); }
 function calculateResult() { try { currentInput = eval(currentInput).toString(); } catch (e) { currentInput = 'Error'; } updateDisplay(); }
 ```"""
-            elif "table" in user_msg_clean or "student" in user_msg_clean:
-                fallback_reply = """```html
+                elif "table" in user_msg_clean or "student" in user_msg_clean:
+                    fallback_reply = """```html
 <!-- File: index.html -->
 <!DOCTYPE html>
 <html lang="en">
@@ -632,42 +688,8 @@ function calculateResult() { try { currentInput = eval(currentInput).toString();
 </body>
 </html>
 ```"""
-            elif "java" in user_msg_clean and ("hello world" in user_msg_clean or "print" in user_msg_clean or "code" in user_msg_clean or "program" in user_msg_clean):
-                fallback_reply = """```java
-// File: HelloWorld.java
-public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
-}
-```"""
-            elif "c++" in user_msg_clean or "cpp" in user_msg_clean:
-                fallback_reply = """```cpp
-// File: main.cpp
-#include <iostream>
-
-int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
-}
-```"""
-            elif re.search(r'\bc\b', user_msg_clean) and ("code" in user_msg_clean or "program" in user_msg_clean or "hello world" in user_msg_clean):
-                fallback_reply = """```c
-// File: main.c
-#include <stdio.h>
-
-int main() {
-    printf("Hello, World!\\n");
-    return 0;
-}
-```"""
-            elif "python" in user_msg_clean:
-                fallback_reply = """```python
-# File: main.py
-print("Hello, World!")
-```"""
-            elif any(w in user_msg_clean for w in ["build", "create", "make", "app", "website", "application", "dashboard"]):
-                fallback_reply = """```html
+                elif any(w in user_msg_clean for w in ["build", "create", "make", "app", "website", "application", "dashboard", "portfolio"]):
+                    fallback_reply = """```html
 <!-- File: index.html -->
 <!DOCTYPE html>
 <html lang="en">
@@ -708,10 +730,9 @@ function triggerAction() {
     res.classList.remove('hidden');
 }
 ```"""
-            else:
-                fallback_reply = "I am **PixiExpert**, your AI software assistant. I can help you build full-stack web applications, write and debug code, analyze data, and manage your project workspace."
+                else:
+                    fallback_reply = "I am **PixiExpert**, your AI software assistant. I can help you build full-stack web applications, write and debug code, analyze data, and manage your project workspace."
 
-            if full_text == "":
                 full_text = fallback_reply
                 if req.thread_id:
                     from src.utils.sandbox_manager import extract_and_write_code_files, reconnect_sandbox
