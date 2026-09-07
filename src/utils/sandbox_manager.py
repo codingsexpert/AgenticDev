@@ -315,13 +315,14 @@ def extract_and_write_code_files(sandbox_id: str, markdown_text: str) -> List[Di
     Parses code blocks containing file path metadata (e.g. ```python file="src/server.py" or // File: src/main.py)
     and automatically writes those files and creates parent folders physically on disk.
     If no explicit file annotations exist, infers sensible default paths (index.html, style.css, script.js, main.py).
+    Includes auto-scaffolding heuristics for missing index.html or package.json files.
     """
     if not sandbox_id or not markdown_text:
         return []
 
     written_files = []
 
-    # Pattern 1: ```python file="app.py"
+    # Pattern 1: ```python file="app.py" or ```jsx path="src/App.jsx"
     p1 = r'```[\w\-]*\s+(?:file|path)=["\']?([^\n"\'\s]+)["\']?\n(.*?)```'
     for rel_path, content in re.findall(p1, markdown_text, re.DOTALL):
         rel_path = rel_path.strip().lstrip("./")
@@ -332,11 +333,22 @@ def extract_and_write_code_files(sandbox_id: str, markdown_text: str) -> List[Di
             except Exception:
                 pass
 
-    # Pattern 2: ```html\n<!-- File: index.html -->
+    # Pattern 2: ```html\n<!-- File: index.html --> or // File: src/App.jsx or // src/App.jsx
     p2 = r'```[\w\-]*\n\s*(?://|#|/\*|<!--)\s*(?:File|Path):\s*([^\n\s]+?)(?:\s*\*/|\s*-->)?\n(.*?)```'
     for rel_path, content in re.findall(p2, markdown_text, re.DOTALL):
         rel_path = rel_path.strip().lstrip("./")
         if rel_path and not any(f["path"] == rel_path for f in written_files):
+            try:
+                write_file(sandbox_id, rel_path, content.strip())
+                written_files.append({"path": rel_path, "bytes": len(content), "content": content.strip()})
+            except Exception:
+                pass
+
+    # Pattern 2b: ```javascript\n// src/components/Header.jsx (direct file path comment)
+    p2b = r'```[\w\-]*\n\s*(?://|#|/\*|<!--)\s*([a-zA-Z0-9_\-/\.]+\.[a-zA-Z0-9]+)(?:\s*\*/|\s*-->)?\n(.*?)```'
+    for rel_path, content in re.findall(p2b, markdown_text, re.DOTALL):
+        rel_path = rel_path.strip().lstrip("./")
+        if rel_path and "." in os.path.basename(rel_path) and not any(f["path"] == rel_path for f in written_files):
             try:
                 write_file(sandbox_id, rel_path, content.strip())
                 written_files.append({"path": rel_path, "bytes": len(content), "content": content.strip()})
@@ -361,7 +373,7 @@ def extract_and_write_code_files(sandbox_id: str, markdown_text: str) -> List[Di
             inferred_path = "index.html" if not any(f["path"] == "index.html" for f in written_files) else f"index_{idx}.html"
         elif lang_clean in ["css"]:
             inferred_path = "style.css" if not any(f["path"] == "style.css" for f in written_files) else f"style_{idx}.css"
-        elif lang_clean in ["javascript", "js", "jsx"]:
+        elif lang_clean in ["javascript", "js", "jsx", "tsx"]:
             inferred_path = "script.js" if not any(f["path"] == "script.js" for f in written_files) else f"script_{idx}.js"
         elif lang_clean in ["python", "py"]:
             inferred_path = "main.py" if not any(f["path"] == "main.py" for f in written_files) else f"main_{idx}.py"
@@ -374,8 +386,30 @@ def extract_and_write_code_files(sandbox_id: str, markdown_text: str) -> List[Di
             except Exception:
                 pass
 
-    # Clean out internal 'content' key before returning
-    for f in written_files:
-        f.pop("content", None)
+    # Auto-Scaffolding Heuristic: If index.html is missing but React/JSX files were written, auto-create index.html wrapper
+    has_html = any(f["path"] == "index.html" for f in written_files)
+    jsx_files = [f["path"] for f in written_files if f["path"].endswith((".jsx", ".tsx", ".js"))]
+    
+    if not has_html and jsx_files:
+        main_entry = next((f for f in jsx_files if "App" in f or "main" in f or "index" in f), jsx_files[0])
+        auto_html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Workspace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased">
+    <div id="root"></div>
+    <script type="module" src="./{main_entry}"></script>
+</body>
+</html>"""
+        try:
+            write_file(sandbox_id, "index.html", auto_html_content)
+            written_files.append({"path": "index.html", "bytes": len(auto_html_content)})
+        except Exception:
+            pass
 
     return written_files
+
