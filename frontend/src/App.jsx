@@ -542,7 +542,7 @@ export default function App() {
       {/* 2. Main Content Area */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative w-full min-w-0">
         {/* Minimal Professional Top Header Bar */}
-        <header className="h-14 border-b border-slate-200/70 px-4 sm:px-6 flex items-center justify-between bg-white/80 backdrop-blur-md z-20 shrink-0 gap-3">
+        <header className="h-14 border-b border-slate-200/70 px-4 sm:px-6 flex items-center justify-between bg-white/90 backdrop-blur-md z-40 shrink-0 gap-3 relative">
           {/* Left: Expand Sidebar Button (only when sidebar is closed) & Session Title */}
           <div className="flex items-center space-x-3 shrink-0">
             {!sidebarOpen && (
@@ -752,7 +752,7 @@ export default function App() {
         <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative min-h-0 clean-ambient-bg">
           {hasContent ? (
             /* Active Conversation View */
-            <div className="flex-1 flex flex-col h-full overflow-hidden min-h-0 bg-white/90 backdrop-blur-md border-r border-slate-200/70 z-30">
+            <div className="flex-1 flex flex-col h-full overflow-hidden min-h-0 bg-white/90 backdrop-blur-md border-r border-slate-200/70 z-10">
               <ChatTimeline
                 messages={messages}
                 nodeHistory={nodeHistory}
