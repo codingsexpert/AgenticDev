@@ -373,8 +373,17 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
           </div>
         )}
 
-        {/* Text Area Input */}
-        <div className="flex items-start mb-2">
+        {/* Text Area Input with Paperclip Icon on Left */}
+        <div className="flex items-start space-x-2.5 mb-2">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            title="Attach File or Image"
+            className="p-1 text-slate-400 hover:text-indigo-600 transition-colors mt-1 shrink-0 cursor-pointer"
+          >
+            <Paperclip className="w-4.5 h-4.5 text-slate-400 hover:text-indigo-600" />
+          </button>
+
           <textarea
             ref={textareaRef}
             rows={1}
@@ -386,7 +395,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
             }}
             onKeyDown={handleKeyDown}
             placeholder="Type your message here..."
-            className="w-full bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none resize-none font-sans min-h-[36px] max-h-[160px] leading-relaxed px-1"
+            className="w-full bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none resize-none font-sans min-h-[36px] max-h-[160px] leading-relaxed pt-0.5"
           />
         </div>
 
@@ -462,16 +471,6 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
               ref={kbInputRef} 
               onChange={handleKbUpload} 
             />
-
-            {/* Media / File Attachment Button */}
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              title="Attach File or Image"
-              className="p-2 rounded-full text-slate-400 hover:text-indigo-600 hover:bg-slate-100 transition-all cursor-pointer"
-            >
-              <Paperclip className="w-4 h-4 text-slate-500 hover:text-indigo-600" />
-            </button>
 
             {/* Voice Microphone Button */}
             <button

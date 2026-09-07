@@ -642,10 +642,8 @@ export default function App() {
                   setShowCanvas(true);
                 }}
               />
-              <div className="w-full bg-white/80 backdrop-blur-xl border-t border-slate-200/70 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] px-3 py-3 sm:px-4 shrink-0 z-30">
-                <div className="max-w-3xl mx-auto w-full">
-                  <PromptBar onSubmit={handlePromptSubmit} isLoading={isLoading} onStop={handleStopGeneration} mode={mode} setMode={setMode} />
-                </div>
+              <div className="p-3 sm:p-4 max-w-3xl mx-auto w-full shrink-0">
+                <PromptBar onSubmit={handlePromptSubmit} isLoading={isLoading} onStop={handleStopGeneration} mode={mode} setMode={setMode} />
               </div>
             </div>
           ) : (
