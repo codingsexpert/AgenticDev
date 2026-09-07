@@ -13,7 +13,8 @@ import {
   Folder,
   ArrowRight,
   Plus,
-  PanelLeftClose
+  PanelLeftClose,
+  Trash2
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -65,7 +66,18 @@ export default function Sidebar({
 
   const handleNavClick = (navName) => {
     setActiveNav(navName);
-    if (navName === 'Chat') onNewProject();
+    if (navName === 'Chat') {
+      onNewProject();
+    } else if (navName === 'Knowledge') {
+      if (onPromptAction) onPromptAction('Show available Knowledge Base documents and developer context');
+    } else if (navName === 'Tools') {
+      if (onPromptAction) onPromptAction('List active system development tools, terminal and capabilities');
+    } else if (navName === 'Settings') {
+      if (onOpenAuth) onOpenAuth();
+    } else if (navName === 'Projects') {
+      if (onPromptAction) onPromptAction('Show summary of all recent projects and active code workspaces');
+    }
+
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       setSidebarOpen(false);
     }
@@ -111,10 +123,10 @@ export default function Sidebar({
     : defaultRecentChats;
 
   const sampleProjects = [
-    { id: 'proj-1', title: 'College Management System', updated: 'Updated 2 days ago' },
-    { id: 'proj-2', title: 'E-commerce Website', updated: 'Updated 3 days ago' },
-    { id: 'proj-3', title: 'Portfolio Website', updated: 'Updated 5 days ago' },
-    { id: 'proj-4', title: 'Task Manager', updated: 'Updated 1 week ago' },
+    { id: 'proj-1', title: 'College Management System', prompt: 'Build a full-stack College Management System web app with student records and admin dashboard', updated: 'Updated 2 days ago' },
+    { id: 'proj-2', title: 'E-commerce Website', prompt: 'Create a modern E-commerce Storefront web application with shopping cart and product grid', updated: 'Updated 3 days ago' },
+    { id: 'proj-3', title: 'Portfolio Website', prompt: 'Build a developer portfolio website with interactive projects showcase and glassmorphic UI', updated: 'Updated 5 days ago' },
+    { id: 'proj-4', title: 'Task Manager', prompt: 'Create a Task Manager app with kanban board and drag-and-drop task status', updated: 'Updated 1 week ago' },
   ];
 
   return (
@@ -211,9 +223,9 @@ export default function Sidebar({
                         : 'border-transparent hover:bg-slate-100/70 hover:border-slate-200/60'
                     }`}
                   >
-                    <div className="flex items-center space-x-2.5 truncate">
+                    <div className="flex items-center space-x-2.5 truncate min-w-0 flex-1">
                       <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-indigo-600' : 'text-slate-400 group-hover:text-indigo-600'} transition-colors`} />
-                      <div className="truncate text-left leading-tight">
+                      <div className="truncate text-left leading-tight min-w-0 flex-1">
                         <div className={`font-medium text-xs truncate ${isSelected ? 'text-indigo-900 font-semibold' : 'text-slate-800 group-hover:text-indigo-600'} transition-colors`}>
                           {chat.title}
                         </div>
@@ -221,7 +233,22 @@ export default function Sidebar({
                       </div>
                     </div>
 
-                    <ChevronRight className={`w-3.5 h-3.5 ${isSelected ? 'text-indigo-500' : 'text-slate-300 group-hover:text-slate-500'} group-hover:translate-x-0.5 transition-all shrink-0 ml-1`} />
+                    <div className="flex items-center space-x-1 shrink-0 ml-1">
+                      {onDeleteProject && chat.thread_id && !chat.thread_id.startsWith('chat-') && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteProject(chat.thread_id);
+                          }}
+                          title="Delete Chat Session"
+                          className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <ChevronRight className={`w-3.5 h-3.5 ${isSelected ? 'text-indigo-500' : 'text-slate-300 group-hover:text-slate-500'} group-hover:translate-x-0.5 transition-all`} />
+                    </div>
                   </div>
                 );
               })}
@@ -239,7 +266,7 @@ export default function Sidebar({
                 <div
                   key={proj.id}
                   onClick={() => {
-                    if (onPromptAction) onPromptAction(`Open sample project: ${proj.title}`);
+                    if (onPromptAction) onPromptAction(proj.prompt);
                     if (typeof window !== 'undefined' && window.innerWidth < 1024) setSidebarOpen(false);
                   }}
                   className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100/70 transition-all cursor-pointer group border border-transparent hover:border-slate-200/60"
