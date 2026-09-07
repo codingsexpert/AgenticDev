@@ -1,0 +1,64 @@
+{
+  "thread_id": "session_1788753187361",
+  "title": "Show available Knowledge Base do",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Show available Knowledge Base documents and developer context",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "I am ready to help! Note: To generate AI responses, please make sure your `GEMINI_API_KEY` in `.env` is set to a valid API key from [Google AI Studio](https://aistudio.google.com/apikey)."
+    },
+    {
+      "role": "user",
+      "content": "List active system development tools, terminal and capabilities",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "I am ready to help! Note: To generate AI responses, please make sure your `GEMINI_API_KEY` in `.env` is set to a valid API key from [Google AI Studio](https://aistudio.google.com/apikey)."
+    },
+    {
+      "role": "user",
+      "content": "Show available Knowledge Base documents and developer context",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "I am ready to help! Note: To generate AI responses, please make sure your `GEMINI_API_KEY` in `.env` is set to a valid API key from [Google AI Studio](https://aistudio.google.com/apikey)."
+    },
+    {
+      "role": "user",
+      "content": "Show available Knowledge Base documents and developer context",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "I am ready to help! Note: To generate AI responses, please make sure your `GEMINI_API_KEY` in `.env` is set to a valid API key from [Google AI Studio](https://aistudio.google.com/apikey)."
+    },
+    {
+      "role": "user",
+      "content": "List active system development tools, terminal and capabilities",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "I am ready to help! Note: To generate AI responses, please make sure your `GEMINI_API_KEY` in `.env` is set to a valid API key from [Google AI Studio](https://aistudio.google.com/apikey)."
+    },
+    {
+      "role": "user",
+      "content": "List active system development tools, terminal and capabilities",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "I am ready to help! Note: To generate AI responses, please make sure your `GEMINI_API_KEY` in `.env` is set to a valid API key from [Google AI Studio](https://aistudio.google.com/apikey)."
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_guest_f528764d624d",
+  "updated_at": 1788753259.32042
+}
