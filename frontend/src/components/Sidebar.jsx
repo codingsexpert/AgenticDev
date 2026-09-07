@@ -127,7 +127,7 @@ export default function Sidebar({
       )}
 
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto bg-white border-r border-slate-200/80 flex flex-col transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none shrink-0 ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto bg-white/80 backdrop-blur-md border-r border-slate-200/60 flex flex-col transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none shrink-0 ${
           sidebarOpen
             ? 'translate-x-0 w-72 lg:w-[270px] lg:opacity-100'
             : '-translate-x-full lg:translate-x-0 lg:w-0 lg:opacity-0 lg:overflow-hidden lg:border-none'
@@ -261,7 +261,7 @@ export default function Sidebar({
         </div>
 
         {/* Bottom User Profile */}
-        <div className="p-3 border-t border-slate-100 bg-white shrink-0">
+        <div className="p-3 border-t border-slate-100/60 bg-transparent shrink-0">
           <div 
             onClick={() => {
               if (!user && onOpenAuth) onOpenAuth();

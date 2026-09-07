@@ -508,7 +508,7 @@ export default function App() {
       {/* 2. Main Content Area */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative w-full min-w-0">
         {/* Minimal Top Header Bar matching Reference UI */}
-        <header className="h-14 border-b border-slate-200/70 px-4 sm:px-6 flex items-center justify-between bg-white z-20 shrink-0 gap-4">
+        <header className="h-14 border-b border-slate-200/60 px-4 sm:px-6 flex items-center justify-between bg-white/70 backdrop-blur-md z-20 shrink-0 gap-4">
           {/* Left: Sidebar Toggle Button & Wide Search Bar */}
           <div className="flex items-center space-x-3 flex-1 max-w-lg">
             <button
