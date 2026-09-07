@@ -339,10 +339,10 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
         </div>
       </div>
 
-      {/* Clean Rounded Rectangular Composer matching Reference Design */}
+      {/* Clean Rounded Rectangular Composer with Multi-Gradient Card Glow */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs focus-within:shadow-md focus-within:border-slate-300 transition-all duration-200 relative w-full"
+        className="multi-gradient-card p-4 rounded-2xl border border-slate-200 shadow-md transition-all duration-200 relative w-full"
       >
         {/* Attachments Preview Area */}
         {attachments.length > 0 && (
@@ -381,7 +381,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
             type="button"
             onClick={() => fileInputRef.current?.click()}
             title="Attach File"
-            className="p-1 text-slate-400 hover:text-slate-600 transition-colors mt-0.5"
+            className="p-1 text-slate-400 hover:text-indigo-600 transition-colors mt-0.5"
           >
             <Paperclip className="w-4 h-4" />
           </button>
@@ -482,7 +482,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
               className={`p-2 rounded-full transition-all ${
                 isListening
                   ? 'bg-rose-500 text-white'
-                  : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
+                  : 'text-slate-400 hover:text-indigo-600 hover:bg-slate-100'
               }`}
             >
               {isListening ? (
@@ -492,7 +492,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
               )}
             </button>
 
-            {/* Send or Stop Button */}
+            {/* Send or Stop Button with Multi-Gradient Background */}
             {isLoading ? (
               <button
                 type="button"
@@ -508,7 +508,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
                 disabled={!input.trim() && attachments.length === 0}
                 className={`w-9 h-9 rounded-full transition-all flex items-center justify-center ${
                   input.trim() || attachments.length > 0
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-xs cursor-pointer'
+                    ? 'multi-gradient-btn text-white shadow-md cursor-pointer'
                     : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 }`}
               >

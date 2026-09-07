@@ -604,16 +604,19 @@ export default function App() {
         </header>
 
         {/* 3. Main Center Workspace Body */}
-        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative min-h-0 bg-[#f8fafc]">
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative min-h-0 multi-gradient-mesh">
           {hasContent ? (
             /* Active Conversation View */
-            <div className="flex-1 flex flex-col h-full overflow-hidden min-h-0 bg-white border-r border-slate-200/70 z-30">
-              <div className="p-2 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between px-4">
-                <span className="text-xs font-semibold text-slate-600">Active Chat</span>
+            <div className="flex-1 flex flex-col h-full overflow-hidden min-h-0 bg-white/90 backdrop-blur-md border-r border-slate-200/70 z-30">
+              <div className="p-2 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between px-4">
+                <span className="text-xs font-semibold text-slate-600 flex items-center space-x-1.5">
+                  <span className="w-2 h-2 rounded-full bg-gradient-to-r from-indigo-500 via-pink-500 to-amber-500 animate-pulse"></span>
+                  <span>Active Chat</span>
+                </span>
                 <button
                   type="button"
                   onClick={handleNewProject}
-                  className="px-3 py-1 rounded-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-medium transition-all flex items-center space-x-1"
+                  className="px-3.5 py-1 rounded-full multi-gradient-btn text-white text-xs font-semibold shadow-xs transition-all flex items-center space-x-1"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>New Chat</span>
@@ -642,21 +645,23 @@ export default function App() {
               </div>
             </div>
           ) : (
-            /* Welcome Hero View (Matching Reference UI Exactly) */
+            /* Welcome Hero View with Vibrant Multi-Color Gradients */
             <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-10 max-w-4xl mx-auto w-full h-full overflow-y-auto">
               <div className="w-full flex flex-col items-center justify-center my-auto py-4">
-                {/* Very minimal AI Sparkle icon above greeting (NO large colorful background) */}
-                <div className="w-10 h-10 rounded-2xl bg-blue-50/80 border border-blue-100/60 flex items-center justify-center text-blue-500 mb-4 shadow-2xs">
-                  <Sparkles className="w-5 h-5 text-blue-500" />
+                {/* Glowing Multi-Color Sparkle Badge */}
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 via-pink-500 via-rose-500 via-amber-400 to-cyan-400 p-0.5 shadow-lg shadow-purple-500/25 mb-4 animate-gradient-x">
+                  <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center">
+                    <Sparkles className="w-6 h-6 text-indigo-600" />
+                  </div>
                 </div>
 
-                {/* Elegant Greeting Heading */}
-                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-2 text-center">
-                  Good morning, <span className="text-blue-600">Mukesh</span> 👋
+                {/* Flowing Multi-Color Gradient Greeting */}
+                <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-2 text-center">
+                  Good morning, <span className="multi-gradient-text">Mukesh</span> 👋
                 </h1>
 
                 {/* Short Description */}
-                <p className="text-xs sm:text-sm text-slate-500 text-center font-normal mb-8 max-w-md">
+                <p className="text-xs sm:text-sm text-slate-600 text-center font-medium mb-8 max-w-md">
                   Ask me anything, write code, solve problems, or explore ideas.
                 </p>
 
@@ -665,18 +670,18 @@ export default function App() {
                   <PromptBar onSubmit={handlePromptSubmit} isLoading={isLoading} onStop={handleStopGeneration} mode={mode} setMode={setMode} />
                 </div>
 
-                {/* 4 Compact Action Cards Grid */}
+                {/* 4 Multi-Gradient Glowing Action Cards Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 w-full max-w-3xl">
                   {/* Card 1: Write Code */}
                   <div
                     onClick={() => handlePromptSubmit('Write and debug Python code for data processing', 'gemini-1.5-flash', 'chat')}
-                    className="p-3.5 rounded-2xl bg-white hover:bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 shadow-2xs transition-all duration-200 cursor-pointer group text-left flex flex-col justify-between"
+                    className="multi-gradient-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
-                      <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100 mb-2.5">
-                        <Code className="w-3.5 h-3.5" />
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/20 mb-2.5">
+                        <Code className="w-4 h-4" />
                       </div>
-                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-blue-600 transition-colors mb-1">
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
                         Write Code
                       </h3>
                       <p className="text-[11px] text-slate-500 leading-snug">
@@ -684,18 +689,18 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
                   {/* Card 2: Analyze Document */}
                   <div
                     onClick={() => handlePromptSubmit('Analyze this document and extract key insights', 'gemini-1.5-flash', 'chat')}
-                    className="p-3.5 rounded-2xl bg-white hover:bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 shadow-2xs transition-all duration-200 cursor-pointer group text-left flex flex-col justify-between"
+                    className="multi-gradient-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
-                      <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100 mb-2.5">
-                        <FileText className="w-3.5 h-3.5" />
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/20 mb-2.5">
+                        <FileText className="w-4 h-4" />
                       </div>
                       <h3 className="font-semibold text-xs text-slate-900 group-hover:text-emerald-600 transition-colors mb-1">
                         Analyze Document
@@ -705,18 +710,18 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
                   {/* Card 3: Solve Problem */}
                   <div
                     onClick={() => handlePromptSubmit('Help me solve this logic problem step by step', 'gemini-1.5-flash', 'chat')}
-                    className="p-3.5 rounded-2xl bg-white hover:bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 shadow-2xs transition-all duration-200 cursor-pointer group text-left flex flex-col justify-between"
+                    className="multi-gradient-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
-                      <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100 mb-2.5">
-                        <Sparkles className="w-3.5 h-3.5" />
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/20 mb-2.5">
+                        <Sparkles className="w-4 h-4" />
                       </div>
                       <h3 className="font-semibold text-xs text-slate-900 group-hover:text-amber-600 transition-colors mb-1">
                         Solve Problem
@@ -726,18 +731,18 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
                   {/* Card 4: Research */}
                   <div
                     onClick={() => handlePromptSubmit('Search and research information on this topic', 'gemini-1.5-flash', 'chat')}
-                    className="p-3.5 rounded-2xl bg-white hover:bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 shadow-2xs transition-all duration-200 cursor-pointer group text-left flex flex-col justify-between"
+                    className="multi-gradient-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
-                      <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 border border-purple-100 mb-2.5">
-                        <Search className="w-3.5 h-3.5" />
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-pink-500/20 mb-2.5">
+                        <Search className="w-4 h-4" />
                       </div>
                       <h3 className="font-semibold text-xs text-slate-900 group-hover:text-purple-600 transition-colors mb-1">
                         Research
@@ -747,7 +752,7 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-600 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
                 </div>
