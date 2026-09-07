@@ -78,29 +78,25 @@ export default function Sidebar({
       thread_id: 'chat-1',
       title: 'Build a calculator app',
       time: '2 hours ago',
-      icon: Code2,
-      color: 'bg-indigo-50 text-indigo-600 border-indigo-100'
+      icon: Code2
     },
     {
       thread_id: 'chat-2',
       title: 'Explain React hooks',
       time: '4 hours ago',
-      icon: MessageSquare,
-      color: 'bg-purple-50 text-purple-600 border-purple-100'
+      icon: MessageSquare
     },
     {
       thread_id: 'chat-3',
       title: 'Fix this code error',
       time: '6 hours ago',
-      icon: Code2,
-      color: 'bg-blue-50 text-blue-600 border-blue-100'
+      icon: Code2
     },
     {
       thread_id: 'chat-4',
       title: 'Summarize this document',
       time: '8 hours ago',
-      icon: FileText,
-      color: 'bg-emerald-50 text-emerald-600 border-emerald-100'
+      icon: FileText
     },
   ];
 
@@ -109,16 +105,15 @@ export default function Sidebar({
       thread_id: p.thread_id,
       title: p.title || p.requirement || 'Chat Session',
       time: p.updated_at ? 'Recently' : `${(idx + 1) * 2} hours ago`,
-      icon: idx % 2 === 0 ? Code2 : MessageSquare,
-      color: idx % 3 === 0 ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : idx % 3 === 1 ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-blue-50 text-blue-600 border-blue-100'
+      icon: idx % 2 === 0 ? Code2 : MessageSquare
     }))
     : defaultRecentChats;
 
   const sampleProjects = [
-    { id: 'proj-1', title: 'College Management System', updated: 'Updated 2 days ago', color: 'bg-blue-50 text-blue-600 border-blue-100' },
-    { id: 'proj-2', title: 'E-commerce Website', updated: 'Updated 3 days ago', color: 'bg-purple-50 text-purple-600 border-purple-100' },
-    { id: 'proj-3', title: 'Portfolio Website', updated: 'Updated 5 days ago', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
-    { id: 'proj-4', title: 'Task Manager', updated: 'Updated 1 week ago', color: 'bg-amber-50 text-amber-600 border-amber-100' },
+    { id: 'proj-1', title: 'College Management System', updated: 'Updated 2 days ago' },
+    { id: 'proj-2', title: 'E-commerce Website', updated: 'Updated 3 days ago' },
+    { id: 'proj-3', title: 'Portfolio Website', updated: 'Updated 5 days ago' },
+    { id: 'proj-4', title: 'Task Manager', updated: 'Updated 1 week ago' },
   ];
 
   return (
@@ -216,9 +211,7 @@ export default function Sidebar({
                     }`}
                   >
                     <div className="flex items-center space-x-2.5 truncate">
-                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${chat.color}`}>
-                        <Icon className="w-3.5 h-3.5" />
-                      </div>
+                      <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-indigo-600' : 'text-slate-400 group-hover:text-indigo-600'} transition-colors`} />
                       <div className="truncate text-left leading-tight">
                         <div className={`font-medium text-xs truncate ${isSelected ? 'text-indigo-900 font-semibold' : 'text-slate-800 group-hover:text-indigo-600'} transition-colors`}>
                           {chat.title}
@@ -251,9 +244,7 @@ export default function Sidebar({
                   className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100/70 transition-all cursor-pointer group border border-transparent hover:border-slate-200/60"
                 >
                   <div className="flex items-center space-x-2.5 truncate">
-                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${proj.color}`}>
-                      <Folder className="w-3.5 h-3.5" />
-                    </div>
+                    <Folder className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-indigo-600 transition-colors" />
                     <div className="truncate text-left leading-tight">
                       <div className="font-medium text-xs text-slate-800 truncate group-hover:text-indigo-600 transition-colors">
                         {proj.title}
