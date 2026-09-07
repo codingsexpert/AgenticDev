@@ -14,18 +14,24 @@ import {
   AlertTriangle,
   Cpu,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Activity,
+  Loader2
 } from 'lucide-react';
+import { useToast } from './Toast';
 
 export default function ToolsModal({
   isOpen,
   onClose,
   onPromptAction
 }) {
+  const toast = useToast();
   const [activeTestTool, setActiveTestTool] = useState(null);
   const [testInput, setTestInput] = useState('');
   const [testResult, setTestResult] = useState(null);
   const [testing, setTesting] = useState(false);
+  const [diagLoading, setDiagLoading] = useState(false);
+  const [diagResult, setDiagResult] = useState(null);
 
   if (!isOpen) return null;
 
@@ -56,9 +62,9 @@ export default function ToolsModal({
       category: 'Execution',
       icon: Terminal,
       color: 'bg-amber-500',
-      description: 'Runs `python -m pytest`, `npm install`, and `git` commands inside local project sandbox boundaries.',
+      description: 'Runs `python3 script.py`, `gcc main.cpp`, `node script.js`, and `bash` commands inside isolated sandbox boundaries.',
       status: 'Active',
-      testPlaceholder: 'Test command: e.g. python -m pytest tests/'
+      testPlaceholder: 'Test code: e.g. print("Hello World")'
     },
     {
       id: 'tool_web',
@@ -92,12 +98,65 @@ export default function ToolsModal({
     }
   ];
 
-  const handleRunToolTest = (toolId, e) => {
+  const handleRunSystemDiagnostics = async () => {
+    setDiagLoading(true);
+    setDiagResult(null);
+    try {
+      const res = await fetch('/api/status');
+      if (res.ok) {
+        const data = await res.json();
+        setDiagResult({
+          status: 'online',
+          model: data.model || 'gemini/gemini-1.5-flash',
+          projectsCount: data.memorySummary?.projectsCount || 0,
+          patternsCount: data.memorySummary?.patternsCount || 0,
+          supabaseConfigured: data.supabaseConfigured || false
+        });
+        toast.success('System Diagnostics: All system services online!');
+      } else {
+        toast.error('System Diagnostics: Server status check failed.');
+      }
+    } catch (err) {
+      toast.error('Diagnostics check failed: ' + err.message);
+    } finally {
+      setDiagLoading(false);
+    }
+  };
+
+  const handleRunToolTest = async (toolId, e) => {
     e.preventDefault();
     if (!testInput.trim()) return;
 
     setTesting(true);
     setTestResult(null);
+
+    if (toolId === 'tool_terminal') {
+      try {
+        const res = await fetch('/api/run-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: testInput, language: 'python' })
+        });
+        const data = await res.json();
+        setTestResult({
+          safe: data.exit_code === 0,
+          message: data.exit_code === 0 ? '✅ Subprocess Executed Successfully' : '⚠️ Subprocess Error Output',
+          details: data.output || 'No output'
+        });
+        if (data.exit_code === 0) toast.success('Tool Execution Passed');
+        else toast.warning('Tool Execution Error');
+      } catch (err) {
+        setTestResult({
+          safe: false,
+          message: '❌ Subprocess Call Failed',
+          details: err.message
+        });
+        toast.error('Subprocess Execution Failed');
+      } finally {
+        setTesting(false);
+      }
+      return;
+    }
 
     setTimeout(() => {
       setTesting(false);
@@ -110,12 +169,14 @@ export default function ToolsModal({
             message: '🛑 Guardrail Triggered: Potential unsafe pattern detected! Command blocked by Execution Guardrail.',
             details: `Sanitization status: Blocked | Pattern: "${testInput}"`
           });
+          toast.warning('Security Guardrail Intercepted Malicious Input');
         } else {
           setTestResult({
             safe: true,
             message: '✅ Guardrail Passed: Input prompt sanitization clear. Valid request format.',
             details: `Sanitization status: Clean | Input: "${testInput}"`
           });
+          toast.success('Guardrail Test Passed');
         }
       } else if (toolId === 'tool_sandbox') {
         setTestResult({
@@ -123,29 +184,16 @@ export default function ToolsModal({
           message: `✅ Sandbox Path Validated: File isolated in './sandboxes/sandbox_demo/${testInput}'`,
           details: 'Boundary check passed. Path is inside sandbox limits.'
         });
-      } else if (toolId === 'tool_terminal') {
-        const isDangerous = /rm|sudo|chmod|eval/i.test(testInput);
-        if (isDangerous) {
-          setTestResult({
-            safe: false,
-            message: '🛑 Command Runner Error: Elevated or destructive command blocked!',
-            details: 'Subprocess Execution Policy prohibits root/destructive operations.'
-          });
-        } else {
-          setTestResult({
-            safe: true,
-            message: `✅ Subprocess Ready: Prepared isolated command execution '${testInput}'`,
-            details: 'Execution environment: Sandbox Subprocess Container'
-          });
-        }
+        toast.success('Sandbox Path Validated');
       } else {
         setTestResult({
           safe: true,
           message: `✅ Tool Executed Successfully for "${testInput}"`,
           details: 'Status: 200 OK | Response received'
         });
+        toast.success('Tool Execution Test Passed');
       }
-    }, 600);
+    }, 500);
   };
 
   return (
@@ -160,29 +208,58 @@ export default function ToolsModal({
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center shadow-2xs">
-              <Wrench className="w-5 h-5 text-slate-700" />
+            <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center shadow-2xs">
+              <Wrench className="w-5 h-5 text-indigo-600" />
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center space-x-2">
                 <span>Developer Tools & Capabilities Center</span>
-                <span className="text-xs bg-slate-100 text-slate-600 border border-slate-200/80 font-semibold px-2.5 py-0.5 rounded-full">
+                <span className="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200/80 font-semibold px-2.5 py-0.5 rounded-full">
                   6 Tools Ready
                 </span>
               </h2>
               <p className="text-xs text-slate-500">
-                Inspect system execution tools, test guardrails, and invoke developer subagents.
+                Inspect system execution tools, test guardrails, and run real-time diagnostics.
               </p>
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleRunSystemDiagnostics}
+              disabled={diagLoading}
+              className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer disabled:opacity-50"
+            >
+              {diagLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Activity className="w-3.5 h-3.5" />}
+              <span>Diagnostics</span>
+            </button>
+
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
+
+        {/* Diagnostic Status Card (if run) */}
+        {diagResult && (
+          <div className="mx-6 mt-4 p-3.5 bg-emerald-50/80 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs animate-slide-down">
+            <div className="flex items-center space-x-3">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+              <div>
+                <span className="font-bold text-emerald-950">System Diagnostic Report: ALL SYSTEMS ONLINE</span>
+                <p className="text-[11px] text-emerald-800">
+                  Model: {diagResult.model} | Memory Projects: {diagResult.projectsCount} | Supabase: {diagResult.supabaseConfigured ? 'Connected' : 'Local File Memory'}
+                </p>
+              </div>
+            </div>
+            <button onClick={() => setDiagResult(null)} className="text-emerald-700 hover:text-emerald-900">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         {/* Content Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
@@ -230,10 +307,11 @@ export default function ToolsModal({
                       onClick={() => {
                         if (onPromptAction) {
                           onPromptAction(`Show capabilities and run demo for tool: ${tool.name}`);
+                          toast.info(`Demonstrating ${tool.name} in chat`);
                           onClose();
                         }
                       }}
-                      className="text-xs text-slate-600 hover:text-indigo-600 font-medium flex items-center space-x-1 transition-colors"
+                      className="text-xs text-slate-600 hover:text-indigo-600 font-medium flex items-center space-x-1 transition-colors cursor-pointer"
                     >
                       <span>Invoke in Chat</span>
                       <ArrowRight className="w-3 h-3" />
@@ -250,76 +328,62 @@ export default function ToolsModal({
                           setTestResult(null);
                         }
                       }}
-                      className={`px-3 py-1 rounded-xl text-xs font-semibold flex items-center space-x-1 transition-all cursor-pointer ${
-                        isSelected 
-                          ? 'bg-indigo-600 text-white shadow-xs' 
-                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                        isSelected
+                          ? 'bg-indigo-600 text-white shadow-2xs'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                       }`}
                     >
-                      <Play className="w-3 h-3 fill-current" />
+                      <Play className="w-3 h-3" />
                       <span>{isSelected ? 'Close Test' : 'Test Tool'}</span>
                     </button>
                   </div>
+
+                  {/* Inline Test Panel */}
+                  {isSelected && (
+                    <div className="mt-4 pt-3 border-t border-slate-200/80 space-y-3 animate-fade-in">
+                      <form onSubmit={(e) => handleRunToolTest(tool.id, e)} className="space-y-2">
+                        <label className="text-[11px] font-semibold text-slate-700 block">
+                          Interactive Execution Sandbox Test:
+                        </label>
+                        <div className="flex space-x-2">
+                          <input
+                            type="text"
+                            value={testInput}
+                            onChange={(e) => setTestInput(e.target.value)}
+                            placeholder={tool.testPlaceholder}
+                            className="flex-1 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-indigo-500 font-mono"
+                          />
+                          <button
+                            type="submit"
+                            disabled={testing || !testInput.trim()}
+                            className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-xs font-semibold flex items-center space-x-1 cursor-pointer"
+                          >
+                            {testing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />}
+                            <span>Run</span>
+                          </button>
+                        </div>
+                      </form>
+
+                      {testResult && (
+                        <div className={`p-3 rounded-xl border text-xs font-mono space-y-1 ${
+                          testResult.safe
+                            ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900'
+                            : 'bg-amber-50/80 border-amber-200 text-amber-900'
+                        }`}>
+                          <div className="font-bold flex items-center space-x-1.5">
+                            {testResult.safe ? <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /> : <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />}
+                            <span>{testResult.message}</span>
+                          </div>
+                          <p className="text-[10.5px] opacity-80 whitespace-pre-wrap">{testResult.details}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
-
-          {/* Interactive Tool Test Sandbox Panel */}
-          {activeTestTool && (
-            <div className="p-5 rounded-2xl bg-slate-900 text-white space-y-4 border border-slate-800 shadow-xl animate-fade-in">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Terminal className="w-4 h-4 text-emerald-400" />
-                  <h3 className="font-bold text-sm text-slate-100">
-                    Interactive Tool Tester — {tools.find(t => t.id === activeTestTool)?.name}
-                  </h3>
-                </div>
-                <button
-                  onClick={() => setActiveTestTool(null)}
-                  className="text-slate-400 hover:text-white text-xs cursor-pointer"
-                >
-                  Close Tester
-                </button>
-              </div>
-
-              <form onSubmit={(e) => handleRunToolTest(activeTestTool, e)} className="space-y-3">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={testInput}
-                    onChange={(e) => setTestInput(e.target.value)}
-                    placeholder={tools.find(t => t.id === activeTestTool)?.testPlaceholder || 'Enter input string to test...'}
-                    className="flex-1 px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-400 transition-all font-mono"
-                  />
-                  <button
-                    type="submit"
-                    disabled={!testInput.trim() || testing}
-                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer shadow-md"
-                  >
-                    <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>{testing ? 'Running...' : 'Run Test'}</span>
-                  </button>
-                </div>
-              </form>
-
-              {testResult && (
-                <div className={`p-4 rounded-xl border text-xs font-mono space-y-1.5 transition-all ${
-                  testResult.safe 
-                    ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-200' 
-                    : 'bg-rose-950/60 border-rose-500/40 text-rose-200'
-                }`}>
-                  <div className="font-bold flex items-center space-x-2">
-                    {testResult.safe ? <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> : <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />}
-                    <span>{testResult.message}</span>
-                  </div>
-                  <div className="text-[11px] opacity-80 pl-6">
-                    {testResult.details}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </div>
