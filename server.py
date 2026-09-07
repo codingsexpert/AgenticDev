@@ -562,6 +562,17 @@ On the VERY FIRST LINE inside the code block, you MUST put the exact full file p
         # Emit intelligent task classification event first
         yield f"data: {json.dumps({'routing': task_classification.to_dict()})}\n\n"
 
+        # Instant Fast Path for simple greetings ("hi", "hello", "hey", "kaise ho", etc.)
+        user_msg_clean = raw_last_user_msg.strip().lower()
+        if is_simple_greeting(raw_last_user_msg):
+            if any(w in user_msg_clean for w in ["kaise ho", "kaise", "bhai"]):
+                reply = "Hello! 👋 Main bilkul sahi hu. Aaj aapko kya build karna hai ya kya help chahiye?"
+            else:
+                reply = "Hello! 👋 How can I help you build your project, write code, or answer your questions today?"
+            yield f"data: {json.dumps({'text': reply})}\n\n"
+            yield f"data: {json.dumps({'done': True})}\n\n"
+            return
+
         # Candidate LLM models to try in order
         raw_model = target_model or os.getenv("LLM_MODEL", "gemini/gemini-1.5-flash")
         primary_model = raw_model if "/" in raw_model else f"gemini/{raw_model}"
