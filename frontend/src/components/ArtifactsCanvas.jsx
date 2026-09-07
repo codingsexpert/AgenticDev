@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Code, Eye, Copy, Check, FileText, Folder, RefreshCw, ExternalLink, Save, Rocket, LayoutList, ChevronRight, ChevronDown, FileJson, FileCode, FileType, File, FolderOpen, FilePlus, FolderPlus, Play, Terminal, Loader2, Maximize2, Minimize2, Trash2 } from 'lucide-react';
+import { Search, X, Code, Eye, Copy, Check, FileText, Folder, RefreshCw, ExternalLink, Save, Rocket, LayoutList, ChevronRight, ChevronDown, FileJson, FileCode, FileType, File, FolderOpen, FilePlus, FolderPlus, Play, Terminal, Loader2, Maximize2, Minimize2, Trash2 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -145,6 +145,17 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
     isDraggingRef.current = false;
     document.removeEventListener('mousemove', handleMouseMove);
     document.removeEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleEditorDidMount = (editor) => {
+    editorRef.current = editor;
+  };
+
+  const handleOpenFind = () => {
+    if (editorRef.current) {
+      editorRef.current.focus();
+      editorRef.current.trigger('keyboard', 'actions.find', null);
+    }
   };
 
   useEffect(() => {
@@ -465,6 +476,16 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
             </>
           )}
           
+          {activeTab === 'code' && (
+            <button
+              onClick={handleOpenFind}
+              className="p-1.5 rounded-lg hover:bg-[#25293d] text-slate-400 hover:text-white transition-colors"
+              title="Find / Replace in Code (Cmd+F / Ctrl+F)"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+          )}
+
           <button
             onClick={handleCopy}
             className="p-1.5 rounded-lg hover:bg-[#25293d] text-slate-400 hover:text-white transition-colors"
@@ -531,6 +552,15 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                  {hasUnsavedChanges && <span className="w-2 h-2 rounded-full bg-blue-400 inline-block animate-pulse" title="Unsaved changes"></span>}
               </span>
               <div className="flex items-center space-x-3">
+                 <button
+                   onClick={handleOpenFind}
+                   className="text-xs text-indigo-300 hover:text-indigo-200 flex items-center space-x-1 font-mono font-medium hover:underline cursor-pointer"
+                   title="Open VS Code Find & Replace Widget (Cmd+F)"
+                 >
+                   <Search className="w-3.5 h-3.5" />
+                   <span>Find</span>
+                 </button>
+
                  {executionResult !== null && (
                    <button
                      onClick={() => setShowTerminal(!showTerminal)}
@@ -552,6 +582,7 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                 theme="vs-dark"
                 value={fileContent}
                 onChange={(val) => setFileContent(val || '')}
+                onMount={handleEditorDidMount}
                 options={{
                     minimap: { enabled: false },
                     fontSize: 13,
@@ -559,7 +590,12 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                     wordWrap: 'on',
                     scrollBeyondLastLine: false,
                     smoothScrolling: true,
-                    padding: { top: 16 }
+                    padding: { top: 16 },
+                    find: {
+                      addExtraSpaceOnTop: false,
+                      autoFindInSelection: 'never',
+                      seedSearchStringFromSelection: 'always'
+                    }
                 }}
               />
             </div>
