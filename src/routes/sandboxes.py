@@ -246,7 +246,38 @@ def preview_sandbox_file(sandbox_id: str, file_path: str = "index.html"):
 
     import glob
     html_files = glob.glob(os.path.join(sandbox_path, "**/*.html"), recursive=True)
-    if html_files:
-        return FileResponse(html_files[0], headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
-
     raise HTTPException(status_code=404, detail=f"Preview file '{file_path}' not found in sandbox '{sandbox_id}'.")
+
+
+@router.delete("/sandboxes/cleanup")
+async def cleanup_sandboxes():
+    """Deletes all generated temporary sandbox folders in ./sandboxes/ and ./data/sandbox/."""
+    import shutil
+    deleted_count = 0
+    sandboxes_dir = Path(get_sandbox_base_dir())
+    data_sandbox_dir = Path("./data/sandbox")
+
+    if sandboxes_dir.exists():
+        for p in sandboxes_dir.iterdir():
+            if p.is_dir():
+                try:
+                    shutil.rmtree(p)
+                    deleted_count += 1
+                except Exception as e:
+                    print(f"Error removing {p}: {e}")
+
+    if data_sandbox_dir.exists():
+        for p in data_sandbox_dir.iterdir():
+            if p.is_file() and not p.name.startswith("."):
+                try:
+                    p.unlink()
+                    deleted_count += 1
+                except Exception as e:
+                    print(f"Error removing {p}: {e}")
+
+    return {
+        "status": "success",
+        "deleted_count": deleted_count,
+        "message": f"Successfully cleaned up {deleted_count} sandbox directories & temporary files."
+    }
+
