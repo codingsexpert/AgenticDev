@@ -660,7 +660,7 @@ export default function App() {
                 </p>
 
                 {/* Centered Message Composer */}
-                <div className="w-full max-w-2xl mb-8">
+                <div className="w-full max-w-3xl mb-8">
                   <PromptBar onSubmit={handlePromptSubmit} isLoading={isLoading} onStop={handleStopGeneration} mode={mode} setMode={setMode} />
                 </div>
 

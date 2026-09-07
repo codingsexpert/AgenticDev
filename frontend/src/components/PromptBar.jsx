@@ -273,7 +273,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
   const currentModelLabel = models.find((m) => m.id === selectedModel)?.label || 'Gemini 2.0 Flash';
 
   return (
-    <div className="w-full max-w-3xl sm:max-w-4xl mx-auto px-3 sm:px-5 pb-3 sm:pb-6 pt-2 shrink-0">
+    <div className="w-full max-w-3xl mx-auto pb-2 pt-1 shrink-0">
       {/* Active Audio Dictation Wave Banner */}
       {isListening && (
         <div className="mb-3 px-3.5 py-2 bg-red-50/90 border border-red-100 rounded-xl flex items-center justify-between text-xs text-red-700 animate-fade-in shadow-sm">
@@ -302,15 +302,14 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
         </div>
       )}
 
-      {/* Mode Switcher Bar */}
-      <div className="flex items-center justify-start mb-3 overflow-x-auto pb-1 no-scrollbar">
-        {/* Triple Mode Switcher (Chat vs Reasoning vs Build) */}
-        <div className="flex items-center bg-zinc-100/80 p-0.5 rounded-lg border border-zinc-200/80 text-xs font-medium shrink-0">
+      {/* Mode Switcher Bar (Apple Liquid Pill) */}
+      <div className="flex items-center justify-start mb-2.5 overflow-x-auto pb-0.5 no-scrollbar">
+        <div className="liquid-pill-bar flex items-center p-1 rounded-2xl text-xs font-medium shrink-0">
           <button
             type="button"
             onClick={() => setMode('chat')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md transition-all ${
-              mode === 'chat' ? 'bg-white text-zinc-900 font-medium shadow-sm' : 'text-zinc-500 hover:text-zinc-800'
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all ${
+              mode === 'chat' ? 'liquid-pill-btn-active text-slate-900 font-semibold' : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             <MessageSquare className="w-3.5 h-3.5 text-indigo-500" />
@@ -319,8 +318,8 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
           <button
             type="button"
             onClick={() => setMode('reasoning')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
-              mode === 'reasoning' ? 'bg-white text-amber-950 font-semibold shadow-xs border border-amber-200/80' : 'text-slate-500 hover:text-slate-800'
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all ${
+              mode === 'reasoning' ? 'liquid-pill-btn-active text-amber-950 font-semibold' : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
@@ -329,8 +328,8 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
           <button
             type="button"
             onClick={() => setMode('build')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
-              mode === 'build' ? 'bg-white text-indigo-950 font-semibold shadow-xs border border-indigo-200/80' : 'text-slate-500 hover:text-slate-800'
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all ${
+              mode === 'build' ? 'liquid-pill-btn-active text-indigo-950 font-semibold' : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             <Wrench className="w-3.5 h-3.5 text-indigo-600" />
