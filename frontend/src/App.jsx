@@ -123,11 +123,35 @@ export default function App() {
     }
   }, []);
 
+  const getGuestId = () => {
+    let guestId = localStorage.getItem('pixlexpert_guest_id');
+    if (!guestId) {
+      guestId = 'guest_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
+      localStorage.setItem('pixlexpert_guest_id', guestId);
+    }
+    return guestId;
+  };
+
+  const getAuthHeaders = (currentUser) => {
+    const u = currentUser !== undefined ? currentUser : user;
+    const token = u?.token || u?.access_token || localStorage.getItem('pixlexpert_token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    const uid = u?.id || getGuestId();
+    headers['x-user-id'] = uid;
+    return headers;
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('pixlexpert_user');
+    localStorage.removeItem('pixlexpert_token');
     localStorage.removeItem('active_thread_id');
+    localStorage.setItem('pixlexpert_guest_id', 'guest_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now());
     setUser(null);
     handleNewProject();
+    fetchChatsAndRestore(null);
     try {
       import('./utils/supabase').then(({ supabase }) => {
         if (supabase) supabase.auth.signOut().catch(() => { });
@@ -171,34 +195,43 @@ export default function App() {
   const fetchChatsAndRestore = async (currentUser) => {
     try {
       const u = currentUser !== undefined ? currentUser : user;
-      const url = u?.id ? `/api/chats?user_id=${encodeURIComponent(u.id)}` : '/api/chats';
-      const res = await fetch(url);
+      const headers = getAuthHeaders(u);
+      const uid = headers['x-user-id'];
+      const url = `/api/chats?user_id=${encodeURIComponent(uid)}`;
+      const res = await fetch(url, { headers });
       const data = await res.json();
       if (Array.isArray(data)) {
         setProjects(data);
 
         // Auto-restore active thread or target first thread for this specific user
-        const savedThreadId = localStorage.getItem('active_thread_id');
+        const savedThreadId = localStorage.getItem(`active_thread_id_${uid}`) || localStorage.getItem('active_thread_id');
         const userThreadExists = data.some((p) => p.thread_id === savedThreadId);
         const targetThreadId = userThreadExists ? savedThreadId : (data.length > 0 ? data[0].thread_id : null);
 
         if (targetThreadId) {
-          handleSelectChat(targetThreadId);
+          handleSelectChat(targetThreadId, u);
         } else {
           handleNewProject();
         }
+      } else {
+        setProjects([]);
+        handleNewProject();
       }
     } catch (e) {
       console.error('Failed to fetch chat history', e);
+      setProjects([]);
     }
   };
 
-  const handleSelectChat = async (threadId) => {
+  const handleSelectChat = async (threadId, currentUser) => {
     try {
-      const res = await fetch(`/api/chats/${threadId}`);
+      const headers = getAuthHeaders(currentUser);
+      const res = await fetch(`/api/chats/${threadId}`, { headers });
       const data = await res.json();
-      if (data) {
+      if (data && data.thread_id) {
         setCurrentThreadId(data.thread_id);
+        const uid = headers['x-user-id'];
+        localStorage.setItem(`active_thread_id_${uid}`, data.thread_id);
         localStorage.setItem('active_thread_id', data.thread_id);
         setMessages(data.messages || []);
         const loadedHist = data.node_history || [];
@@ -234,7 +267,7 @@ export default function App() {
   const handleDeleteProject = async (threadId) => {
     if (!threadId) return;
     try {
-      await fetch(`/api/chats/${threadId}`, { method: 'DELETE' });
+      await fetch(`/api/chats/${threadId}`, { method: 'DELETE', headers: getAuthHeaders() });
       const updatedList = projects.filter((p) => p.thread_id !== threadId);
       setProjects(updatedList);
       if (currentThreadId === threadId) {
@@ -250,7 +283,7 @@ export default function App() {
     try {
       await fetch(`/api/chats/${threadId}/rename`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ title: newTitle.trim() }),
       });
       setProjects((prev) =>
@@ -316,6 +349,8 @@ export default function App() {
   const autoSaveChat = async (tId, msgList, nHist, mMode) => {
     if (!tId || msgList.length === 0) return;
     const title = msgList[0]?.content?.slice(0, 32) || 'Chat Session';
+    const headers = getAuthHeaders();
+    const currentUserId = headers['x-user-id'];
 
     // Optimistically update local project list without triggering full refetch delay
     setProjects((prev) => {
@@ -329,14 +364,14 @@ export default function App() {
     try {
       await fetch('/api/chats/save', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           thread_id: tId,
           title,
           messages: msgList,
           node_history: nHist,
           mode: mMode,
-          user_id: user?.id || null,
+          user_id: currentUserId,
         }),
       });
     } catch (e) {
@@ -357,6 +392,8 @@ export default function App() {
     const activeThread = currentThreadId || `session_${Date.now()}`;
     if (!currentThreadId) {
       setCurrentThreadId(activeThread);
+      const uid = getAuthHeaders()['x-user-id'];
+      localStorage.setItem(`active_thread_id_${uid}`, activeThread);
       localStorage.setItem('active_thread_id', activeThread);
     }
 
@@ -368,7 +405,7 @@ export default function App() {
     if (selectedMode === 'build') {
       fetch('/api/projects/start', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ requirement: promptText, model: modelName }),
         signal: controller.signal,
       })
@@ -390,8 +427,14 @@ export default function App() {
     try {
       const response = await fetch('/api/chat/stream', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: updatedMessages, model: modelName, thread_id: activeThread, mode: selectedMode }),
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          messages: updatedMessages,
+          model: modelName,
+          thread_id: activeThread,
+          mode: selectedMode,
+          user_id: getAuthHeaders()['x-user-id']
+        }),
         signal: controller.signal,
       });
 
@@ -898,7 +941,11 @@ export default function App() {
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
-        onAuthSuccess={(userData) => setUser(userData)}
+        onAuthSuccess={(userData) => {
+          setUser(userData);
+          handleNewProject();
+          fetchChatsAndRestore(userData);
+        }}
       />
 
       {/* Projects Explorer Modal */}

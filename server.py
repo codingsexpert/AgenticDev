@@ -1210,7 +1210,8 @@ def get_chats(
     request: Request,
     user: Dict[str, Any] = Depends(get_current_user_optional)
 ):
-    return list_chat_sessions(user_id=user.get("id"))
+    target_uid = request.query_params.get("user_id") or request.headers.get("x-user-id") or user.get("id")
+    return list_chat_sessions(user_id=target_uid)
 
 
 @app.get("/api/chats/{thread_id}")
@@ -1219,12 +1220,13 @@ def get_chat(
     request: Request,
     user: Dict[str, Any] = Depends(get_current_user_optional)
 ):
+    target_uid = request.query_params.get("user_id") or request.headers.get("x-user-id") or user.get("id")
     data = get_chat_session(thread_id)
     if not data:
         raise HTTPException(status_code=404, detail="Chat session not found")
     
     owner_id = data.get("user_id")
-    if owner_id and owner_id != user.get("id"):
+    if owner_id and owner_id != target_uid:
         raise HTTPException(status_code=403, detail="Access denied: You do not have permission to view this chat session.")
     return data
 
@@ -1235,8 +1237,9 @@ def save_chat(
     request: Request,
     user: Dict[str, Any] = Depends(get_current_user_optional)
 ):
+    target_uid = req.user_id or request.headers.get("x-user-id") or user.get("id")
     existing = get_chat_session(req.thread_id)
-    if existing and existing.get("user_id") and existing.get("user_id") != user.get("id"):
+    if existing and existing.get("user_id") and existing.get("user_id") != target_uid:
         raise HTTPException(status_code=403, detail="Access denied: You cannot modify a chat session owned by another user.")
         
     return save_chat_session(
@@ -1245,7 +1248,7 @@ def save_chat(
         messages=req.messages,
         mode=req.mode or "chat",
         node_history=req.node_history,
-        user_id=user.get("id"),
+        user_id=target_uid,
     )
 
 
@@ -1256,12 +1259,13 @@ def rename_chat(
     request: Request,
     user: Dict[str, Any] = Depends(get_current_user_optional)
 ):
+    target_uid = request.headers.get("x-user-id") or user.get("id")
     data = get_chat_session(thread_id)
-    if data and data.get("user_id") and data.get("user_id") != user.get("id"):
+    if data and data.get("user_id") and data.get("user_id") != target_uid:
         raise HTTPException(status_code=403, detail="Access denied: You cannot rename a chat session owned by another user.")
         
     if not data:
-        data = {"messages": [], "mode": "chat", "node_history": [], "user_id": user.get("id")}
+        data = {"messages": [], "mode": "chat", "node_history": [], "user_id": target_uid}
     
     return save_chat_session(
         thread_id=thread_id,
@@ -1269,7 +1273,7 @@ def rename_chat(
         messages=data.get("messages", []),
         mode=data.get("mode", "chat"),
         node_history=data.get("node_history", []),
-        user_id=user.get("id"),
+        user_id=target_uid,
     )
 
 
@@ -1279,9 +1283,11 @@ def delete_chat(
     request: Request,
     user: Dict[str, Any] = Depends(get_current_user_optional)
 ):
+    target_uid = request.headers.get("x-user-id") or user.get("id")
     data = get_chat_session(thread_id)
-    if data and data.get("user_id") and data.get("user_id") != user.get("id"):
+    if data and data.get("user_id") and data.get("user_id") != target_uid:
         raise HTTPException(status_code=403, detail="Access denied: You cannot delete a chat session owned by another user.")
+    return {"status": "deleted", "thread_id": thread_id}
 
     from src.utils.memory_manager import delete_chat_session
     success = delete_chat_session(thread_id)

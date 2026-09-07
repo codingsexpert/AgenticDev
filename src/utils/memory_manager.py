@@ -113,23 +113,22 @@ def save_chat_session(thread_id: str, title: str, messages: List[Dict[str, Any]]
 
 
 def list_chat_sessions(user_id: Optional[str] = None) -> List[Dict[str, Any]]:
-    """Returns a list of saved chat sessions."""
+    """Returns a list of saved chat sessions strictly filtered by user_id."""
     sessions = []
-    current_uid = user_id if (user_id and user_id != "guest") else None
+    target_uid = user_id.strip() if (user_id and isinstance(user_id, str) and user_id.strip()) else None
 
     # Try Supabase first
     if supabase_client:
         try:
             query = supabase_client.table("sessions").select("thread_id, title, mode, user_id, updated_at, messages")
-            if current_uid:
-                query = query.eq("user_id", current_uid)
-            elif user_id == "guest":
+            if target_uid:
+                query = query.eq("user_id", target_uid)
+            else:
                 query = query.is_("user_id", "null")
                 
             response = query.order("updated_at", desc=True).execute()
             
             for row in response.data:
-                # Add message_count manually
                 msgs = row.get("messages", [])
                 row["message_count"] = len(msgs) if isinstance(msgs, list) else 0
                 if "messages" in row:
@@ -148,11 +147,11 @@ def list_chat_sessions(user_id: Optional[str] = None) -> List[Dict[str, Any]]:
                 if isinstance(content, dict) and "thread_id" in content:
                     sess_user = content.get("user_id")
 
-                    if current_uid:
-                        if sess_user != current_uid:
+                    if target_uid:
+                        if sess_user != target_uid:
                             continue
                     else:
-                        if sess_user and sess_user != "guest":
+                        if sess_user is not None and sess_user != "":
                             continue
 
                     sessions.append({
