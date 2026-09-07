@@ -18,7 +18,9 @@ import {
   Share2,
   Archive,
   Check,
-  X
+  X,
+  Search,
+  Download
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -51,6 +53,7 @@ export default function Sidebar({
   const [openMenuThreadId, setOpenMenuThreadId] = useState(null);
   const [editingThreadId, setEditingThreadId] = useState(null);
   const [editingTitle, setEditingTitle] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [isResizing, setIsResizing] = useState(false);
   const menuRef = useRef(null);
 
@@ -195,6 +198,45 @@ export default function Sidebar({
     }
   };
 
+  const handleExportChat = async (chat, e) => {
+    e?.stopPropagation();
+    setOpenMenuThreadId(null);
+    try {
+      const res = await fetch(`http://localhost:8000/api/chats/${chat.thread_id}`, {
+        headers: {
+          'x-user-id': user?.id || ''
+        }
+      });
+      let messages = [];
+      if (res.ok) {
+        const data = await res.json();
+        messages = data.messages || [];
+      }
+      
+      let markdown = `# ${chat.title}\n*Exported from PixiExpert AI Studio on ${new Date().toLocaleString()}*\n\n---\n\n`;
+      if (messages.length === 0) {
+        markdown += `*No message history found for this session.*`;
+      } else {
+        messages.forEach((msg) => {
+          const roleName = msg.role === 'user' ? '👤 User' : '🤖 PixiExpert';
+          markdown += `### ${roleName}\n${msg.content}\n\n---\n\n`;
+        });
+      }
+
+      const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${chat.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_chat.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert(`Export failed: ${err.message}`);
+    }
+  };
+
   const safeProjects = Array.isArray(projects) ? projects : [];
 
   const defaultChats = [
@@ -217,6 +259,10 @@ export default function Sidebar({
   const pinnedChats = allChats.filter((c) => pinnedThreadIds.includes(c.thread_id));
   const unpinnedChats = allChats.filter((c) => !pinnedThreadIds.includes(c.thread_id));
   const sortedChats = [...pinnedChats, ...unpinnedChats];
+
+  const displayChats = searchQuery.trim()
+    ? sortedChats.filter((c) => c.title.toLowerCase().includes(searchQuery.trim().toLowerCase()))
+    : sortedChats;
 
   return (
     <>
@@ -322,9 +368,36 @@ export default function Sidebar({
               </button>
             </div>
 
+            {/* Chat Search Bar */}
+            <div className="px-1 py-0.5">
+              <div className="relative flex items-center">
+                <Search className="w-3.5 h-3.5 absolute left-2.5 text-slate-400 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search chats..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-8 pr-6 py-1 text-xs bg-slate-100/70 border border-slate-200/60 rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:bg-white text-slate-700 placeholder-slate-400 transition-all"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2 text-slate-400 hover:text-slate-600 p-0.5"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            </div>
+
             {/* Chat Items Vertical List (ChatGPT Style) */}
             <div className="space-y-0.5">
-              {sortedChats.map((chat) => {
+              {displayChats.length === 0 ? (
+                <div className="px-3 py-3 text-center text-xs text-slate-400 italic">
+                  No chats match "{searchQuery}"
+                </div>
+              ) : (
+                displayChats.map((chat) => {
                 const isSelected = currentThreadId === chat.thread_id;
                 const isPinned = pinnedThreadIds.includes(chat.thread_id);
                 const isMenuOpen = openMenuThreadId === chat.thread_id;
@@ -439,6 +512,15 @@ export default function Sidebar({
 
                               <button
                                 type="button"
+                                onClick={(e) => handleExportChat(chat, e)}
+                                className="w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 text-slate-700 transition-colors"
+                              >
+                                <Download className="w-3.5 h-3.5 text-slate-400" />
+                                <span>Export Markdown</span>
+                              </button>
+
+                              <button
+                                type="button"
                                 onClick={(e) => togglePinThread(chat.thread_id, e)}
                                 className="w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 text-slate-700 transition-colors"
                               >
@@ -467,7 +549,7 @@ export default function Sidebar({
                     )}
                   </div>
                 );
-              })}
+              }))}
             </div>
           </div>
         </div>
