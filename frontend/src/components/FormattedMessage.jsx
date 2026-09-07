@@ -5,6 +5,7 @@ import { Check, Copy, Code2, Eye, Play, Save, Sparkles, Bug, RefreshCw, MessageC
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { getCleanFilename } from '../utils/fileUtils';
+import { useToast } from './Toast';
 
 const getFileIcon = (filename = '', language = '') => {
   const name = getCleanFilename(filename, language).toLowerCase();
@@ -22,6 +23,7 @@ const getFileIcon = (filename = '', language = '') => {
 };
 
 function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickAction }) {
+  const { addToast } = useToast();
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [copied, setCopied] = useState(false);
   const [applied, setApplied] = useState(false);
@@ -63,8 +65,10 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
       });
       const data = await res.json();
       setExecutionResult(data);
+      addToast('Code executed successfully', 'success');
     } catch (e) {
       setExecutionResult({ output: "Failed to execute code: " + e.message, images: [] });
+      addToast('Execution error: ' + e.message, 'error');
     }
     setIsExecuting(false);
   };
@@ -72,11 +76,15 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
   const handleCopy = () => {
     navigator.clipboard.writeText(currentBlock.code);
     setCopied(true);
+    addToast('Code copied to clipboard', 'info');
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleApplyAll = async () => {
-    if (!activeSandboxId) return;
+    if (!activeSandboxId) {
+      addToast('No active sandbox workspace selected', 'warning');
+      return;
+    }
     try {
       await Promise.all(validBlocks.map(b =>
         fetch(`/api/sandboxes/${activeSandboxId}/file`, {
@@ -86,9 +94,11 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
         })
       ));
       setApplied(true);
+      addToast('All code files synced to Sandbox workspace!', 'success');
       setTimeout(() => setApplied(false), 2000);
     } catch (e) {
       console.error('Failed to apply code files', e);
+      addToast('Failed to sync code to sandbox', 'error');
     }
   };
 
