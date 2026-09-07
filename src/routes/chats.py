@@ -283,21 +283,27 @@ On the VERY FIRST LINE inside the code block, you MUST put the exact full file p
             yield f"data: {json.dumps({'done': True})}\n\n"
             return
 
-        raw_model = target_model or os.getenv("LLM_MODEL", "gemini/gemini-1.5-flash")
+        raw_model = target_model or os.getenv("LLM_MODEL", "gemini/gemini-2.0-flash")
         primary_model = raw_model if "/" in raw_model else f"gemini/{raw_model}"
-        models_to_try = [primary_model, "gemini/gemini-1.5-flash", "gemini/gemini-1.5-pro", "gemini/gemini-2.0-flash"]
+        
+        seen_models = set()
+        models_to_try = []
+        for m in [primary_model, "gemini/gemini-2.0-flash", "gemini/gemini-1.5-flash", "gemini/gemini-2.0-flash-lite", "gemini/gemini-1.5-pro"]:
+            if m not in seen_models:
+                seen_models.add(m)
+                models_to_try.append(m)
 
         stream_success = False
         full_text = ""
 
         for m_name in models_to_try:
             try:
-                response_stream = litellm.completion(
+                response_stream = await litellm.acompletion(
                     model=m_name,
                     messages=messages,
                     stream=True,
                 )
-                for chunk in response_stream:
+                async for chunk in response_stream:
                     delta = chunk.choices[0].delta.content or ""
                     if delta:
                         full_text += delta

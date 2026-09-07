@@ -62,10 +62,23 @@ def extract_text_from_file(file_path: Path) -> str:
     return text
 
 
+# Global in-memory cache for user KB documents: user_id -> { "mtime": float, "chunks": List[str], "sources": List[str] }
+_KB_CACHE = {}
+
+def get_kb_mtime(user_kb_dir: Path) -> float:
+    """Calculates max modification timestamp of files in user KB directory."""
+    try:
+        files = [f for f in user_kb_dir.iterdir() if f.is_file() and not f.name.startswith(".")]
+        if not files:
+            return 0.0
+        return max(f.stat().st_mtime for f in files)
+    except Exception:
+        return 0.0
+
 def retrieve_from_kb(query: str, user_id: str = "default_user", top_k: int = 3) -> str:
     """
     Retrieves relevant Knowledge Base context STRICTLY from the specified user's isolated folder.
-    Guarantees cross-tenant data isolation.
+    Guarantees cross-tenant data isolation. Uses in-memory chunk caching for zero disk latency.
     """
     if not query or not query.strip():
         return ""
@@ -76,38 +89,48 @@ def retrieve_from_kb(query: str, user_id: str = "default_user", top_k: int = 3) 
     files_in_kb = [f for f in user_kb_dir.iterdir() if f.is_file() and not f.name.startswith(".")]
     if not files_in_kb:
         return ""
+
+    current_mtime = get_kb_mtime(user_kb_dir)
+    cached = _KB_CACHE.get(user_id)
+
+    if cached and cached.get("mtime") == current_mtime:
+        all_chunks = cached["chunks"]
+        chunk_sources = cached["sources"]
+    else:
+        all_chunks = []
+        chunk_sources = []
         
-    try:
-        from sklearn.feature_extraction.text import TfidfVectorizer
-        from sklearn.metrics.pairwise import cosine_similarity
-    except ImportError:
-        return ""
-        
-    all_chunks = []
-    chunk_sources = []
-    
-    # 1. Read and chunk all documents in THIS specific user's KB directory
-    for file_path in files_in_kb:
-        text = extract_text_from_file(file_path)
-        if text:
-            chunks = chunk_text(text)
-            for chunk in chunks:
-                all_chunks.append(chunk)
-                chunk_sources.append(file_path.name)
-                    
+        # Read and chunk all documents in THIS specific user's KB directory
+        for file_path in files_in_kb:
+            text = extract_text_from_file(file_path)
+            if text:
+                chunks = chunk_text(text)
+                for chunk in chunks:
+                    all_chunks.append(chunk)
+                    chunk_sources.append(file_path.name)
+
+        _KB_CACHE[user_id] = {
+            "mtime": current_mtime,
+            "chunks": all_chunks,
+            "sources": chunk_sources
+        }
+
     if not all_chunks:
         return ""
         
     try:
-        # 2. Vectorize using TF-IDF
+        from sklearn.feature_extraction.text import TfidfVectorizer
+        from sklearn.metrics.pairwise import cosine_similarity
+
+        # Vectorize using TF-IDF
         vectorizer = TfidfVectorizer(stop_words='english')
         tfidf_matrix = vectorizer.fit_transform(all_chunks)
         query_vec = vectorizer.transform([query])
         
-        # 3. Calculate cosine similarity
+        # Calculate cosine similarity
         cosine_sim = cosine_similarity(query_vec, tfidf_matrix).flatten()
         
-        # 4. Get top_k indices
+        # Get top_k indices
         top_indices = cosine_sim.argsort()[-top_k:][::-1]
         
         results = []
@@ -126,3 +149,4 @@ def retrieve_from_kb(query: str, user_id: str = "default_user", top_k: int = 3) 
         print(f"⚠️ RAG retrieval error: {e}")
         
     return ""
+
