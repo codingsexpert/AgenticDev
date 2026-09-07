@@ -67,7 +67,22 @@ export default function App() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
+  const searchInputRef = useRef(null);
   const abortControllerRef = useRef(null);
+
+  // Cmd + K Keyboard Shortcut listener for search focus
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleStopGeneration = () => {
     if (abortControllerRef.current) {
@@ -524,47 +539,89 @@ export default function App() {
 
       {/* 2. Main Content Area */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative w-full min-w-0">
-        {/* Minimal Top Header Bar matching Reference UI */}
-        <header className="h-14 border-b border-slate-200/60 px-4 sm:px-6 flex items-center justify-between bg-white/70 backdrop-blur-md z-20 shrink-0 gap-4">
-          {/* Left: Sidebar Toggle Button & Wide Search Bar */}
-          <div className="flex items-center space-x-3 flex-1 max-w-lg">
+        {/* Minimal Professional Top Header Bar */}
+        <header className="h-14 border-b border-slate-200/70 px-4 sm:px-6 flex items-center justify-between bg-white/80 backdrop-blur-md z-20 shrink-0 gap-3">
+          {/* Left: Sidebar Toggle Button & Active Session Breadcrumbs */}
+          <div className="flex items-center space-x-3 shrink-0">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               title={sidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
-              className="p-1.5 rounded-lg border border-slate-200/60 hover:bg-slate-100/80 text-slate-600 transition-all shrink-0 cursor-pointer"
+              className="p-1.5 rounded-xl border border-slate-200/70 hover:bg-slate-100 text-slate-600 transition-all shrink-0 cursor-pointer shadow-2xs"
             >
               {sidebarOpen ? <PanelLeftClose className="w-4 h-4 text-slate-500" /> : <PanelLeft className="w-4 h-4 text-indigo-600" />}
             </button>
 
-            {/* Clean Search Input with ⌘ K badge */}
-            <div className="relative w-full">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search projects, files, or ask anything..."
-                className="w-full pl-9 pr-12 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-300 focus:bg-white transition-all"
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
-                ⌘ K
+            {/* Session Breadcrumb & Status */}
+            <div className="hidden sm:flex items-center space-x-2 text-xs">
+              <span className="font-bold text-slate-900 flex items-center space-x-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>PixiExpert</span>
+              </span>
+              <span className="text-slate-300">/</span>
+              <span className="font-medium text-slate-600 truncate max-w-[180px] md:max-w-[240px]">
+                {currentThreadId 
+                  ? (projects.find(p => p.thread_id === currentThreadId)?.title || 'Active Session')
+                  : 'New Workspace'
+                }
               </span>
             </div>
           </div>
 
-          {/* Right Header Actions */}
-          <div className="flex items-center space-x-3">
+          {/* Center: Search Command Bar with Cmd+K */}
+          <div className="flex-1 max-w-md mx-2">
+            <div className="relative w-full">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search projects, files, or ask anything..."
+                className="w-full pl-9 pr-12 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all"
+              />
+              <kbd className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-slate-400 bg-white px-1.5 py-0.5 rounded border border-slate-200 shadow-2xs">
+                ⌘ K
+              </kbd>
+            </div>
+          </div>
+
+          {/* Right Header Quick Actions */}
+          <div className="flex items-center space-x-2 shrink-0">
             {/* Sandbox App Toggle Button (when active chat sandbox exists) */}
             {activeSandboxId && (
               <button
                 onClick={() => { setShowCanvas(!showCanvas); setShowGraph(false); }}
-                className={`flex items-center space-x-1.5 px-3 py-1 rounded-full border text-xs font-medium transition-all ${showCanvas ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
-                  }`}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all cursor-pointer ${
+                  showCanvas 
+                    ? 'bg-indigo-50 border-indigo-200 text-indigo-700 shadow-2xs' 
+                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                }`}
               >
-                <Layers className="w-3.5 h-3.5" />
-                <span>{showCanvas ? 'Hide App' : 'View App'}</span>
+                <Layers className="w-3.5 h-3.5 text-indigo-600" />
+                <span className="hidden md:inline">{showCanvas ? 'Hide App' : 'View Sandbox App'}</span>
               </button>
             )}
+
+            {/* Agent Graph Canvas Button */}
+            <button
+              onClick={() => { setShowGraph(!showGraph); setShowCanvas(false); }}
+              title="View Agent Workflow Graph"
+              className={`p-1.5 rounded-full border text-xs font-medium transition-all cursor-pointer ${
+                showGraph ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-600'
+              }`}
+            >
+              <Activity className="w-4 h-4 text-indigo-600" />
+            </button>
+
+            {/* New Chat Button */}
+            <button
+              type="button"
+              onClick={handleNewProject}
+              className="px-3 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition-all flex items-center space-x-1 cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">New Chat</span>
+            </button>
 
             {/* Clean User Profile Avatar */}
             {user ? (
@@ -574,7 +631,7 @@ export default function App() {
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center space-x-1 p-0.5 rounded-full hover:bg-slate-100 transition-all cursor-pointer"
                 >
-                  <div className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center overflow-hidden">
+                  <div className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center overflow-hidden shadow-2xs">
                     {user.avatar ? (
                       <img src={user.avatar} alt="User" className="w-full h-full object-cover" />
                     ) : (
@@ -613,7 +670,7 @@ export default function App() {
             ) : (
               <button
                 onClick={() => setAuthModalOpen(true)}
-                className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center"
+                className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-2xs"
               >
                 M
               </button>
@@ -626,20 +683,6 @@ export default function App() {
           {hasContent ? (
             /* Active Conversation View */
             <div className="flex-1 flex flex-col h-full overflow-hidden min-h-0 bg-white/90 backdrop-blur-md border-r border-slate-200/70 z-30">
-              <div className="p-2 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between px-4">
-                <span className="text-xs font-semibold text-slate-700 flex items-center space-x-1.5">
-                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
-                  <span>Active Chat</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={handleNewProject}
-                  className="px-3.5 py-1 rounded-full clean-primary-btn text-white text-xs font-semibold shadow-xs transition-all flex items-center space-x-1"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>New Chat</span>
-                </button>
-              </div>
               <ChatTimeline
                 messages={messages}
                 nodeHistory={nodeHistory}
