@@ -51,7 +51,46 @@ export default function Sidebar({
   const [openMenuThreadId, setOpenMenuThreadId] = useState(null);
   const [editingThreadId, setEditingThreadId] = useState(null);
   const [editingTitle, setEditingTitle] = useState('');
+  const [isResizing, setIsResizing] = useState(false);
   const menuRef = useRef(null);
+
+  const startResizing = (e) => {
+    e.preventDefault();
+    setIsResizing(true);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isResizing) return;
+      const newWidth = Math.max(200, Math.min(500, e.clientX));
+      if (setSidebarWidth) {
+        setSidebarWidth(newWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isResizing) {
+        setIsResizing(false);
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        try {
+          localStorage.setItem('pixlexpert_sidebar_width', sidebarWidth.toString());
+        } catch (err) {}
+      }
+    };
+
+    if (isResizing) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, sidebarWidth, setSidebarWidth]);
 
   // ESC key listener & body scroll lock on mobile
   useEffect(() => {
@@ -190,12 +229,30 @@ export default function Sidebar({
       )}
 
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto bg-white/90 backdrop-blur-md border-r border-slate-200/70 flex flex-col transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none shrink-0 ${
+        style={typeof window !== 'undefined' && window.innerWidth >= 1024 ? {
+          width: sidebarOpen ? `${sidebarWidth}px` : '0px'
+        } : undefined}
+        className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto bg-white/90 backdrop-blur-md border-r border-slate-200/70 flex flex-col relative shrink-0 shadow-2xl lg:shadow-none ${
+          isResizing ? 'transition-none select-none' : 'transition-all duration-300 ease-in-out'
+        } ${
           sidebarOpen
-            ? 'translate-x-0 w-72 lg:w-[270px] lg:opacity-100'
+            ? 'translate-x-0 opacity-100'
             : '-translate-x-full lg:translate-x-0 lg:w-0 lg:opacity-0 lg:overflow-hidden lg:border-none'
         }`}
       >
+        {/* Right Drag Resizer Edge Handle (ChatGPT / IDE Style) */}
+        <div
+          onMouseDown={startResizing}
+          onDoubleClick={() => setSidebarWidth && setSidebarWidth(260)}
+          title="Drag edge to resize sidebar width (Double click to reset to 260px)"
+          className={`absolute right-0 top-0 bottom-0 w-2 hover:w-2.5 bg-transparent hover:bg-indigo-500/30 cursor-col-resize cursor-ew-resize z-40 transition-all group flex items-center justify-center ${
+            isResizing ? 'bg-indigo-600/40 w-2.5 opacity-100' : ''
+          }`}
+        >
+          <div className={`w-1 h-8 rounded-full transition-all ${
+            isResizing ? 'bg-indigo-600' : 'bg-slate-300 opacity-0 group-hover:opacity-100 group-hover:bg-indigo-500'
+          }`} />
+        </div>
         {/* Branding & Sidebar Collapse Button */}
         <div className="p-4 sm:p-4.5 flex items-center justify-between border-b border-slate-100/80 shrink-0">
           <div className="cursor-pointer flex items-center space-x-2.5" onClick={() => handleNavClick('Chat')}>

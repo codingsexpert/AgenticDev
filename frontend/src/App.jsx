@@ -483,7 +483,14 @@ export default function App() {
     };
   };
 
-  const [sidebarWidth, setSidebarWidth] = useState(260);
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    try {
+      const saved = localStorage.getItem('pixlexpert_sidebar_width');
+      return saved ? Math.max(200, Math.min(500, parseInt(saved, 10))) : 260;
+    } catch (e) {
+      return 260;
+    }
+  });
 
   const handleAnswerQuestions = (answers) => {
     setPmQuestions([]);
