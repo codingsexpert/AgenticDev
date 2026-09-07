@@ -484,10 +484,10 @@ export default function Sidebar({
           >
             <div className="flex items-center space-x-2.5 truncate">
               <div className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
-                {user?.avatar ? (
+                {user?.avatar && !user.avatar.includes('dicebear.com') ? (
                   <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
-                  user?.name?.charAt(0) || 'M'
+                  (user?.name?.trim()?.charAt(0) || user?.email?.trim()?.charAt(0) || 'M').toUpperCase()
                 )}
               </div>
               <div className="truncate text-left leading-tight">

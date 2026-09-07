@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   User,
   Mail,
@@ -15,7 +15,10 @@ import {
   CreditCard,
   Lock,
   Smartphone,
-  LogOut
+  LogOut,
+  Upload,
+  Camera,
+  Trash2
 } from 'lucide-react';
 
 export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLogout, tokenUsage }) {
@@ -23,14 +26,43 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
 
   const [activeTab, setActiveTab] = useState('account'); // 'account' | 'subscription' | 'usage' | 'security'
   const [isEditing, setIsEditing] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Form fields
   const [name, setName] = useState(user?.name || 'Mukesh Singh');
   const [email, setEmail] = useState(user?.email || 'mukesh@gmail.com');
-  const [avatar, setAvatar] = useState(user?.avatar || '');
+  const [avatar, setAvatar] = useState(() => {
+    if (user?.avatar && !user.avatar.includes('dicebear.com')) {
+      return user.avatar;
+    }
+    return '';
+  });
   const [plan, setPlan] = useState(user?.plan || 'Pro Member');
   const [apiKey, setApiKey] = useState(user?.apiKey || 'sk-pixl-********************');
   const [isSaved, setIsSaved] = useState(false);
+
+  const initialLetter = (name?.trim()?.charAt(0) || email?.trim()?.charAt(0) || 'M').toUpperCase();
+  const hasCustomPhoto = avatar && !avatar.includes('dicebear.com');
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Please select an image file under 5MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setAvatar(event.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setAvatar('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleSaveProfile = (e) => {
     e.preventDefault();
@@ -60,11 +92,11 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-slate-100 text-slate-800 border border-slate-200/80 font-bold text-base flex items-center justify-center shadow-2xs">
-              {avatar ? (
-                <img src={avatar} alt="Profile" className="w-full h-full object-cover rounded-2xl" />
+            <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white border border-indigo-500/20 font-bold text-base flex items-center justify-center shadow-xs overflow-hidden">
+              {hasCustomPhoto ? (
+                <img src={avatar} alt="Profile" className="w-full h-full object-cover" />
               ) : (
-                name?.charAt(0) || 'M'
+                <span>{initialLetter}</span>
               )}
             </div>
             <div>
@@ -149,7 +181,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
 
           {/* TAB 1: Account Details */}
           {activeTab === 'account' && (
-            <form onSubmit={handleSaveProfile} className="space-y-4">
+            <form onSubmit={handleSaveProfile} className="space-y-5">
               <div className="flex justify-between items-center pb-2 border-b border-slate-100">
                 <h3 className="text-sm font-bold text-slate-900">Personal Profile</h3>
                 <button
@@ -160,6 +192,55 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
                   <Edit2 className="w-3.5 h-3.5" />
                   <span>{isEditing ? 'Cancel Editing' : 'Edit Profile'}</span>
                 </button>
+              </div>
+
+              {/* Profile Photo Upload / Initials Avatar Section */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center space-x-4">
+                <div className="relative w-16 h-16 rounded-full bg-indigo-600 text-white font-black text-xl flex items-center justify-center shadow-md overflow-hidden shrink-0">
+                  {hasCustomPhoto ? (
+                    <img src={avatar} alt="Profile Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <span>{initialLetter}</span>
+                  )}
+                </div>
+
+                <div className="space-y-1.5 flex-1">
+                  <div className="text-xs font-bold text-slate-800">Profile Photo</div>
+                  <div className="text-[11px] text-slate-500">
+                    {hasCustomPhoto ? 'Custom image active. Click to update or remove.' : `Showing initial '${initialLetter}'. Click below to upload a photo.`}
+                  </div>
+
+                  {isEditing && (
+                    <div className="flex items-center space-x-2 pt-1">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Upload Photo</span>
+                      </button>
+
+                      {hasCustomPhoto && (
+                        <button
+                          type="button"
+                          onClick={handleRemovePhoto}
+                          className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold rounded-xl transition-colors flex items-center space-x-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Remove Photo</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -187,13 +268,13 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Avatar Image URL</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Image URL (Optional)</label>
                 <input
                   type="text"
                   disabled={!isEditing}
                   value={avatar}
                   onChange={(e) => setAvatar(e.target.value)}
-                  placeholder="https://example.com/my-avatar.png"
+                  placeholder="https://example.com/my-photo.png"
                   className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 disabled:bg-slate-100 disabled:text-slate-500 focus:outline-none focus:border-indigo-500 focus:bg-white"
                 />
               </div>

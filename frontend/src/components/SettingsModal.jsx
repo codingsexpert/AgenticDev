@@ -349,10 +349,10 @@ export default function SettingsModal({
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white font-black text-sm flex items-center justify-center shadow-sm overflow-hidden">
-                        {user?.avatar ? (
+                        {user?.avatar && !user.avatar.includes('dicebear.com') ? (
                           <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
-                          user?.name?.charAt(0) || 'M'
+                          (user?.name?.trim()?.charAt(0) || user?.email?.trim()?.charAt(0) || 'M').toUpperCase()
                         )}
                       </div>
                       <div>

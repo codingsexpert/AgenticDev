@@ -722,5 +722,16 @@
     "token_expires_at": 1788863070.071292,
     "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Riya Singh",
     "created_at": 1788776670.071311
+  },
+  "ankit@gmail.com": {
+    "id": "usr_1788777734257",
+    "name": "ANKIT",
+    "email": "ankit@gmail.com",
+    "salt": "a29ed6bf8c0a171947190d051895ed28",
+    "password_hash": "a78778e7f9f69b432d7cfe14ae17c80854fc6a383d6029fc9ae0a64a416152ac",
+    "token": "pixl_jwt_478d9007e6f869238b8f17a857e260507f4783bd6b794de4e181647e0b10b3f5",
+    "token_expires_at": 1788864134.2574809,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=ANKIT",
+    "created_at": 1788777734.257489
   }
 }

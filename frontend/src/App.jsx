@@ -638,10 +638,10 @@ export default function App() {
                 className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white font-bold text-sm flex items-center justify-center overflow-hidden shadow-xs hover:ring-4 hover:ring-indigo-100 ring-2 ring-indigo-50 transition-all cursor-pointer shrink-0"
                 title="Profile & Account Settings"
               >
-                {user?.avatar ? (
+                {user?.avatar && !user.avatar.includes('dicebear.com') ? (
                   <img src={user.avatar} alt="User Profile" className="w-full h-full object-cover" />
                 ) : (
-                  user?.name?.charAt(0) || 'M'
+                  (user?.name?.trim()?.charAt(0) || user?.email?.trim()?.charAt(0) || 'M').toUpperCase()
                 )}
               </button>
 
@@ -656,11 +656,11 @@ export default function App() {
                     }}
                     className="p-2.5 bg-slate-50 hover:bg-indigo-50/60 border border-slate-200/80 rounded-xl flex items-center space-x-3 cursor-pointer transition-colors group"
                   >
-                    <div className="w-9 h-9 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
-                      {user?.avatar ? (
+                    <div className="w-9 h-9 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
+                      {user?.avatar && !user.avatar.includes('dicebear.com') ? (
                         <img src={user.avatar} alt="User" className="w-full h-full object-cover rounded-full" />
                       ) : (
-                        user?.name?.charAt(0) || 'M'
+                        (user?.name?.trim()?.charAt(0) || user?.email?.trim()?.charAt(0) || 'M').toUpperCase()
                       )}
                     </div>
                     <div className="truncate text-left leading-tight flex-1">

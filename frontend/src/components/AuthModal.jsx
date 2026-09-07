@@ -61,7 +61,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           id: u.id,
           email: u.email,
           name: u.user_metadata?.full_name || u.email.split('@')[0],
-          avatar: u.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.email}`,
+          avatar: u.user_metadata?.avatar_url || '',
           token: supaRes.data.session?.access_token,
         };
         localStorage.setItem('pixlexpert_user', JSON.stringify(userData));
@@ -123,7 +123,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           id: u.id,
           email: u.email,
           name: cleanName,
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cleanName)}`,
+          avatar: '',
           token: supaRes.data.session?.access_token,
         };
         localStorage.setItem('pixlexpert_user', JSON.stringify(userData));
