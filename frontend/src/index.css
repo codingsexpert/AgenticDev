@@ -6,10 +6,20 @@
   color-scheme: light;
 }
 
-* {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+*:not(.codicon):not([class*="codicon"]) {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Preserve VS Code Codicon Font Family for Monaco Find & Replace Widget */
+.codicon,
+[class^="codicon-"],
+[class*=" codicon-"],
+.monaco-editor .codicon,
+.find-widget .button,
+.monaco-findInput .codicon {
+  font-family: codicon !important;
 }
 
 body {

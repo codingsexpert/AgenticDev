@@ -219,11 +219,10 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
           {hasWebBlocks && (
             <button
               onClick={() => setShowPreview(!showPreview)}
-              className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-all duration-200 flex items-center space-x-2 cursor-pointer border active:scale-95 ${
-                showPreview
-                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md'
-                  : 'bg-indigo-950/70 hover:bg-indigo-900/90 text-indigo-200 border-indigo-500/40 shadow-sm'
-              }`}
+              className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-all duration-200 flex items-center space-x-2 cursor-pointer border active:scale-95 ${showPreview
+                ? 'bg-indigo-600 text-white border-indigo-400 shadow-md'
+                : 'bg-indigo-950/70 hover:bg-indigo-900/90 text-indigo-200 border-indigo-500/40 shadow-sm'
+                }`}
               title="Toggle interactive live web preview"
             >
               <Eye className="w-3.5 h-3.5" />
@@ -262,11 +261,10 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
             <button
               key={idx}
               onClick={() => setActiveTabIndex(idx)}
-              className={`flex items-center space-x-2.5 px-4 py-2 rounded-t-xl text-xs font-mono transition-all duration-200 shrink-0 cursor-pointer ${
-                isActive
-                  ? 'bg-[#181b28] text-white font-semibold border-t border-x border-slate-700/80 shadow-md'
-                  : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
-              }`}
+              className={`flex items-center space-x-2.5 px-4 py-2 rounded-t-xl text-xs font-mono transition-all duration-200 shrink-0 cursor-pointer ${isActive
+                ? 'bg-[#181b28] text-white font-semibold border-t border-x border-slate-700/80 shadow-md'
+                : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
+                }`}
             >
               {getFileIcon(cleanName, block.language)}
               <span>{cleanName}</span>
@@ -318,7 +316,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
             <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-800/60">
               <div className="flex items-center space-x-2 text-slate-300">
                 <Terminal className="w-3.5 h-3.5 text-indigo-400" />
-                <span className="font-semibold uppercase tracking-wider text-[11px] text-slate-200">Terminal Console Output</span>
+                <span className="font-semibold uppercase tracking-wider text-[11px] text-slate-200">Terminal Output</span>
               </div>
               <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-semibold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
                 {executionResult.exit_code === 0 ? 'EXIT CODE: 0 (SUCCESS)' : executionResult.exit_code ? `EXIT CODE: ${executionResult.exit_code}` : 'EXECUTED'}
