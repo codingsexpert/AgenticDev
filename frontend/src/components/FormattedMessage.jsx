@@ -154,47 +154,62 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
     : (currentBlock.filename || `${currentBlock.language || 'Code'} File`);
 
   return (
-    <div className="my-5 flex flex-col bg-white border border-slate-200/90 shadow-[0_15px_45px_-10px_rgba(15,23,42,0.1)] hover:shadow-[0_20px_55px_-10px_rgba(99,102,241,0.18)] rounded-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-0.5">
-      {/* Unified Card Main Header */}
-      <div className="flex flex-wrap items-center justify-between p-4 bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 text-white gap-3 border-b border-indigo-500/20">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center shrink-0 shadow-inner">
-            <Folder className="w-5 h-5 text-indigo-300" />
+    <div className="my-5 flex flex-col bg-[#0f1117] border border-slate-800/80 shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:shadow-[0_25px_60px_rgba(99,102,241,0.2)] rounded-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-0.5">
+      {/* Unified Main Card Top Bar Header */}
+      <div className="flex flex-wrap items-center justify-between p-4 bg-gradient-to-r from-[#0d0e15] via-[#16192b] to-[#0d0e15] border-b border-indigo-500/20 gap-3">
+        <div className="flex items-center space-x-3.5">
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl blur-xs opacity-50 group-hover:opacity-100 transition duration-300"></div>
+            <div className="relative w-10 h-10 rounded-xl bg-slate-900 border border-indigo-400/30 flex items-center justify-center shrink-0">
+              <Folder className="w-5 h-5 text-indigo-400" />
+            </div>
           </div>
           <div>
-            <div className="text-sm font-semibold tracking-tight text-white flex items-center space-x-2">
-              <span>{projectTitle}</span>
-              {blocks.length > 1 && (
-                <span className="text-[10px] bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono uppercase tracking-wider">
-                  Connected
+            <div className="text-sm font-semibold tracking-tight text-white flex items-center space-x-2.5">
+              <span className="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent font-semibold">
+                {projectTitle}
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono uppercase tracking-wider">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
                 </span>
-              )}
+                CONNECTED
+              </span>
             </div>
-            <div className="text-[11.5px] text-slate-300 mt-0.5 flex items-center space-x-2">
-              <span>Saved in workspace sandbox</span>
-              <span className="text-slate-500">•</span>
-              <span>{blocks.map(b => b.filename).join(', ')}</span>
+            <div className="text-[11.5px] text-slate-400 mt-1 flex items-center space-x-2 font-mono">
+              <span className="text-indigo-300/80">Saved in workspace sandbox</span>
+              <span className="text-slate-600">•</span>
+              <span className="text-slate-400 truncate max-w-[240px] sm:max-w-md">{blocks.map(b => b.filename).join(', ')}</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2 shrink-0 flex-wrap gap-1.5 sm:gap-2">
-          {/* Prominent Run Code Button */}
+        {/* Primary Action Buttons */}
+        <div className="flex items-center space-x-2 shrink-0 flex-wrap gap-2">
+          {/* Primary Glowing Run Code Button */}
           <button
             onClick={handleRunCode}
             disabled={isExecuting}
-            className="text-xs px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold transition-all shadow-md flex items-center space-x-1.5 disabled:opacity-50 cursor-pointer"
-            title="Execute code and view output terminal"
+            className="relative group text-xs px-3.5 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-xl font-semibold transition-all duration-200 shadow-[0_0_15px_rgba(16,185,129,0.3)] flex items-center space-x-2 disabled:opacity-50 cursor-pointer border border-emerald-400/30 active:scale-95"
+            title="Execute code natively and view output console"
           >
-            {isExecuting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5 fill-white text-white" />}
-            <span>{isExecuting ? 'Running...' : 'Run Code'}</span>
+            {isExecuting ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+            ) : (
+              <Play className="w-3.5 h-3.5 fill-white text-white" />
+            )}
+            <span className="tracking-wide">{isExecuting ? 'Executing...' : 'Run Code'}</span>
           </button>
 
           {hasWebBlocks && (
             <button
               onClick={() => setShowPreview(!showPreview)}
-              className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all flex items-center space-x-1.5 shadow-sm ${showPreview ? 'bg-indigo-500 text-white' : 'bg-indigo-950/60 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40'
-                }`}
+              className={`text-xs px-3.5 py-1.5 rounded-xl font-medium transition-all duration-200 flex items-center space-x-2 cursor-pointer border active:scale-95 ${
+                showPreview
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.4)]'
+                  : 'bg-indigo-950/60 hover:bg-indigo-900/80 text-indigo-300 border-indigo-500/30'
+              }`}
               title="Toggle interactive live web preview"
             >
               <Eye className="w-3.5 h-3.5" />
@@ -205,8 +220,8 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
           {activeSandboxId && (
             <button
               onClick={handleApplyAll}
-              className="text-xs px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition-all shadow-sm flex items-center space-x-1.5"
-              title="Save all files directly to sandbox"
+              className="text-xs px-3.5 py-1.5 bg-indigo-600/90 hover:bg-indigo-500 text-white rounded-xl font-medium transition-all duration-200 border border-indigo-400/30 flex items-center space-x-2 cursor-pointer active:scale-95"
+              title="Save all files directly to sandbox workspace"
             >
               {applied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Save className="w-3.5 h-3.5" />}
               <span>{applied ? 'Saved All' : 'Save All'}</span>
@@ -215,81 +230,86 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
 
           <button
             onClick={() => onOpenCodeBlock && onOpenCodeBlock(blocks)}
-            className="text-xs px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg font-medium transition-all border border-white/20 flex items-center space-x-1.5 shadow-sm"
-            title="Open full workspace IDE canvas"
+            className="text-xs px-3.5 py-1.5 bg-slate-800/80 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl font-medium transition-all duration-200 border border-slate-700/80 hover:border-indigo-500/50 flex items-center space-x-2 shadow-sm cursor-pointer active:scale-95"
+            title="Open full interactive Workspace IDE canvas"
           >
-            <Layers className="w-3.5 h-3.5 text-indigo-300" />
+            <Layers className="w-3.5 h-3.5 text-indigo-400" />
             <span>Open Workspace IDE</span>
           </button>
         </div>
       </div>
 
-      {/* Multi-File Tab Bar */}
-      <div className="flex items-center space-x-1 px-3 py-2 bg-slate-100/80 border-b border-slate-200 overflow-x-auto no-scrollbar">
+      {/* Multi-File Tab Bar Strip */}
+      <div className="flex items-center space-x-1 px-3 pt-2 bg-[#121319] border-b border-slate-800/80 overflow-x-auto no-scrollbar">
         {blocks.map((block, idx) => {
           const isActive = idx === activeTabIndex;
           return (
             <button
               key={idx}
               onClick={() => setActiveTabIndex(idx)}
-              className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 ${isActive
-                  ? 'bg-white text-indigo-950 font-semibold shadow-sm border border-slate-200'
-                  : 'text-slate-600 hover:bg-slate-200/60 hover:text-slate-900'
-                }`}
+              className={`flex items-center space-x-2 px-3.5 py-2 rounded-t-xl text-xs font-mono transition-all duration-200 shrink-0 cursor-pointer relative ${
+                isActive
+                  ? 'bg-[#1e202e] text-indigo-300 font-semibold border-t border-x border-slate-700/80 shadow-md'
+                  : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
+              }`}
             >
               {getFileIcon(block.filename, block.language)}
               <span>{block.filename}</span>
+              {isActive && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 rounded-full"></span>
+              )}
             </button>
           );
         })}
       </div>
 
-      {/* Active File Quick Actions Toolbar */}
-      <div className="flex items-center space-x-2 px-3 py-1.5 border-b border-slate-100 bg-slate-50/50 overflow-x-auto no-scrollbar">
-        <button
-          onClick={() => onQuickAction && onQuickAction('Explain', currentBlock.code)}
-          className="text-[11px] px-2.5 py-1 bg-white hover:bg-amber-50 text-slate-600 hover:text-amber-700 border border-slate-200 hover:border-amber-200 rounded-md transition-colors flex items-center space-x-1.5 whitespace-nowrap shadow-xs"
-        >
-          <MessageCircle className="w-3 h-3 text-amber-500" />
-          <span>Explain</span>
-        </button>
-        <button
-          onClick={() => onQuickAction && onQuickAction('Debug', currentBlock.code)}
-          className="text-[11px] px-2.5 py-1 bg-white hover:bg-rose-50 text-slate-600 hover:text-rose-700 border border-slate-200 hover:border-rose-200 rounded-md transition-colors flex items-center space-x-1.5 whitespace-nowrap shadow-xs"
-        >
-          <Bug className="w-3 h-3 text-rose-500" />
-          <span>Debug</span>
-        </button>
-        <button
-          onClick={() => onQuickAction && onQuickAction('Refactor', currentBlock.code)}
-          className="text-[11px] px-2.5 py-1 bg-white hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border border-slate-200 hover:border-indigo-200 rounded-md transition-colors flex items-center space-x-1.5 whitespace-nowrap shadow-xs"
-        >
-          <RefreshCw className="w-3 h-3 text-indigo-500" />
-          <span>Refactor</span>
-        </button>
-        {isExecutable && (
+      {/* File Quick Actions & Run Toolbar */}
+      <div className="flex items-center space-x-2 px-3.5 py-2 border-b border-slate-800/60 bg-[#161822] overflow-x-auto no-scrollbar justify-between">
+        <div className="flex items-center space-x-2">
           <button
-            onClick={handleRunCode}
-            disabled={isExecuting}
-            className="text-[11px] px-2.5 py-1 bg-zinc-900 hover:bg-zinc-800 text-white rounded-md transition-colors flex items-center space-x-1.5 whitespace-nowrap shadow-xs disabled:opacity-50 ml-auto"
+            onClick={() => onQuickAction && onQuickAction('Explain', currentBlock.code)}
+            className="text-[11px] px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:border-amber-400/50 rounded-lg transition-all flex items-center space-x-1.5 whitespace-nowrap cursor-pointer"
           >
-            {isExecuting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />}
-            <span>{isExecuting ? 'Running...' : 'Run Code'}</span>
+            <MessageCircle className="w-3 h-3 text-amber-400" />
+            <span>Explain</span>
           </button>
-        )}
+          <button
+            onClick={() => onQuickAction && onQuickAction('Debug', currentBlock.code)}
+            className="text-[11px] px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:border-rose-400/50 rounded-lg transition-all flex items-center space-x-1.5 whitespace-nowrap cursor-pointer"
+          >
+            <Bug className="w-3 h-3 text-rose-400" />
+            <span>Debug</span>
+          </button>
+          <button
+            onClick={() => onQuickAction && onQuickAction('Refactor', currentBlock.code)}
+            className="text-[11px] px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 hover:border-indigo-400/50 rounded-lg transition-all flex items-center space-x-1.5 whitespace-nowrap cursor-pointer"
+          >
+            <RefreshCw className="w-3 h-3 text-indigo-400" />
+            <span>Refactor</span>
+          </button>
+        </div>
+
+        <button
+          onClick={handleRunCode}
+          disabled={isExecuting}
+          className="text-[11px] px-3 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium rounded-lg transition-all flex items-center space-x-1.5 whitespace-nowrap shadow-xs disabled:opacity-50 cursor-pointer border border-emerald-400/30"
+        >
+          {isExecuting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3 fill-white" />}
+          <span>{isExecuting ? 'Running...' : 'Run Code'}</span>
+        </button>
       </div>
 
-      {/* Code Editor/Viewer Body */}
-      <div className="bg-[#1e1e1e] relative">
-        <div className="bg-[#252526] px-4 py-1.5 border-b border-slate-700/60 flex items-center justify-between text-slate-300 font-mono text-[11px]">
-          <span className="flex items-center space-x-2 font-semibold uppercase text-indigo-300 tracking-wider">
+      {/* Code Viewer Container */}
+      <div className="bg-[#0b0c10] relative">
+        <div className="bg-[#12141c] px-4 py-2 border-b border-slate-800/80 flex items-center justify-between text-slate-300 font-mono text-[11px]">
+          <span className="flex items-center space-x-2 font-semibold uppercase text-indigo-400 tracking-wider">
             {getFileIcon(currentBlock.filename, currentBlock.language)}
-            <span>{currentBlock.filename}</span>
+            <span>FILE: {currentBlock.filename}</span>
           </span>
           <button
             type="button"
             onClick={handleCopy}
-            className="flex items-center space-x-1 px-2.5 py-1 rounded bg-slate-700/80 hover:bg-slate-700 text-slate-200 text-[10.5px] transition-colors font-sans"
+            className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 text-slate-200 text-[11px] transition-all cursor-pointer font-sans active:scale-95"
           >
             {copied ? (
               <>
@@ -305,44 +325,53 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
           </button>
         </div>
 
-        <div className="overflow-x-auto selection:bg-indigo-500/40 font-mono text-[13px]">
+        <div className="overflow-x-auto selection:bg-indigo-500/40 font-mono text-[13px] p-2">
           <SyntaxHighlighter
             language={langLower === 'html' ? 'xml' : langLower === 'jsx' ? 'javascript' : langLower || 'javascript'}
             style={vscDarkPlus}
-            customStyle={{ margin: 0, padding: '16px', background: 'transparent', fontSize: '13px', lineHeight: '1.5' }}
+            customStyle={{ margin: 0, padding: '16px', background: 'transparent', fontSize: '13px', lineHeight: '1.6' }}
             wrapLines={true}
           >
             {currentBlock.code}
           </SyntaxHighlighter>
         </div>
 
-        {/* Terminal Execution Result */}
+        {/* Integrated High-Tech Terminal Execution Box */}
         {executionResult !== null && (
-          <div className="border-t border-zinc-700/60 bg-[#0d1117] p-3 font-mono text-[11px] sm:text-xs">
-            <div className="flex items-center space-x-1.5 mb-2 text-emerald-400 opacity-90">
-              <Terminal className="w-3.5 h-3.5" />
-              <span className="font-semibold uppercase tracking-wider text-[10px]">Terminal Output</span>
+          <div className="border-t border-slate-800/80 bg-[#07080b] p-4 font-mono text-[11.5px] sm:text-xs">
+            <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-800/60">
+              <div className="flex items-center space-x-2 text-emerald-400">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <Terminal className="w-3.5 h-3.5" />
+                <span className="font-semibold uppercase tracking-wider text-[11px]">TERMINAL OUTPUT</span>
+              </div>
+              <span className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">
+                {executionResult.exit_code === 0 ? 'STATUS: SUCCESS (0)' : executionResult.exit_code ? `EXIT CODE: ${executionResult.exit_code}` : 'EXECUTED'}
+              </span>
             </div>
-            <div className="text-zinc-300 whitespace-pre-wrap pl-1 overflow-x-auto max-h-[300px] overflow-y-auto no-scrollbar">
-              {executionResult.output}
+            <div className="text-slate-200 whitespace-pre-wrap font-mono p-3 bg-[#0d0f17] rounded-xl border border-slate-800/80 max-h-[320px] overflow-y-auto leading-relaxed shadow-inner">
+              {executionResult.output || 'No output produced.'}
             </div>
           </div>
         )}
       </div>
 
-      {/* Interactive Combined Live Run Preview */}
+      {/* Interactive Combined Live Preview Panel */}
       {showPreview && (
-        <div ref={previewRef} className="border-t border-slate-200 bg-white">
-          <div className="flex items-center justify-between px-3.5 py-2 bg-slate-100 border-b border-slate-200 text-xs text-slate-700 font-mono">
-            <span className="flex items-center space-x-2 font-semibold text-slate-800">
-              <Play className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Combined Interactive Preview ({blocks.length} File{blocks.length > 1 ? 's' : ''} Connected)</span>
+        <div ref={previewRef} className="border-t border-slate-800/80 bg-slate-900">
+          <div className="flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-slate-900 via-indigo-950/60 to-slate-900 border-b border-slate-800 text-xs text-slate-200 font-mono">
+            <span className="flex items-center space-x-2 font-semibold text-white">
+              <Play className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
+              <span>Interactive Live Web Sandbox Preview ({blocks.length} File{blocks.length > 1 ? 's' : ''})</span>
             </span>
           </div>
           <iframe
             srcDoc={getCombinedSrcDoc()}
             title="Combined Live Code Preview"
-            className="w-full h-80 sm:h-96 border-none bg-white"
+            className="w-full h-80 sm:h-96 border-none bg-white shadow-2xl"
             sandbox="allow-scripts allow-modals"
           />
         </div>
