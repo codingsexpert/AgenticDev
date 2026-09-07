@@ -230,9 +230,9 @@ export default function ChatTimeline({
                   </div>
                 </div>
               ) : (
-                /* Standard Display Bubble — Clean Claude-Style Light Slate Card */
+                /* Standard Display Bubble — Clean Claude-Style Card */
                 <div className="flex flex-col items-end max-w-[88%] sm:max-w-[80%]">
-                  <div className="bg-slate-100/90 text-slate-900 px-3.5 py-2.5 rounded-2xl rounded-tr-xs text-xs sm:text-sm leading-normal font-sans font-medium border border-slate-200/80 w-full shadow-2xs">
+                  <div className="user-message-card bg-slate-100/90 dark:bg-slate-800/90 text-slate-900 dark:text-slate-100 px-3.5 py-2.5 rounded-2xl rounded-tr-xs text-xs sm:text-sm leading-normal font-sans font-medium border border-slate-200/80 dark:border-slate-700/80 w-full shadow-2xs">
                     <FormattedMessage
                       content={msg.content}
                       isUser={true}
@@ -256,10 +256,10 @@ export default function ChatTimeline({
               )}
             </div>
           ) : (
-            /* Assistant Message Response — Clean Seamless Claude Style */
+            /* Assistant Message Response — Clean Seamless Style */
             <div className="flex flex-col items-start mr-auto w-full animate-fade-in my-1 max-w-full overflow-hidden pl-1 sm:pl-2">
               {/* Response Text Body */}
-              <div className="text-xs sm:text-sm text-slate-800 leading-normal font-sans w-full break-words">
+              <div className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-normal font-sans w-full break-words">
                 <FormattedMessage content={msg.content} activeSandboxId={activeSandboxId} onOpenCodeBlock={onOpenCodeBlock} onQuickAction={onQuickAction} />
               </div>
 
@@ -276,16 +276,16 @@ export default function ChatTimeline({
       {nodeHistory && nodeHistory.length > 0 && !activeSandboxId && (
         <div className="flex flex-col items-start mr-auto w-full max-w-[85%] sm:max-w-[80%] my-2 animate-fade-in">
           <div className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider mb-2 ml-1">AI Dev Team Progress</div>
-          <div className="bg-white border border-zinc-200 rounded-xl p-3 sm:p-4 shadow-sm w-full space-y-3">
+          <div className="bg-white dark:bg-slate-900 border border-zinc-200 dark:border-slate-800 rounded-xl p-3 sm:p-4 shadow-sm w-full space-y-3">
             {nodeHistory.map((hist, i) => (
-              <div key={i} className="flex items-center space-x-3 text-sm text-zinc-700">
-                <div className="w-5 h-5 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0">
-                  <Check className="w-3 h-3 text-emerald-600" />
+              <div key={i} className="flex items-center space-x-3 text-sm text-zinc-700 dark:text-zinc-300">
+                <div className="w-5 h-5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center shrink-0">
+                  <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <span className="capitalize font-medium">{hist.node.replace('_', ' ')} phase completed</span>
               </div>
             ))}
-            <div className="flex items-center space-x-3 text-sm text-zinc-500 mt-2 bg-zinc-50 p-2 rounded-lg border border-zinc-100">
+            <div className="flex items-center space-x-3 text-sm text-zinc-500 dark:text-zinc-400 mt-2 bg-zinc-50 dark:bg-slate-800/80 p-2 rounded-lg border border-zinc-100 dark:border-slate-700/60">
               <div className="w-5 h-5 flex items-center justify-center shrink-0">
                 <div className="w-3.5 h-3.5 border-2 border-zinc-300 border-t-indigo-500 rounded-full animate-spin" />
               </div>
@@ -298,7 +298,7 @@ export default function ChatTimeline({
       {/* Real-Time Streaming AI Response */}
       {streamingText && (
         <div className="flex items-start mr-auto w-full animate-fade-in py-1">
-          <div className="text-xs sm:text-sm text-slate-800 leading-normal font-sans relative w-full">
+          <div className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-normal font-sans relative w-full">
             <FormattedMessage content={streamingText} activeSandboxId={activeSandboxId} onOpenCodeBlock={onOpenCodeBlock} onQuickAction={onQuickAction} />
             <span className="inline-block w-2 h-4 bg-zinc-400 animate-pulse ml-1 align-middle rounded-sm"></span>
           </div>
