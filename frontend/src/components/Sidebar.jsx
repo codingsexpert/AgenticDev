@@ -31,10 +31,10 @@ export default function Sidebar({
   user,
   onOpenAuth,
   onLogout,
-  onPromptAction
+  onPromptAction,
+  activeNav = 'Chat',
+  onSelectNav
 }) {
-  const [activeNav, setActiveNav] = useState('Chat');
-
   // ESC key listener & body scroll lock on mobile
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -65,17 +65,11 @@ export default function Sidebar({
   ];
 
   const handleNavClick = (navName) => {
-    setActiveNav(navName);
-    if (navName === 'Chat') {
+    if (onSelectNav) {
+      onSelectNav(navName);
+    }
+    if (navName === 'Chat' && onNewProject && !currentThreadId) {
       onNewProject();
-    } else if (navName === 'Knowledge') {
-      if (onPromptAction) onPromptAction('Show available Knowledge Base documents and developer context');
-    } else if (navName === 'Tools') {
-      if (onPromptAction) onPromptAction('List active system development tools, terminal and capabilities');
-    } else if (navName === 'Settings') {
-      if (onOpenAuth) onOpenAuth();
-    } else if (navName === 'Projects') {
-      if (onPromptAction) onPromptAction('Show summary of all recent projects and active code workspaces');
     }
 
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {

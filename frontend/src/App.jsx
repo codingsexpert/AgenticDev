@@ -5,6 +5,10 @@ import PromptBar from './components/PromptBar';
 import ArtifactsCanvas from './components/ArtifactsCanvas';
 import GraphCanvas from './components/GraphCanvas';
 import AuthModal from './components/AuthModal';
+import ProjectsModal from './components/ProjectsModal';
+import KnowledgeModal from './components/KnowledgeModal';
+import ToolsModal from './components/ToolsModal';
+import SettingsModal from './components/SettingsModal';
 import { getCleanFilename } from './utils/fileUtils';
 import {
   Menu,
@@ -50,6 +54,9 @@ export default function App() {
   const [activeChatCodeBlock, setActiveChatCodeBlock] = useState(null);
   const [chatWidth, setChatWidth] = useState(480);
   const [isResizingChat, setIsResizingChat] = useState(false);
+
+  // Active Sidebar Navigation Tab ('Chat' | 'Projects' | 'Knowledge' | 'Tools' | 'Settings')
+  const [activeNav, setActiveNav] = useState('Chat');
 
   // Search & Theme State
   const [searchQuery, setSearchQuery] = useState('');
@@ -504,6 +511,8 @@ export default function App() {
         onOpenAuth={() => setAuthModalOpen(true)}
         onLogout={handleLogout}
         onPromptAction={(p) => handlePromptSubmit(p, 'gemini-1.5-flash', mode)}
+        activeNav={activeNav}
+        onSelectNav={(nav) => setActiveNav(nav)}
       />
 
       {/* 2. Main Content Area */}
@@ -770,6 +779,58 @@ export default function App() {
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
         onAuthSuccess={(userData) => setUser(userData)}
+      />
+
+      {/* Projects Explorer Modal */}
+      <ProjectsModal
+        isOpen={activeNav === 'Projects'}
+        onClose={() => setActiveNav('Chat')}
+        projects={projects}
+        currentThreadId={currentThreadId}
+        onSelectProject={(id) => {
+          handleSelectChat(id);
+          setActiveNav('Chat');
+        }}
+        onDeleteProject={handleDeleteProject}
+        onRenameProject={handleRenameProject}
+        onNewProject={() => {
+          handleNewProject();
+          setActiveNav('Chat');
+        }}
+        onOpenCanvas={() => {
+          setShowCanvas(true);
+          setActiveNav('Chat');
+        }}
+      />
+
+      {/* Knowledge Base Modal */}
+      <KnowledgeModal
+        isOpen={activeNav === 'Knowledge'}
+        onClose={() => setActiveNav('Chat')}
+        onPromptAction={(p) => {
+          setActiveNav('Chat');
+          handlePromptSubmit(p, 'gemini-1.5-flash', mode);
+        }}
+      />
+
+      {/* Tools & Capabilities Modal */}
+      <ToolsModal
+        isOpen={activeNav === 'Tools'}
+        onClose={() => setActiveNav('Chat')}
+        onPromptAction={(p) => {
+          setActiveNav('Chat');
+          handlePromptSubmit(p, 'gemini-1.5-flash', mode);
+        }}
+      />
+
+      {/* Settings & Configuration Modal */}
+      <SettingsModal
+        isOpen={activeNav === 'Settings'}
+        onClose={() => setActiveNav('Chat')}
+        user={user}
+        onOpenAuth={() => setAuthModalOpen(true)}
+        onLogout={handleLogout}
+        tokenUsage={tokenUsage}
       />
     </div>
   );
