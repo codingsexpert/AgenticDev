@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from './components/Sidebar';
+import RightSidebar from './components/RightSidebar';
 import ChatTimeline from './components/ChatTimeline';
 import PromptBar from './components/PromptBar';
 import ArtifactsCanvas from './components/ArtifactsCanvas';
@@ -904,6 +905,15 @@ export default function App() {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Right Sidebar Widget for System Diagnostics, Quick Starters & Recent Chats */}
+          {!showCanvas && !showGraph && (
+            <RightSidebar
+              projects={projects}
+              onSelectProject={handleSelectChat}
+              onPromptAction={(promptText) => handlePromptSubmit(promptText, 'gemini-1.5-flash', 'chat')}
+            />
           )}
 
           {/* Sliding Code Canvas / Artifact Preview */}
