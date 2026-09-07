@@ -60,28 +60,13 @@ export default function App() {
   // Active Sidebar Navigation Tab ('Chat' | 'Projects' | 'Knowledge' | 'Tools' | 'Settings')
   const [activeNav, setActiveNav] = useState('Chat');
 
-  // Search & Theme State
+  // Search State
   const [searchQuery, setSearchQuery] = useState('');
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    try {
-      const saved = localStorage.getItem('pixlexpert_theme');
-      if (saved) return saved === 'dark';
-      return typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    } catch (e) {
-      return false;
-    }
-  });
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (isDarkMode) {
-      root.classList.add('dark');
-      localStorage.setItem('pixlexpert_theme', 'dark');
-    } else {
-      root.classList.remove('dark');
-      localStorage.setItem('pixlexpert_theme', 'light');
-    }
-  }, [isDarkMode]);
+    document.documentElement.classList.remove('dark');
+    localStorage.removeItem('pixlexpert_theme');
+  }, []);
 
   // Authentication State & Top Profile Dropdown State
   const [user, setUser] = useState(null);
@@ -578,7 +563,7 @@ export default function App() {
   const hasContent = messages.length > 0 || nodeHistory.length > 0 || streamingText !== '';
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-slate-950 ambient-bg text-slate-900 dark:text-slate-100 font-sans">
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 ambient-bg text-slate-900 font-sans">
       {/* 1. Left Sidebar Navigation */}
       <Sidebar
         projects={projects}
@@ -604,24 +589,24 @@ export default function App() {
       {/* 2. Main Content Area */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative w-full min-w-0">
         {/* Minimal Professional Top Header Bar */}
-        <header className="h-14 border-b border-slate-200/70 dark:border-slate-800/80 px-4 sm:px-6 flex items-center justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur-md z-40 shrink-0 gap-3 relative">
+        <header className="h-14 border-b border-slate-200/70 px-4 sm:px-6 flex items-center justify-between bg-white/90 backdrop-blur-md z-40 shrink-0 gap-3 relative">
           {/* Left: Expand Sidebar Button (only when sidebar is closed) & Session Title */}
           <div className="flex items-center space-x-3 shrink-0">
             {!sidebarOpen && (
               <button
                 onClick={() => setSidebarOpen(true)}
                 title="Expand Sidebar"
-                className="p-1.5 rounded-xl border border-slate-200/70 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-indigo-600 dark:text-indigo-400 transition-all shrink-0 cursor-pointer shadow-2xs"
+                className="p-1.5 rounded-xl border border-slate-200/70 hover:bg-slate-100 text-indigo-600 transition-all shrink-0 cursor-pointer shadow-2xs"
               >
-                <PanelLeft className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                <PanelLeft className="w-4 h-4 text-indigo-600" />
               </button>
             )}
 
             {/* Active Session Status Title (No duplicate PixiExpert text!) */}
             <div className="hidden sm:flex items-center space-x-2 text-xs">
-              <span className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500"></span>
-              <span className="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[200px] md:max-w-[320px]">
-                {currentThreadId 
+              <span className="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span className="font-semibold text-slate-800 truncate max-w-[200px] md:max-w-[320px]">
+                {currentThreadId
                   ? (projects.find(p => p.thread_id === currentThreadId)?.title || 'Active Chat')
                   : 'New Workspace'
                 }
@@ -639,9 +624,9 @@ export default function App() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search projects, files, or ask anything..."
-                className="w-full pl-9 pr-12 py-1.5 rounded-full bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950 transition-all"
+                className="w-full pl-9 pr-12 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all"
               />
-              <kbd className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800 shadow-2xs">
+              <kbd className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-slate-400 bg-white px-1.5 py-0.5 rounded border border-slate-200 shadow-2xs">
                 ⌘ K
               </kbd>
             </div>
@@ -668,7 +653,7 @@ export default function App() {
               {userMenuOpen && (
                 <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-2xl p-2 z-[100] animate-fade-in space-y-1 text-slate-900 font-sans">
                   {/* User Profile Card */}
-                  <div 
+                  <div
                     onClick={() => {
                       setUserMenuOpen(false);
                       setActiveNav('Profile');
@@ -758,23 +743,6 @@ export default function App() {
                       <span className="text-slate-800 font-semibold">Custom Tools</span>
                     </button>
                   </div>
-
-                  <div className="border-t border-slate-200/80 my-1"></div>
-
-                  {/* Theme Mode Quick Toggle */}
-                  <button
-                    type="button"
-                    onClick={() => setIsDarkMode(!isDarkMode)}
-                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-800 hover:bg-slate-100 transition-colors text-xs font-semibold cursor-pointer text-left"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      {isDarkMode ? <Moon className="w-4 h-4 text-indigo-600 shrink-0" /> : <Sun className="w-4 h-4 text-amber-500 shrink-0" />}
-                      <span className="text-slate-800 font-semibold">Appearance</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-slate-500 uppercase bg-slate-100 px-2 py-0.5 rounded-md">
-                      {isDarkMode ? 'Dark' : 'Light'}
-                    </span>
-                  </button>
 
                   <div className="border-t border-slate-200/80 my-1"></div>
 

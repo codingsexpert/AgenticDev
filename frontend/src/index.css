@@ -64,7 +64,7 @@ select {
 .ambient-bg,
 .clean-ambient-bg {
   background-color: #fcf8ff;
-  background-image: 
+  background-image:
     radial-gradient(at 0% 0%, rgba(186, 230, 253, 0.65) 0px, transparent 55%),
     radial-gradient(at 100% 0%, rgba(254, 240, 138, 0.7) 0px, transparent 55%),
     radial-gradient(at 0% 50%, rgba(245, 208, 254, 0.6) 0px, transparent 55%),
@@ -87,7 +87,7 @@ select {
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.75);
-  box-shadow: 
+  box-shadow:
     0 10px 30px -5px rgba(0, 0, 0, 0.04),
     0 4px 12px -2px rgba(0, 0, 0, 0.02),
     inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
@@ -98,7 +98,7 @@ select {
   transform: translateY(-2px);
   background: rgba(255, 255, 255, 0.88);
   border-color: rgba(255, 255, 255, 0.95);
-  box-shadow: 
+  box-shadow:
     0 20px 40px -10px rgba(99, 102, 241, 0.12),
     0 8px 20px -4px rgba(0, 0, 0, 0.04),
     inset 0 1px 1px 0 rgba(255, 255, 255, 1);
@@ -138,121 +138,4 @@ select {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-/* ==========================================================================
-   DARK MODE STYLES & OVERRIDES
-   ========================================================================== */
-
-html.dark,
-html.dark body {
-  background-color: #090d16 !important;
-  color: #f1f5f9 !important;
-  color-scheme: dark;
-}
-
-/* Dark Mode Ambient Background */
-html.dark .ambient-bg,
-html.dark .clean-ambient-bg {
-  background-color: #090d16 !important;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.45) 0px, transparent 55%),
-    radial-gradient(at 100% 0%, rgba(88, 28, 135, 0.4) 0px, transparent 55%),
-    radial-gradient(at 0% 50%, rgba(15, 23, 42, 0.95) 0px, transparent 55%),
-    radial-gradient(at 100% 50%, rgba(49, 46, 129, 0.35) 0px, transparent 55%),
-    radial-gradient(at 0% 100%, rgba(30, 27, 75, 0.5) 0px, transparent 55%),
-    radial-gradient(at 100% 100%, rgba(17, 24, 39, 0.9) 0px, transparent 55%) !important;
-}
-
-/* Dark Mode Glass Cards */
-html.dark .clean-glass-card {
-  background: rgba(15, 23, 42, 0.85) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 
-    0 10px 30px -5px rgba(0, 0, 0, 0.5),
-    0 4px 12px -2px rgba(0, 0, 0, 0.3),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.1) !important;
-  color: #f8fafc !important;
-}
-
-html.dark .clean-glass-card:hover {
-  background: rgba(15, 23, 42, 0.95) !important;
-  border-color: rgba(99, 102, 241, 0.4) !important;
-}
-
-/* Dark Mode Liquid Pill Switcher */
-html.dark .liquid-pill-bar {
-  background: rgba(15, 23, 42, 0.85) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-html.dark .liquid-pill-btn-active {
-  background: rgba(30, 41, 59, 0.95) !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
-  color: #ffffff !important;
-}
-
-/* Dark Mode Scrollbars */
-html.dark ::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.35) !important;
-}
-
-html.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(129, 140, 248, 0.5) !important;
-}
-
-/* Dark Mode Markdown Text Visibility Overrides */
-html.dark .markdown-body,
-html.dark .markdown-body p,
-html.dark .markdown-body li,
-html.dark .markdown-body span,
-html.dark .markdown-body em,
-html.dark .markdown-body div,
-html.dark .markdown-body td {
-  color: #e2e8f0 !important;
-}
-
-html.dark .markdown-body strong,
-html.dark .markdown-body h1,
-html.dark .markdown-body h2,
-html.dark .markdown-body h3,
-html.dark .markdown-body h4,
-html.dark .markdown-body h5,
-html.dark .markdown-body h6,
-html.dark .markdown-body th {
-  color: #ffffff !important;
-}
-
-html.dark .markdown-body blockquote {
-  background-color: rgba(49, 46, 129, 0.3) !important;
-  border-color: #6366f1 !important;
-  color: #cbd5e1 !important;
-}
-
-html.dark .markdown-body details {
-  background-color: #1e293b !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-html.dark .markdown-body summary {
-  background-color: #0f172a !important;
-  color: #fbbf24 !important;
-}
-
-/* User Message Card in Dark Mode */
-html.dark .user-message-card {
-  background-color: #1e293b !important;
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
-}
-
-/* Smooth component overrides for Dark Mode */
-html.dark header {
-  background-color: rgba(15, 23, 42, 0.95) !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-html.dark aside {
-  background-color: #0b0f19 !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
 }

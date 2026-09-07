@@ -160,18 +160,6 @@ export default function SettingsModal({
             </button>
 
             <button
-              onClick={() => setActiveTab('appearance')}
-              className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                activeTab === 'appearance'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-              }`}
-            >
-              <Sun className="w-4 h-4 shrink-0" />
-              <span>Appearance & Theme</span>
-            </button>
-
-            <button
               onClick={() => setActiveTab('account')}
               className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'account'
@@ -357,57 +345,6 @@ export default function SettingsModal({
                 </div>
               </div>
             )}
-
-            {activeTab === 'appearance' && (
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-bold text-sm text-slate-900 mb-1 flex items-center space-x-2">
-                    <Sun className="w-4 h-4 text-indigo-600" />
-                    <span>Visual Appearance & Theme</span>
-                  </h3>
-                  <p className="text-xs text-slate-500 mb-4">
-                    Switch between sleek Light Mode and immersive Dark Mode.
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div
-                      onClick={() => setThemeMode('light')}
-                      className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center space-x-3 ${
-                        themeMode === 'light'
-                          ? 'bg-indigo-50/70 border-indigo-500 ring-1 ring-indigo-400'
-                          : 'border-slate-200 hover:border-slate-300 bg-white'
-                      }`}
-                    >
-                      <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0 border border-amber-200">
-                        <Sun className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <div className="font-bold text-xs text-slate-900">Light Mode</div>
-                        <div className="text-[11px] text-slate-500">Clean white liquid glass aesthetics</div>
-                      </div>
-                    </div>
-
-                    <div
-                      onClick={() => setThemeMode('dark')}
-                      className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center space-x-3 ${
-                        themeMode === 'dark'
-                          ? 'bg-indigo-50/70 border-indigo-500 ring-1 ring-indigo-400'
-                          : 'border-slate-200 hover:border-slate-300 bg-white'
-                      }`}
-                    >
-                      <div className="w-10 h-10 rounded-xl bg-indigo-950 text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-800">
-                        <Moon className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <div className="font-bold text-xs text-slate-900">Dark Mode</div>
-                        <div className="text-[11px] text-slate-500">Immersive dark obsidian theme</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {activeTab === 'account' && (
               <div className="space-y-6">
                 <div>
