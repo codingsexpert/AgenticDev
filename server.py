@@ -615,8 +615,58 @@ On the VERY FIRST LINE inside the code block, you MUST put the exact full file p
         if not stream_success:
             user_msg_clean = raw_last_user_msg.strip().lower()
             greetings = ["hi", "hlo", "hello", "hey", "namaste", "kaise ho", "good morning", "good evening", "who are you", "help"]
+            
             if any(g in user_msg_clean for g in greetings):
                 fallback_reply = "Hello! 👋 I am **PixiExpert**, your AI software assistant. How can I help you build your project or answer your questions today?"
+            elif "java" in user_msg_clean and ("hello world" in user_msg_clean or "print" in user_msg_clean or "code" in user_msg_clean or "program" in user_msg_clean):
+                fallback_reply = """```java
+// File: HelloWorld.java
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+```"""
+            elif "c++" in user_msg_clean or "cpp" in user_msg_clean:
+                fallback_reply = """```cpp
+// File: main.cpp
+#include <iostream>
+
+int main() {
+    std::cout << "Hello, World!" << std::endl;
+    return 0;
+}
+```"""
+            elif re.search(r'\bc\b', user_msg_clean) and ("code" in user_msg_clean or "program" in user_msg_clean or "hello world" in user_msg_clean):
+                fallback_reply = """```c
+// File: main.c
+#include <stdio.h>
+
+int main() {
+    printf("Hello, World!\\n");
+    return 0;
+}
+```"""
+            elif "python" in user_msg_clean:
+                fallback_reply = """```python
+# File: main.py
+print("Hello, World!")
+```"""
+            elif "html" in user_msg_clean or "table" in user_msg_clean or "website" in user_msg_clean:
+                fallback_reply = """```html
+<!-- File: index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Page</title>
+</head>
+<body>
+    <h1>Hello World</h1>
+</body>
+</html>
+```"""
             elif "tool" in user_msg_clean or "capability" in user_msg_clean or "terminal" in user_msg_clean:
                 fallback_reply = """### PixiExpert System Capabilities & Active Tools:
 
@@ -625,17 +675,15 @@ On the VERY FIRST LINE inside the code block, you MUST put the exact full file p
 3. **Data Analysis & Visualization**: Automated data processing, chart generation, and pandas analytics.
 4. **Knowledge Base & RAG Ingestion**: Upload, index, and retrieve project documentation.
 5. **AI Development Team Agents**: Automated code generation, blueprint validation, and architecture synthesis."""
-            elif "knowledge" in user_msg_clean or "document" in user_msg_clean:
-                fallback_reply = """### Knowledge Base System:
-
-Your Knowledge Base is active! You can upload project documentation, PDF guides, or code specs to provide context for AI code generation."""
-            elif "project" in user_msg_clean or "workspace" in user_msg_clean:
-                fallback_reply = """### Project Workspaces:
-
-Your workspace IDE is active and connected. You can create new projects, edit code files in Monaco editor, or view live web previews in real time."""
             else:
                 fallback_reply = "I am **PixiExpert**, your AI software assistant. I can help you build full-stack web applications, write and debug code, analyze data, and manage your project workspace."
-            yield f"data: {json.dumps({'text': fallback_reply})}\n\n"
+
+            # Stream fallback reply smoothly token-by-token for typewriter effect
+            tokens = re.split(r'(\s+)', fallback_reply)
+            for tok in tokens:
+                if tok:
+                    yield f"data: {json.dumps({'text': tok})}\n\n"
+                    await asyncio.sleep(0.015)
 
         yield f"data: {json.dumps({'done': True})}\n\n"
 

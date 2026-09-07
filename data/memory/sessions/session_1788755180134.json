@@ -1,0 +1,28 @@
+{
+  "thread_id": "session_1788755180134",
+  "title": "hey",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hey",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! 👋 How can I help you build your project, write code, or answer your questions today?"
+    },
+    {
+      "role": "user",
+      "content": "can you write java program to print hello world ?",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "```java\n// File: HelloWorld.java\npublic class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}\n```"
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_guest_f528764d624d",
+  "updated_at": 1788755222.806767
+}
