@@ -618,6 +618,221 @@ On the VERY FIRST LINE inside the code block, you MUST put the exact full file p
             
             if any(g in user_msg_clean for g in greetings):
                 fallback_reply = "Hello! 👋 I am **PixiExpert**, your AI software assistant. How can I help you build your project or answer your questions today?"
+            elif "calculator" in user_msg_clean:
+                fallback_reply = """```html
+<!-- File: index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div className="calculator">
+        <div className="display" id="display">0</div>
+        <div className="buttons">
+            <button className="btn btn-clear" onclick="clearDisplay()">C</button>
+            <button className="btn btn-operator" onclick="appendOperator('/')">&divide;</button>
+            <button className="btn btn-operator" onclick="appendOperator('*')">&times;</button>
+            <button className="btn btn-operator" onclick="deleteLast()">&larr;</button>
+            
+            <button className="btn" onclick="appendNumber('7')">7</button>
+            <button className="btn" onclick="appendNumber('8')">8</button>
+            <button className="btn" onclick="appendNumber('9')">9</button>
+            <button className="btn btn-operator" onclick="appendOperator('-')">&minus;</button>
+            
+            <button className="btn" onclick="appendNumber('4')">4</button>
+            <button className="btn" onclick="appendNumber('5')">5</button>
+            <button className="btn" onclick="appendNumber('6')">6</button>
+            <button className="btn btn-operator" onclick="appendOperator('+')">+</button>
+            
+            <button className="btn" onclick="appendNumber('1')">1</button>
+            <button className="btn" onclick="appendNumber('2')">2</button>
+            <button className="btn" onclick="appendNumber('3')">3</button>
+            <button className="btn btn-equals" onclick="calculateResult()">=</button>
+            
+            <button className="btn btn-zero" onclick="appendNumber('0')">0</button>
+            <button className="btn" onclick="appendNumber('.')">.</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+```css
+/* File: style.css */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+}
+
+.calculator {
+    width: 320px;
+    background: rgba(30, 41, 59, 0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.display {
+    width: 100%;
+    height: 70px;
+    background: #0f172a;
+    border-radius: 16px;
+    color: #ffffff;
+    font-size: 2.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.btn {
+    height: 55px;
+    border-radius: 14px;
+    border: none;
+    background: #334155;
+    color: #f8fafc;
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn:hover {
+    background: #475569;
+}
+
+.btn-operator {
+    background: #4f46e5;
+    color: #ffffff;
+}
+
+.btn-clear {
+    background: #e11d48;
+    color: #ffffff;
+}
+
+.btn-equals {
+    background: #10b981;
+    color: #ffffff;
+    grid-row: span 2;
+    height: 122px;
+}
+
+.btn-zero {
+    grid-column: span 2;
+}
+```
+
+```javascript
+// File: script.js
+let display = document.getElementById('display');
+let currentInput = '0';
+
+function updateDisplay() {
+    display.textContent = currentInput;
+}
+
+function clearDisplay() {
+    currentInput = '0';
+    updateDisplay();
+}
+
+function deleteLast() {
+    if (currentInput.length === 1 || currentInput === 'Error') {
+        currentInput = '0';
+    } else {
+        currentInput = currentInput.slice(0, -1);
+    }
+    updateDisplay();
+}
+
+function appendNumber(num) {
+    if (currentInput === '0' || currentInput === 'Error') {
+        currentInput = num;
+    } else {
+        currentInput += num;
+    }
+    updateDisplay();
+}
+
+function appendOperator(op) {
+    if (currentInput === 'Error') return;
+    const lastChar = currentInput.slice(-1);
+    if (['+', '-', '*', '/'].includes(lastChar)) {
+        currentInput = currentInput.slice(0, -1) + op;
+    } else {
+        currentInput += op;
+    }
+    updateDisplay();
+}
+
+function calculateResult() {
+    try {
+        currentInput = eval(currentInput).toString();
+    } catch (e) {
+        currentInput = 'Error';
+    }
+    updateDisplay();
+}
+```"""
+            elif "table" in user_msg_clean or "student" in user_msg_clean:
+                fallback_reply = """```html
+<!-- File: index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Records</title>
+    <style>
+        body { font-family: sans-serif; padding: 2rem; background: #f8fafc; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #4f46e5; color: white; font-weight: 600; }
+        tr:hover { background: #f1f5f9; }
+    </style>
+</head>
+<body>
+    <h2>Student Records</h2>
+    <table>
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Course</th><th>Marks</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>101</td><td>Rahul Sharma</td><td>Computer Science</td><td>92%</td></tr>
+            <tr><td>102</td><td>Priya Patel</td><td>Data Science</td><td>88%</td></tr>
+            <tr><td>103</td><td>Aman Verma</td><td>AI & ML</td><td>95%</td></tr>
+        </tbody>
+    </table>
+</body>
+</html>
+```"""
             elif "java" in user_msg_clean and ("hello world" in user_msg_clean or "print" in user_msg_clean or "code" in user_msg_clean or "program" in user_msg_clean):
                 fallback_reply = """```java
 // File: HelloWorld.java
@@ -651,21 +866,6 @@ int main() {
                 fallback_reply = """```python
 # File: main.py
 print("Hello, World!")
-```"""
-            elif "html" in user_msg_clean or "table" in user_msg_clean or "website" in user_msg_clean:
-                fallback_reply = """```html
-<!-- File: index.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Page</title>
-</head>
-<body>
-    <h1>Hello World</h1>
-</body>
-</html>
 ```"""
             elif "tool" in user_msg_clean or "capability" in user_msg_clean or "terminal" in user_msg_clean:
                 fallback_reply = """### PixiExpert System Capabilities & Active Tools:

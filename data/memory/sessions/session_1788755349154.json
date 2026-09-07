@@ -1,0 +1,43 @@
+{
+  "thread_id": "session_1788755349154",
+  "title": "hy",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hy",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! How can I help you today?"
+    },
+    {
+      "role": "user",
+      "content": "write cPP program to prin 1 to 10 counting",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "```cpp\n// File: main.cpp\n#include <iostream>\n\nint main() {\n    for (int i = 1; i <= 10; ++i) {\n        std::cout << i << \"\\n\";\n    }\n    return 0;\n}\n```"
+    },
+    {
+      "role": "user",
+      "content": "build calculator using html css and javascript",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "```html\n<!-- File: index.html -->\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Web Page</title>\n</head>\n<body>\n    <h1>Hello World</h1>\n</body>\n</html>\n```"
+    }
+  ],
+  "node_history": [
+    {
+      "state_delta": {
+        "sandboxId": "sb_1788755393237"
+      }
+    }
+  ],
+  "user_id": "usr_guest_f528764d624d",
+  "updated_at": 1788755444.68893
+}
