@@ -1,0 +1,37 @@
+{
+  "thread_id": "session_1788747509199",
+  "title": "hi",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Hey! Batayein aaj kis project ya code par help chahiye?"
+    },
+    {
+      "role": "user",
+      "content": "can you help me",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Haan bilkul! Aap batayein kis cheez mein help chahiye—koi naya feature build karna hai, bug debug karna hai, ya FastAPI aur HTML/CSS ka koi setup karna hai? Details share kijiye, shuru karte hain!"
+    },
+    {
+      "role": "user",
+      "content": "write the code of printing hello world  in c++",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "```cpp\n// File: main.cpp\n#include <iostream>\n\nint main() {\n    std::cout << \"Hello, World!\" << std::endl;\n    return 0;\n}\n```\n\n### Explanation:\n* **`#include <iostream>`**: Ye standard input/output library include karta hai taaki hum screen par print (`cout`) kar sakein.\n* **`int main()`**: C++ program ka entry point, jahan se execution shuru hoti hai.\n* **`std::cout << \"Hello, World!\"`**: Text ko console par print karne ke liye use hota hai.\n* **`std::endl`**: New line insert karta hai aur output buffer flush karta hai.\n* **`return 0;`**: Operating system ko batata hai ki program successfully execute ho gaya.\n\n### How to Compile & Run:\n```bash\ng++ main.cpp -o main\n./main\n```"
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_guest_f528764d624d",
+  "updated_at": 1788747612.828013
+}

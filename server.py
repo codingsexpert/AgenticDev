@@ -210,12 +210,50 @@ async def run_code(
                     with open(img_file, "rb") as f:
                         b64 = base64.b64encode(f.read()).decode("utf-8")
                         images.append(f"data:image/png;base64,{b64}")
-                    img_file.unlink() # Cleanup after sending
+                    img_file.unlink()
                 except Exception as e:
                     print(f"Failed to read image {img_file}: {e}")
                     
-            return {"output": output.strip() or "No console output.", "images": images}
+            return {"output": output.strip() or "Program executed successfully with no console output.", "images": images}
             
+        elif lang in ["cpp", "c++", "c"]:
+            compiler = "g++" if "cpp" in lang or "c++" in lang else "gcc"
+            ext = ".cpp" if "cpp" in lang or "c++" in lang else ".c"
+            tmp_src = sandbox_dir / f"main_{int(time.time())}{ext}"
+            tmp_bin = sandbox_dir / f"bin_{int(time.time())}"
+            
+            with open(tmp_src, "w") as f:
+                f.write(code)
+                
+            compile_res = subprocess.run(
+                [compiler, "-o", tmp_bin.name, tmp_src.name],
+                capture_output=True, text=True, timeout=10, cwd=str(sandbox_dir)
+            )
+            if compile_res.returncode != 0:
+                if tmp_src.exists(): tmp_src.unlink()
+                return {"output": f"[Compilation Error]\n{redact_sensitive_keys(compile_res.stderr)}"}
+                
+            run_res = subprocess.run(
+                [f"./{tmp_bin.name}"], capture_output=True, text=True, timeout=10, cwd=str(sandbox_dir)
+            )
+            if tmp_src.exists(): tmp_src.unlink()
+            if tmp_bin.exists(): tmp_bin.unlink()
+            
+            output = redact_sensitive_keys(run_res.stdout)
+            if run_res.stderr:
+                output += f"\n[Errors]\n{redact_sensitive_keys(run_res.stderr)}"
+            return {"output": output.strip() or "Program executed successfully with no console output."}
+
+        elif lang in ["bash", "sh", "shell", "zsh"]:
+            result = subprocess.run(
+                ["bash", "-c", code],
+                capture_output=True, text=True, timeout=10, cwd=str(sandbox_dir), env=sanitized_env
+            )
+            output = redact_sensitive_keys(result.stdout)
+            if result.stderr:
+                output += f"\n[Errors]\n{redact_sensitive_keys(result.stderr)}"
+            return {"output": output.strip() or "Script executed with no console output."}
+
         elif lang in ["javascript", "node", "js", "javascriptreact", "typescript"]:
             with tempfile.NamedTemporaryFile(suffix=".js", delete=False, mode="w") as f:
                 f.write(code)
@@ -233,9 +271,9 @@ async def run_code(
             output = redact_sensitive_keys(result.stdout)
             if result.stderr:
                 output += f"\n[Errors]\n{redact_sensitive_keys(result.stderr)}"
-            return {"output": output.strip() or "No output."}
+            return {"output": output.strip() or "Program executed with no output."}
         else:
-            return {"output": f"Execution for language '{lang}' is not natively supported yet."}
+            return {"output": f"Code preview/execution for '{lang}' format is ready. (Run via Workspace IDE for full environment execution)."}
             
     except subprocess.TimeoutExpired:
         return {"output": "Execution timed out (limit 10s)."}

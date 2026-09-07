@@ -1,0 +1,19 @@
+{
+  "thread_id": "session_1788745669899",
+  "title": "hi kaise ho",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi kaise ho",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: The LLM API is currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_guest_f528764d624d",
+  "updated_at": 1788745677.555131
+}

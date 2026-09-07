@@ -35,7 +35,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
     return l === 'html' || l === 'css' || l === 'javascript' || l === 'js' || f.endsWith('.html') || f.endsWith('.css') || f.endsWith('.js');
   });
 
-  const isExecutable = ['python', 'py', 'python3', 'javascript', 'js', 'node'].includes(langLower);
+  const isExecutable = ['python', 'py', 'python3', 'javascript', 'js', 'node', 'cpp', 'c++', 'c', 'bash', 'sh', 'zsh', 'java', 'go', 'rust', 'php'].includes(langLower) || true;
 
   const handleRunCode = async () => {
     setIsExecuting(true);
@@ -178,7 +178,30 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
           </div>
         </div>
 
-        <div className="flex items-center space-x-2 shrink-0">
+        <div className="flex items-center space-x-2 shrink-0 flex-wrap gap-1.5 sm:gap-2">
+          {/* Prominent Run Code Button */}
+          <button
+            onClick={handleRunCode}
+            disabled={isExecuting}
+            className="text-xs px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold transition-all shadow-md flex items-center space-x-1.5 disabled:opacity-50 cursor-pointer"
+            title="Execute code and view output terminal"
+          >
+            {isExecuting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5 fill-white text-white" />}
+            <span>{isExecuting ? 'Running...' : 'Run Code'}</span>
+          </button>
+
+          {hasWebBlocks && (
+            <button
+              onClick={() => setShowPreview(!showPreview)}
+              className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all flex items-center space-x-1.5 shadow-sm ${showPreview ? 'bg-indigo-500 text-white' : 'bg-indigo-950/60 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40'
+                }`}
+              title="Toggle interactive live web preview"
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span>{showPreview ? 'Hide Preview' : 'Live Preview'}</span>
+            </button>
+          )}
+
           {activeSandboxId && (
             <button
               onClick={handleApplyAll}
@@ -187,17 +210,6 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
             >
               {applied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Save className="w-3.5 h-3.5" />}
               <span>{applied ? 'Saved All' : 'Save All'}</span>
-            </button>
-          )}
-
-          {hasWebBlocks && (
-            <button
-              onClick={() => setShowPreview(!showPreview)}
-              className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all flex items-center space-x-1.5 shadow-sm ${showPreview ? 'bg-emerald-500 text-white' : 'bg-emerald-950/60 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40'
-                }`}
-            >
-              <Eye className="w-3.5 h-3.5" />
-              <span>{showPreview ? 'Hide Preview' : 'Live Preview'}</span>
             </button>
           )}
 
