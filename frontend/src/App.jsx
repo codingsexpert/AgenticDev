@@ -405,8 +405,6 @@ export default function App() {
     const newMsg = { role: 'user', content: promptText, attachments };
     const updatedMessages = [...messages, newMsg];
     setMessages(updatedMessages);
-    setStreamingText('');
-
     if (selectedMode === 'build') {
       fetch('/api/projects/start', {
         method: 'POST',
@@ -419,14 +417,8 @@ export default function App() {
           if (data.thread_id) connectEventSource(data.thread_id);
         })
         .catch((e) => {
-          if (e.name !== 'AbortError') {
-            console.error('Failed to start project build pipeline', e);
-          }
-          setIsLoading(false);
+          console.warn('Background graph trace:', e);
         });
-
-      autoSaveChat(activeThread, updatedMessages, nodeHistory, selectedMode);
-      return;
     }
 
     try {
