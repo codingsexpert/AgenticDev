@@ -759,12 +759,14 @@ export default function App() {
             </div>
           )}
 
-          {/* 4. Right Sidebar (Recent Chats & Sample Projects) */}
-          <RightSidebar
-            projects={projects}
-            onSelectProject={handleSelectChat}
-            onPromptAction={(p) => handlePromptSubmit(p, 'gemini-1.5-flash', mode)}
-          />
+          {/* 4. Right Sidebar (Recent Chats & Sample Projects) - Hidden when Workspace IDE canvas is active */}
+          {!showCanvas && (
+            <RightSidebar
+              projects={projects}
+              onSelectProject={handleSelectChat}
+              onPromptAction={(p) => handlePromptSubmit(p, 'gemini-1.5-flash', mode)}
+            />
+          )}
 
           {/* Sliding Code Canvas / Artifact Preview */}
           {showCanvas && activeSandboxId && (
