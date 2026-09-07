@@ -476,7 +476,8 @@ export default function Sidebar({
         <div className="p-3 border-t border-slate-100/80 bg-transparent shrink-0">
           <div 
             onClick={() => {
-              if (!user && onOpenAuth) onOpenAuth();
+              if (onSelectNav) onSelectNav('Profile');
+              else if (!user && onOpenAuth) onOpenAuth();
               if (typeof window !== 'undefined' && window.innerWidth < 1024) setSidebarOpen(false);
             }}
             className="flex items-center justify-between p-2 rounded-2xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200/60 transition-all cursor-pointer group min-h-[44px]"
