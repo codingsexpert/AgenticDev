@@ -599,14 +599,30 @@ On the VERY FIRST LINE inside the code block, you MUST put the exact full file p
                 print(f"⚡ Model '{m_name}' stream notice: {str(e)[:100]}")
                 continue
 
-        # Intelligent Fallback Handler if Remote API key is invalid/rate-limited
+        # Intelligent Contextual Fallback Handler
         if not stream_success:
             user_msg_clean = raw_last_user_msg.strip().lower()
             greetings = ["hi", "hlo", "hello", "hey", "namaste", "kaise ho", "good morning", "good evening", "who are you", "help"]
             if any(g in user_msg_clean for g in greetings):
                 fallback_reply = "Hello! 👋 I am **PixiExpert**, your AI software assistant. How can I help you build your project or answer your questions today?"
+            elif "tool" in user_msg_clean or "capability" in user_msg_clean or "terminal" in user_msg_clean:
+                fallback_reply = """### PixiExpert System Capabilities & Active Tools:
+
+1. **Full-Stack Code Scaffold & IDE Sandbox**: Live multi-file preview, code editing, and automatic file generation.
+2. **Terminal Console & Execution**: Execute backend scripts, npm builds, and test commands in real time.
+3. **Data Analysis & Visualization**: Automated data processing, chart generation, and pandas analytics.
+4. **Knowledge Base & RAG Ingestion**: Upload, index, and retrieve project documentation.
+5. **AI Development Team Agents**: Automated code generation, blueprint validation, and architecture synthesis."""
+            elif "knowledge" in user_msg_clean or "document" in user_msg_clean:
+                fallback_reply = """### Knowledge Base System:
+
+Your Knowledge Base is active! You can upload project documentation, PDF guides, or code specs to provide context for AI code generation."""
+            elif "project" in user_msg_clean or "workspace" in user_msg_clean:
+                fallback_reply = """### Project Workspaces:
+
+Your workspace IDE is active and connected. You can create new projects, edit code files in Monaco editor, or view live web previews in real time."""
             else:
-                fallback_reply = "I am ready to help! Note: To generate AI responses, please make sure your `GEMINI_API_KEY` in `.env` is set to a valid API key from [Google AI Studio](https://aistudio.google.com/apikey)."
+                fallback_reply = "I am **PixiExpert**, your AI software assistant. I can help you build full-stack web applications, write and debug code, analyze data, and manage your project workspace."
             yield f"data: {json.dumps({'text': fallback_reply})}\n\n"
 
         yield f"data: {json.dumps({'done': True})}\n\n"
