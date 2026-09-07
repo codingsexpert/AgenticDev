@@ -13,8 +13,12 @@ import {
   Layers, 
   Play, 
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Download,
+  Terminal,
+  FileText
 } from 'lucide-react';
+import { useToast } from './Toast';
 
 export default function ProjectsModal({
   isOpen,
@@ -27,8 +31,9 @@ export default function ProjectsModal({
   onNewProject,
   onOpenCanvas
 }) {
+  const { addToast } = useToast();
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('all'); // 'all' | 'active' | 'completed'
+  const [filter, setFilter] = useState('all'); // 'all' | 'active'
   const [editingId, setEditingId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
 
@@ -53,8 +58,55 @@ export default function ProjectsModal({
     e.stopPropagation();
     if (editTitle.trim() && onRenameProject) {
       onRenameProject(threadId, editTitle.trim());
+      addToast('Project title updated', 'success');
     }
     setEditingId(null);
+  };
+
+  const handleDelete = (threadId, e) => {
+    e.stopPropagation();
+    if (onDeleteProject) {
+      onDeleteProject(threadId);
+      addToast('Project deleted successfully', 'info');
+    }
+  };
+
+  const handleExportProject = (proj, e) => {
+    e.stopPropagation();
+    const titleText = proj.title || proj.requirement || 'Untitled AI Project';
+    let content = `# ${titleText}\n`;
+    content += `**Thread ID**: \`${proj.thread_id}\`\n`;
+    content += `**Export Date**: ${new Date().toLocaleString()}\n\n`;
+    content += `---\n\n## Project Workspace Log\n\n`;
+
+    if (proj.messages && proj.messages.length > 0) {
+      proj.messages.forEach((msg, idx) => {
+        const role = msg.sender === 'user' ? '👤 User' : '🤖 AI Agent';
+        content += `### Message ${idx + 1} (${role})\n\n${msg.text || msg.content || ''}\n\n`;
+      });
+    } else {
+      content += `*No message history available for this project workspace.*\n`;
+    }
+
+    const blob = new Blob([content], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${titleText.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-export.md`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    addToast(`Exported "${titleText}" to Markdown`, 'success');
+  };
+
+  const handleOpenSandbox = (threadId, e) => {
+    e.stopPropagation();
+    if (onSelectProject) onSelectProject(threadId);
+    if (onOpenCanvas) onOpenCanvas();
+    onClose();
+    addToast('Opening IDE Code Sandbox...', 'info');
   };
 
   return (
@@ -90,6 +142,7 @@ export default function ProjectsModal({
               onClick={() => {
                 onClose();
                 onNewProject();
+                addToast('Created new project workspace', 'success');
               }}
               className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center space-x-1.5 shadow-2xs transition-all cursor-pointer"
             >
@@ -184,7 +237,7 @@ export default function ProjectsModal({
                       {/* Top Header Row */}
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-2">
-                          <span className="w-2 h-2 rounded-full bg-slate-400"></span>
+                          <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
                           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                             {proj.thread_id ? proj.thread_id.slice(0, 16) : 'Sandbox'}
                           </span>
@@ -209,7 +262,7 @@ export default function ProjectsModal({
                           />
                           <button
                             onClick={(e) => handleSaveRename(proj.thread_id, e)}
-                            className="px-2 py-1 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700"
+                            className="px-2 py-1 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 cursor-pointer"
                           >
                             Save
                           </button>
@@ -245,12 +298,25 @@ export default function ProjectsModal({
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
+                        <button
+                          onClick={(e) => handleExportProject(proj, e)}
+                          title="Export Project Markdown"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                        </button>
+                        {onOpenCanvas && (
+                          <button
+                            onClick={(e) => handleOpenSandbox(proj.thread_id, e)}
+                            title="Open IDE Sandbox"
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors cursor-pointer"
+                          >
+                            <Terminal className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                         {onDeleteProject && (
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onDeleteProject(proj.thread_id);
-                            }}
+                            onClick={(e) => handleDelete(proj.thread_id, e)}
                             title="Delete Project"
                             className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                           >
@@ -263,6 +329,7 @@ export default function ProjectsModal({
                         onClick={() => {
                           onSelectProject(proj.thread_id);
                           onClose();
+                          addToast('Loaded project workspace', 'info');
                         }}
                         className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-indigo-600 text-white text-xs font-semibold flex items-center space-x-1 transition-all cursor-pointer"
                       >
@@ -280,3 +347,4 @@ export default function ProjectsModal({
     </div>
   );
 }
+
