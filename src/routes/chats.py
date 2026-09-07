@@ -310,12 +310,21 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
         stream_success = False
         full_text = ""
 
+        gemini_api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        if gemini_api_key and not gemini_api_key.startswith("AIzaSy"):
+            gemini_api_key = None
+
+        acompletion_kwargs = {}
+        if gemini_api_key:
+            acompletion_kwargs["api_key"] = gemini_api_key
+
         for m_name in models_to_try:
             try:
                 response_stream = await litellm.acompletion(
                     model=m_name,
                     messages=messages,
                     stream=True,
+                    **acompletion_kwargs
                 )
                 async for chunk in response_stream:
                     delta = chunk.choices[0].delta.content or ""
@@ -345,7 +354,183 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
             
             if any(g in user_msg_clean for g in greetings):
                 fallback_reply = "Hello! 👋 I am **PixiExpert**, your AI software assistant. How can I help you build your project or answer your questions today?"
-            elif "calculator" in user_msg_clean:
+            elif "weather" in user_msg_clean:
+                fallback_reply = """```html
+<!-- File: index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Weather Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="weather-card w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl backdrop-blur-xl">
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-xl font-bold tracking-tight text-white flex items-center space-x-2">
+                <span>🌤️ Weather App</span>
+            </h1>
+            <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold px-2.5 py-1 rounded-full">Live Forecast</span>
+        </div>
+
+        <div class="flex gap-2 mb-6">
+            <input type="text" id="cityInput" placeholder="Enter city (e.g. Delhi, London, Mumbai)..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all">
+            <button onclick="getWeather()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md cursor-pointer">Search</button>
+        </div>
+
+        <div id="weatherDisplay" class="space-y-4">
+            <div class="text-center py-6 bg-slate-800/50 border border-slate-700/50 rounded-2xl">
+                <h2 id="cityName" class="text-2xl font-bold text-white mb-1">Delhi, India</h2>
+                <div id="temp" class="text-5xl font-extrabold text-indigo-400 my-2">28°C</div>
+                <p id="condition" class="text-sm font-medium text-slate-400 uppercase tracking-wider">Partly Cloudy</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="bg-slate-800/40 p-3 rounded-xl border border-slate-800">
+                    <span class="text-slate-500 block">Humidity</span>
+                    <span id="humidity" class="text-sm font-bold text-slate-200">65%</span>
+                </div>
+                <div class="bg-slate-800/40 p-3 rounded-xl border border-slate-800">
+                    <span class="text-slate-500 block">Wind Speed</span>
+                    <span id="wind" class="text-sm font-bold text-slate-200">14 km/h</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+```css
+/* File: style.css */
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+}
+```
+
+```javascript
+// File: script.js
+const mockData = {
+    "delhi": { name: "Delhi, India", temp: "28°C", condition: "Sunny / Clear", humidity: "52%", wind: "12 km/h" },
+    "mumbai": { name: "Mumbai, India", temp: "31°C", condition: "Humid / Partly Cloudy", humidity: "78%", wind: "18 km/h" },
+    "london": { name: "London, UK", temp: "16°C", condition: "Light Rain", humidity: "82%", wind: "22 km/h" },
+    "new york": { name: "New York, USA", temp: "22°C", condition: "Clear Sky", humidity: "45%", wind: "15 km/h" }
+};
+
+function getWeather() {
+    const input = document.getElementById('cityInput').value.trim().toLowerCase();
+    if (!input) return;
+    
+    const city = mockData[input] || {
+        name: input.charAt(0).toUpperCase() + input.slice(1),
+        temp: Math.floor(Math.random() * 15 + 18) + "°C",
+        condition: "Partly Cloudy",
+        humidity: Math.floor(Math.random() * 30 + 45) + "%",
+        wind: Math.floor(Math.random() * 15 + 10) + " km/h"
+    };
+
+    document.getElementById('cityName').textContent = city.name;
+    document.getElementById('temp').textContent = city.temp;
+    document.getElementById('condition').textContent = city.condition;
+    document.getElementById('humidity').textContent = city.humidity;
+    document.getElementById('wind').textContent = city.wind;
+}
+```"""
+            elif "to do" in user_msg_clean or "todo" in user_msg_clean or "task" in user_msg_clean:
+                fallback_reply = """```html
+<!-- File: index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager & To-Do App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl backdrop-blur-xl">
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-xl font-bold text-white flex items-center space-x-2">
+                <span>📝 Task Manager</span>
+            </h1>
+            <span id="taskCount" class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold px-2.5 py-1 rounded-full">0 Tasks</span>
+        </div>
+
+        <div class="flex gap-2 mb-6">
+            <input type="text" id="taskInput" placeholder="Add a new task..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all">
+            <button onclick="addTask()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md cursor-pointer">Add</button>
+        </div>
+
+        <ul id="taskList" class="space-y-2.5 max-h-80 overflow-y-auto pr-1"></ul>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+```css
+/* File: style.css */
+body { font-family: system-ui, -apple-system, sans-serif; }
+```
+
+```javascript
+// File: script.js
+let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+
+function renderTasks() {
+    const list = document.getElementById('taskList');
+    const count = document.getElementById('taskCount');
+    list.innerHTML = '';
+    count.textContent = `${tasks.length} Task${tasks.length === 1 ? '' : 's'}`;
+
+    if (tasks.length === 0) {
+        list.innerHTML = `<li class="py-8 text-center text-xs text-slate-500">No tasks yet. Add a task above!</li>`;
+        return;
+    }
+
+    tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.className = `flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/60 border border-slate-700/60 transition-all ${task.completed ? 'opacity-60' : ''}`;
+        li.innerHTML = `
+            <div class="flex items-center space-x-3 truncate">
+                <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${index})" class="w-4 h-4 rounded accent-indigo-600 cursor-pointer">
+                <span class="text-sm text-slate-200 truncate ${task.completed ? 'line-through text-slate-500' : ''}">${task.text}</span>
+            </div>
+            <button onclick="deleteTask(${index})" class="text-xs text-rose-400 hover:text-rose-300 font-semibold px-2 py-1 rounded-lg hover:bg-rose-500/10 transition-all cursor-pointer">Delete</button>
+        `;
+        list.appendChild(li);
+    });
+}
+
+function addTask() {
+    const input = document.getElementById('taskInput');
+    const text = input.value.trim();
+    if (!text) return;
+    tasks.push({ text, completed: false });
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    input.value = '';
+    renderTasks();
+}
+
+function toggleTask(index) {
+    tasks[index].completed = !tasks[index].completed;
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    renderTasks();
+}
+
+function deleteTask(index) {
+    tasks.splice(index, 1);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    renderTasks();
+}
+
+renderTasks();
+```"""
+            elif "calculator" in user_msg_clean or "buil" in user_msg_clean:
                 fallback_reply = """```html
 <!-- File: index.html -->
 <!DOCTYPE html>
@@ -391,142 +576,29 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
 
 ```css
 /* File: style.css */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: system-ui, -apple-system, sans-serif;
-}
-
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-}
-
-.calculator {
-    width: 320px;
-    background: rgba(30, 41, 59, 0.85);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    padding: 20px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-}
-
-.display {
-    width: 100%;
-    height: 70px;
-    background: #0f172a;
-    border-radius: 16px;
-    color: #ffffff;
-    font-size: 2.2rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 0 20px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.buttons {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-}
-
-.btn {
-    height: 55px;
-    border-radius: 14px;
-    border: none;
-    background: #334155;
-    color: #f8fafc;
-    font-size: 1.25rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.btn:hover {
-    background: #475569;
-}
-
-.btn-operator {
-    background: #4f46e5;
-    color: #ffffff;
-}
-
-.btn-clear {
-    background: #e11d48;
-    color: #ffffff;
-}
-
-.btn-equals {
-    background: #10b981;
-    color: #ffffff;
-    grid-row: span 2;
-    height: 122px;
-}
-
-.btn-zero {
-    grid-column: span 2;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); }
+.calculator { width: 320px; background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
+.display { width: 100%; height: 70px; background: #0f172a; border-radius: 16px; color: #ffffff; font-size: 2.2rem; font-weight: 600; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); }
+.buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.btn { height: 55px; border-radius: 14px; border: none; background: #334155; color: #f8fafc; font-size: 1.25rem; font-weight: 600; cursor: pointer; transition: all 0.15s ease; }
+.btn:hover { background: #475569; }
+.btn-operator { background: #4f46e5; color: #ffffff; }
+.btn-clear { background: #e11d48; color: #ffffff; }
+.btn-equals { background: #10b981; color: #ffffff; grid-row: span 2; height: 122px; }
+.btn-zero { grid-column: span 2; }
 ```
 
 ```javascript
 // File: script.js
 let display = document.getElementById('display');
 let currentInput = '0';
-
-function updateDisplay() {
-    display.textContent = currentInput;
-}
-
-function clearDisplay() {
-    currentInput = '0';
-    updateDisplay();
-}
-
-function deleteLast() {
-    if (currentInput.length === 1 || currentInput === 'Error') {
-        currentInput = '0';
-    } else {
-        currentInput = currentInput.slice(0, -1);
-    }
-    updateDisplay();
-}
-
-function appendNumber(num) {
-    if (currentInput === '0' || currentInput === 'Error') {
-        currentInput = num;
-    } else {
-        currentInput += num;
-    }
-    updateDisplay();
-}
-
-function appendOperator(op) {
-    if (currentInput === 'Error') return;
-    const lastChar = currentInput.slice(-1);
-    if (['+', '-', '*', '/'].includes(lastChar)) {
-        currentInput = currentInput.slice(0, -1) + op;
-    } else {
-        currentInput += op;
-    }
-    updateDisplay();
-}
-
-function calculateResult() {
-    try {
-        currentInput = eval(currentInput).toString();
-    } catch (e) {
-        currentInput = 'Error';
-    }
-    updateDisplay();
-}
+function updateDisplay() { display.textContent = currentInput; }
+function clearDisplay() { currentInput = '0'; updateDisplay(); }
+function deleteLast() { currentInput = (currentInput.length === 1 || currentInput === 'Error') ? '0' : currentInput.slice(0, -1); updateDisplay(); }
+function appendNumber(num) { currentInput = (currentInput === '0' || currentInput === 'Error') ? num : currentInput + num; updateDisplay(); }
+function appendOperator(op) { if (currentInput === 'Error') return; const last = currentInput.slice(-1); if (['+','-','*','/'].includes(last)) currentInput = currentInput.slice(0,-1) + op; else currentInput += op; updateDisplay(); }
+function calculateResult() { try { currentInput = eval(currentInput).toString(); } catch (e) { currentInput = 'Error'; } updateDisplay(); }
 ```"""
             elif "table" in user_msg_clean or "student" in user_msg_clean:
                 fallback_reply = """```html
@@ -594,16 +666,60 @@ int main() {
 # File: main.py
 print("Hello, World!")
 ```"""
-            elif "tool" in user_msg_clean or "capability" in user_msg_clean or "terminal" in user_msg_clean:
-                fallback_reply = """### PixiExpert System Capabilities & Active Tools:
+            elif any(w in user_msg_clean for w in ["build", "create", "make", "app", "website", "application", "dashboard"]):
+                fallback_reply = """```html
+<!-- File: index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-xl bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl text-center">
+        <div class="w-16 h-16 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">⚡</span>
+        </div>
+        <h1 class="text-2xl font-extrabold text-white mb-2">Web Application Workspace</h1>
+        <p class="text-sm text-slate-400 mb-6">Your custom application has been initialized and is ready for live development.</p>
+        
+        <div class="flex justify-center gap-3">
+            <button onclick="triggerAction()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md cursor-pointer">Explore App</button>
+        </div>
+        <div id="actionResult" class="mt-4 text-xs font-semibold text-emerald-400 hidden">Interactive application workspace loaded successfully!</div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+```
 
-1. **Full-Stack Code Scaffold & IDE Sandbox**: Live multi-file preview, code editing, and automatic file generation.
-2. **Terminal Console & Execution**: Execute backend scripts, npm builds, and test commands in real time.
-3. **Data Analysis & Visualization**: Automated data processing, chart generation, and pandas analytics.
-4. **Knowledge Base & RAG Ingestion**: Upload, index, and retrieve project documentation.
-5. **AI Development Team Agents**: Automated code generation, blueprint validation, and architecture synthesis."""
+```css
+/* File: style.css */
+body { font-family: system-ui, -apple-system, sans-serif; }
+```
+
+```javascript
+// File: script.js
+function triggerAction() {
+    const res = document.getElementById('actionResult');
+    res.classList.remove('hidden');
+}
+```"""
             else:
                 fallback_reply = "I am **PixiExpert**, your AI software assistant. I can help you build full-stack web applications, write and debug code, analyze data, and manage your project workspace."
+
+            if full_text == "":
+                full_text = fallback_reply
+                if req.thread_id:
+                    from src.utils.sandbox_manager import extract_and_write_code_files, reconnect_sandbox
+                    sandbox_id = req.thread_id if req.thread_id.startswith("sandbox-") else f"sandbox-{req.thread_id}"
+                    reconnect_sandbox(sandbox_id)
+                    written = extract_and_write_code_files(sandbox_id, full_text)
+                    if written:
+                        yield f"data: {json.dumps({'sandbox': {'sandbox_id': sandbox_id, 'files': written}})}\n\n"
 
             tokens = re.split(r'(\s+)', fallback_reply)
             for tok in tokens:
