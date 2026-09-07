@@ -343,6 +343,18 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
               <Play className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
               <span>Interactive Live Web Sandbox Preview ({validBlocks.length} File{validBlocks.length > 1 ? 's' : ''})</span>
             </span>
+            {activeSandboxId && (
+              <a
+                href={`/api/sandboxes/${activeSandboxId}/preview/index.html`}
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-white flex items-center space-x-1 font-semibold text-indigo-300 bg-indigo-900/60 hover:bg-indigo-800 px-2.5 py-1 rounded-md border border-indigo-500/40 text-[11px] transition-colors"
+                title="Open Web App in New Browser Tab"
+              >
+                <ExternalLink className="w-3 h-3" />
+                <span>Open in New Tab</span>
+              </a>
+            )}
           </div>
           <iframe
             srcDoc={getCombinedSrcDoc()}

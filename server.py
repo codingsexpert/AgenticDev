@@ -1203,14 +1203,18 @@ def deploy_sandbox(sandbox_id: str, req: DeployRequest):
         
     return {"status": "success", "url": "Deployment succeeded, check Vercel dashboard."}
 
+@app.get("/api/sandboxes/{sandbox_id}/preview")
+@app.get("/api/sandboxes/{sandbox_id}/preview/")
 @app.get("/api/sandboxes/{sandbox_id}/preview/{file_path:path}")
-def preview_sandbox_file(sandbox_id: str, file_path: str):
+def preview_sandbox_file(sandbox_id: str, file_path: str = "index.html"):
+    if not file_path:
+        file_path = "index.html"
     sandbox_path = get_sandbox_path(sandbox_id)
     if not is_safe_sandbox_path(sandbox_path, file_path):
         raise HTTPException(status_code=403, detail="Security guardrail blocked attempt to read outside sandbox boundary.")
     full_path = os.path.abspath(os.path.join(sandbox_path, file_path))
-    if os.path.exists(full_path):
-        return FileResponse(full_path)
+    if os.path.exists(full_path) and os.path.isfile(full_path):
+        return FileResponse(full_path, headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
 
     # Candidate fallback paths if specific file_path is missing
     candidates = [
@@ -1221,8 +1225,14 @@ def preview_sandbox_file(sandbox_id: str, file_path: str):
         os.path.join(sandbox_path, "backend", "public", "index.html"),
     ]
     for cand in candidates:
-        if os.path.exists(cand):
-            return FileResponse(cand)
+        if os.path.exists(cand) and os.path.isfile(cand):
+            return FileResponse(cand, headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
+
+    # Dynamic search for any .html file in sandbox
+    import glob
+    html_files = glob.glob(os.path.join(sandbox_path, "**/*.html"), recursive=True)
+    if html_files:
+        return FileResponse(html_files[0], headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
 
     raise HTTPException(status_code=404, detail=f"Preview file '{file_path}' not found in sandbox '{sandbox_id}'.")
 

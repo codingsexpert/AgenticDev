@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Code, Eye, Copy, Check, FileText, Folder, RefreshCw, ExternalLink, Save, Rocket, LayoutList, ChevronRight, ChevronDown, FileJson, FileCode, FileType, File, FolderOpen, FilePlus, FolderPlus } from 'lucide-react';
+import { X, Code, Eye, Copy, Check, FileText, Folder, RefreshCw, ExternalLink, Save, Rocket, LayoutList, ChevronRight, ChevronDown, FileJson, FileCode, FileType, File, FolderOpen, FilePlus, FolderPlus, Play, Terminal, Loader2 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -107,8 +107,12 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [executionResult, setExecutionResult] = useState(null);
+  const [showTerminal, setShowTerminal] = useState(false);
   const [isDeploying, setIsDeploying] = useState(false);
   const [deployedUrl, setDeployedUrl] = useState(null);
+  const [previewKey, setPreviewKey] = useState(Date.now());
   
   const editorRef = useRef(null);
 
@@ -185,6 +189,38 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
     setTimeout(() => setCopied(false), 2000);
   };
   
+  const handleRunCode = async () => {
+    if (!sandboxId || !selectedFile) return;
+    setIsExecuting(true);
+    setShowTerminal(true);
+    setExecutionResult(null);
+
+    try {
+      // 1. Auto-save current file
+      await fetch(`/api/sandboxes/${sandboxId}/file`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: selectedFile, content: fileContent })
+      });
+      setOriginalContent(fileContent);
+      setPreviewKey(Date.now());
+
+      // 2. Execute code natively via /api/run-code
+      const lang = getLanguage(selectedFile);
+      const res = await fetch('/api/run-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: fileContent, language: lang })
+      });
+      const data = await res.json();
+      setExecutionResult(data);
+    } catch (err) {
+      setExecutionResult({ output: "Execution error: " + err.message, exit_code: 1 });
+    } finally {
+      setIsExecuting(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!sandboxId || !selectedFile) return;
     setSaving(true);
@@ -199,14 +235,7 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
         });
         if (!res.ok) throw new Error("Failed to save");
         setOriginalContent(fileContent);
-        
-        // Auto-reload preview
-        const iframes = document.querySelectorAll('iframe');
-        iframes.forEach(iframe => {
-            if (iframe.src.includes(`/api/sandboxes/${sandboxId}/preview`)) {
-                iframe.contentWindow.location.reload();
-            }
-        });
+        setPreviewKey(Date.now());
     } catch (err) {
         console.error("Save error:", err);
         alert("Failed to save file.");
@@ -289,7 +318,10 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
   }, [fileContent, originalContent, activeTab, sandboxId, selectedFile]);
 
   const safeSelectedFile = selectedFile || 'index.html';
-  const previewUrl = `/api/sandboxes/${sandboxId}/preview/${safeSelectedFile.endsWith('.html') ? safeSelectedFile : 'index.html'}`;
+  const htmlFile = files.find(f => typeof f?.path === 'string' && f.path.endsWith('.html'));
+  const mainHtmlPath = htmlFile ? htmlFile.path : (safeSelectedFile.endsWith('.html') ? safeSelectedFile : 'index.html');
+  const rawPreviewUrl = sandboxId ? `/api/sandboxes/${sandboxId}/preview/${mainHtmlPath}` : '';
+  const previewUrl = rawPreviewUrl ? `${rawPreviewUrl}?t=${previewKey}` : '';
 
   const getLanguage = (path = '') => {
       const p = (path || '').toLowerCase();
@@ -356,19 +388,31 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
 
         <div className="flex items-center space-x-2">
           {activeTab === 'code' && (
-             <button
-              onClick={handleSave}
-              disabled={!hasUnsavedChanges || saving}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                  hasUnsavedChanges 
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20' 
-                      : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-              }`}
-              title="Save Changes (Cmd+S)"
-             >
-                 {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                 <span>Save</span>
-             </button>
+            <>
+              <button
+                onClick={handleRunCode}
+                disabled={isExecuting}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 hover:bg-emerald-500 text-white shadow-md cursor-pointer border border-emerald-400/40 active:scale-95 disabled:opacity-50"
+                title="Save & Run Code Natively"
+              >
+                {isExecuting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5 fill-white" />}
+                <span>{isExecuting ? 'Running...' : 'Run Code'}</span>
+              </button>
+
+              <button
+                onClick={handleSave}
+                disabled={!hasUnsavedChanges || saving}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                    hasUnsavedChanges 
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20' 
+                        : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                }`}
+                title="Save Changes (Cmd+S)"
+              >
+                  {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                  <span>Save</span>
+              </button>
+            </>
           )}
           
           <button
@@ -430,13 +474,45 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
           </div>
 
           {/* Editor Viewer */}
-          <div className="flex-1 flex flex-col bg-[#1e1e1e] overflow-hidden">
+          <div className="flex-1 flex flex-col bg-[#1e1e1e] overflow-hidden relative">
             <div className="text-[10px] font-mono text-slate-400 px-4 py-2 border-b border-[#333] flex items-center justify-between">
               <span className="flex items-center space-x-2">
                  <span>{getCleanFilename(safeSelectedFile)}</span>
                  {hasUnsavedChanges && <span className="w-2 h-2 rounded-full bg-blue-500 inline-block animate-pulse" title="Unsaved changes"></span>}
               </span>
-              <span>{fileContent.length} bytes</span>
+              <div className="flex items-center space-x-3">
+                 <button
+                   onClick={handleRunCode}
+                   disabled={isExecuting}
+                   className="flex items-center space-x-1 px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-[11px] transition-all cursor-pointer shadow-xs border border-emerald-500/40 disabled:opacity-50"
+                   title="Run/Save code & update preview"
+                 >
+                   {isExecuting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3 fill-white" />}
+                   <span>{isExecuting ? 'Running...' : 'Run Code'}</span>
+                 </button>
+                 
+                 <a
+                   href={rawPreviewUrl || previewUrl}
+                   target="_blank"
+                   rel="noreferrer"
+                   className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 font-mono font-medium"
+                   title="Open preview in new tab"
+                 >
+                   <ExternalLink className="w-3 h-3" />
+                   <span>Open in New Tab</span>
+                 </a>
+
+                 {executionResult !== null && (
+                   <button
+                     onClick={() => setShowTerminal(!showTerminal)}
+                     className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 font-mono font-medium"
+                   >
+                     <Terminal className="w-3 h-3" />
+                     <span>{showTerminal ? 'Hide Console' : 'Show Console'}</span>
+                   </button>
+                 )}
+                 <span>{fileContent.length} bytes</span>
+              </div>
             </div>
             <div className="flex-1 w-full h-full relative">
               <Editor
@@ -457,6 +533,36 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                 }}
               />
             </div>
+
+            {/* Integrated Terminal Console Drawer */}
+            {(showTerminal && executionResult !== null) && (
+              <div className="border-t border-slate-800 bg-[#07080b] p-3.5 font-mono text-xs max-h-60 overflow-hidden flex flex-col shrink-0">
+                <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-800/80">
+                  <div className="flex items-center space-x-2 text-emerald-400">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <Terminal className="w-3.5 h-3.5" />
+                    <span className="font-bold uppercase tracking-wider text-[11px]">TERMINAL CONSOLE OUTPUT</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-semibold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                      {executionResult.exit_code === 0 ? 'EXIT CODE: 0 (SUCCESS)' : executionResult.exit_code ? `EXIT CODE: ${executionResult.exit_code}` : 'EXECUTED'}
+                    </span>
+                    <button
+                      onClick={() => setShowTerminal(false)}
+                      className="text-slate-500 hover:text-slate-300 p-0.5"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+                <div className="text-slate-200 whitespace-pre-wrap font-mono p-3 bg-[#0d0f17] rounded-xl border border-slate-800/80 overflow-y-auto leading-relaxed shadow-inner flex-1">
+                  {executionResult.output || 'No output produced.'}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -465,12 +571,23 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
         <div className="flex-1 flex flex-col bg-slate-100">
           <div className="px-3 py-1.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500">
             <span className="font-mono truncate text-[11px] flex items-center space-x-2">
-                <span>{previewUrl}</span>
+                <span className="font-semibold text-slate-700">Preview: {previewUrl}</span>
                 <button onClick={() => document.getElementById('preview-iframe')?.contentWindow?.location?.reload()} className="hover:text-slate-800 p-1 rounded-full hover:bg-slate-200 transition-colors" title="Reload Frame">
-                    <RefreshCw className="w-3 h-3" />
+                    <RefreshCw className="w-3 h-3 text-slate-600" />
                 </button>
             </span>
             <div className="flex items-center space-x-3">
+              <a
+                href={rawPreviewUrl || previewUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-indigo-700 flex items-center space-x-1.5 font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded-md border border-indigo-200 transition-colors"
+                title="Open Web App in New Browser Tab"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Open in New Tab</span>
+              </a>
+
               <button
                 onClick={handleDeploy}
                 disabled={isDeploying}
@@ -479,38 +596,17 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                 {isDeploying ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Rocket className="w-3.5 h-3.5" />}
                 <span>Deploy to Vercel</span>
               </button>
-              {deployedUrl && (
-                <a
-                  href={deployedUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-slate-900 flex items-center space-x-1 font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100"
-                >
-                  <span>Live App</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              )}
-              {!deployedUrl && (
-                <a
-                  href={previewUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-slate-900 flex items-center space-x-1 font-medium"
-                >
-                  <span>Open in new tab</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              )}
             </div>
           </div>
           <iframe
             id="preview-iframe"
             src={previewUrl}
             title="Generated App Web Preview"
-            className="w-full flex-1 border-none bg-white"
+            className="w-full flex-1 border-none bg-white shadow-inner"
           />
         </div>
       )}
+
     </div>
   );
 }
