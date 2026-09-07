@@ -541,26 +541,24 @@ export default function App() {
       <div className="flex-1 flex flex-col h-full overflow-hidden relative w-full min-w-0">
         {/* Minimal Professional Top Header Bar */}
         <header className="h-14 border-b border-slate-200/70 px-4 sm:px-6 flex items-center justify-between bg-white/80 backdrop-blur-md z-20 shrink-0 gap-3">
-          {/* Left: Sidebar Toggle Button & Active Session Breadcrumbs */}
+          {/* Left: Expand Sidebar Button (only when sidebar is closed) & Session Title */}
           <div className="flex items-center space-x-3 shrink-0">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              title={sidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
-              className="p-1.5 rounded-xl border border-slate-200/70 hover:bg-slate-100 text-slate-600 transition-all shrink-0 cursor-pointer shadow-2xs"
-            >
-              {sidebarOpen ? <PanelLeftClose className="w-4 h-4 text-slate-500" /> : <PanelLeft className="w-4 h-4 text-indigo-600" />}
-            </button>
+            {!sidebarOpen && (
+              <button
+                onClick={() => setSidebarOpen(true)}
+                title="Expand Sidebar"
+                className="p-1.5 rounded-xl border border-slate-200/70 hover:bg-slate-100 text-indigo-600 transition-all shrink-0 cursor-pointer shadow-2xs"
+              >
+                <PanelLeft className="w-4 h-4 text-indigo-600" />
+              </button>
+            )}
 
-            {/* Session Breadcrumb & Status */}
+            {/* Active Session Status Title (No duplicate PixiExpert text!) */}
             <div className="hidden sm:flex items-center space-x-2 text-xs">
-              <span className="font-bold text-slate-900 flex items-center space-x-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>PixiExpert</span>
-              </span>
-              <span className="text-slate-300">/</span>
-              <span className="font-medium text-slate-600 truncate max-w-[180px] md:max-w-[240px]">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="font-semibold text-slate-800 truncate max-w-[200px] md:max-w-[320px]">
                 {currentThreadId 
-                  ? (projects.find(p => p.thread_id === currentThreadId)?.title || 'Active Session')
+                  ? (projects.find(p => p.thread_id === currentThreadId)?.title || 'Active Chat')
                   : 'New Workspace'
                 }
               </span>
@@ -587,37 +585,11 @@ export default function App() {
 
           {/* Right Header Quick Actions */}
           <div className="flex items-center space-x-2 shrink-0">
-            {/* Sandbox App Toggle Button (when active chat sandbox exists) */}
-            {activeSandboxId && (
-              <button
-                onClick={() => { setShowCanvas(!showCanvas); setShowGraph(false); }}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all cursor-pointer ${
-                  showCanvas 
-                    ? 'bg-indigo-50 border-indigo-200 text-indigo-700 shadow-2xs' 
-                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
-                }`}
-              >
-                <Layers className="w-3.5 h-3.5 text-indigo-600" />
-                <span className="hidden md:inline">{showCanvas ? 'Hide App' : 'View Sandbox App'}</span>
-              </button>
-            )}
-
-            {/* Agent Graph Canvas Button */}
-            <button
-              onClick={() => { setShowGraph(!showGraph); setShowCanvas(false); }}
-              title="View Agent Workflow Graph"
-              className={`p-1.5 rounded-full border text-xs font-medium transition-all cursor-pointer ${
-                showGraph ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-600'
-              }`}
-            >
-              <Activity className="w-4 h-4 text-indigo-600" />
-            </button>
-
             {/* New Chat Button */}
             <button
               type="button"
               onClick={handleNewProject}
-              className="px-3 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition-all flex items-center space-x-1 cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">New Chat</span>
