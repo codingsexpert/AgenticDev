@@ -18,16 +18,26 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
   const fileInputRef = useRef(null);
   const kbInputRef = useRef(null);
   const [isUploadingKb, setIsUploadingKb] = useState(false);
+  const [toolsDropdownOpen, setToolsDropdownOpen] = useState(false);
+  const toolsDropdownRef = useRef(null);
+  const [enabledTools, setEnabledTools] = useState({
+    sandbox: true,
+    webSearch: true,
+    guardrails: true
+  });
 
-  // Close model dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setModelDropdownOpen(false);
       }
+      if (toolsDropdownRef.current && !toolsDropdownRef.current.contains(event.target)) {
+        setToolsDropdownOpen(false);
+      }
     };
 
-    if (modelDropdownOpen) {
+    if (modelDropdownOpen || toolsDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('touchstart', handleClickOutside);
     }
@@ -36,7 +46,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
     };
-  }, [modelDropdownOpen]);
+  }, [modelDropdownOpen, toolsDropdownOpen]);
 
   const startTimer = () => {
     setRecordingSeconds(0);
@@ -190,9 +200,9 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
   };
 
   const models = [
-    { id: 'gemini-flash-latest', label: 'Gemini Flash (Latest)', desc: 'Instant Speed & High Availability' },
-    { id: 'gemini-3.6-flash', label: 'Gemini 3.6 Flash', desc: 'Complex Multi-Agent Architecture' },
-    { id: 'gemini-3.6-flash', label: 'Gemini 3.6 Flash', desc: 'Standard Fast Model' },
+    { id: 'gemini-flash-latest', label: 'Gemini 2.0 Flash (Recommended)', desc: 'Instant Speed & Tool Use' },
+    { id: 'gemini-3.6-flash', label: 'Gemini 3.6 Flash', desc: 'Complex Multi-Agent Engine' },
+    { id: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro', desc: 'Deep Context Reasoning' },
     { id: 'gemini-flash-lite-latest', label: 'Gemini Flash Lite', desc: 'Ultra-Fast Lightweight' },
   ];
 
@@ -392,23 +402,26 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
 
         {/* Bottom Bar Controls: Dropdown Pills Left | Media + Mic + Circular Blue Send Right */}
         <div className="flex items-center justify-between pt-2 gap-2 flex-wrap sm:flex-nowrap">
-          {/* Left Controls: Web & Tools dropdown pills */}
+          {/* Left Controls: AI Model Engine & Tools dropdown pills */}
           <div className="flex items-center space-x-2">
-            {/* Web Search Dropdown Pill */}
+            {/* AI Model Selector Pill */}
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
-                onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
+                onClick={() => {
+                  setModelDropdownOpen(!modelDropdownOpen);
+                  setToolsDropdownOpen(false);
+                }}
                 className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-medium text-slate-700 transition-colors cursor-pointer"
               >
-                <span className="text-xs">🌐</span>
-                <span>Web</span>
+                <span className="text-xs">⚡</span>
+                <span className="truncate max-w-[110px] sm:max-w-none">{currentModelLabel}</span>
                 <ChevronDown className="w-3 h-3 text-slate-400" />
               </button>
 
               {modelDropdownOpen && (
                 <div className="absolute bottom-full mb-2 left-0 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 space-y-1 z-50 animate-fade-in">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 py-1">Search Engine</div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 py-1">AI Model Engine</div>
                   {models.map((m) => (
                     <button
                       key={m.id}
@@ -419,7 +432,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
                       }}
                       className={`w-full text-left px-3 py-2 rounded-xl text-xs transition-colors flex flex-col ${
                         selectedModel === m.id
-                          ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-100'
+                          ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100'
                           : 'text-slate-700 hover:bg-slate-50'
                       }`}
                     >
@@ -431,16 +444,76 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
               )}
             </div>
 
-            {/* Tools Dropdown Pill */}
-            <button
-              type="button"
-              onClick={() => kbInputRef.current?.click()}
-              className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-medium text-slate-700 transition-colors cursor-pointer"
-            >
-              <span className="text-xs">🛠️</span>
-              <span>Tools</span>
-              <ChevronDown className="w-3 h-3 text-slate-400" />
-            </button>
+            {/* Tools Selector Pill */}
+            <div className="relative" ref={toolsDropdownRef}>
+              <button
+                type="button"
+                onClick={() => {
+                  setToolsDropdownOpen(!toolsDropdownOpen);
+                  setModelDropdownOpen(false);
+                }}
+                className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-medium text-slate-700 transition-colors cursor-pointer"
+              >
+                <span className="text-xs">🛠️</span>
+                <span>Tools</span>
+                <ChevronDown className="w-3 h-3 text-slate-400" />
+              </button>
+
+              {toolsDropdownOpen && (
+                <div className="absolute bottom-full mb-2 left-0 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl p-2.5 space-y-2 z-50 animate-fade-in">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Active Agent Capabilities</div>
+
+                  <div className="space-y-1">
+                    <div 
+                      onClick={() => setEnabledTools(prev => ({ ...prev, sandbox: !prev.sandbox }))}
+                      className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 cursor-pointer text-xs"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <Layers className="w-3.5 h-3.5 text-indigo-600" />
+                        <span className="font-medium text-slate-800">Local Sandbox Storage</span>
+                      </div>
+                      <input type="checkbox" checked={enabledTools.sandbox} readOnly className="w-3.5 h-3.5 accent-indigo-600" />
+                    </div>
+
+                    <div 
+                      onClick={() => setEnabledTools(prev => ({ ...prev, webSearch: !prev.webSearch }))}
+                      className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 cursor-pointer text-xs"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                        <span className="font-medium text-slate-800">Web Search & RAG</span>
+                      </div>
+                      <input type="checkbox" checked={enabledTools.webSearch} readOnly className="w-3.5 h-3.5 accent-indigo-600" />
+                    </div>
+
+                    <div 
+                      onClick={() => setEnabledTools(prev => ({ ...prev, guardrails: !prev.guardrails }))}
+                      className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 cursor-pointer text-xs"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <Database className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="font-medium text-slate-800">Safety Guardrails</span>
+                      </div>
+                      <input type="checkbox" checked={enabledTools.guardrails} readOnly className="w-3.5 h-3.5 accent-indigo-600" />
+                    </div>
+                  </div>
+
+                  <div className="border-t border-slate-100 pt-1.5 space-y-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setToolsDropdownOpen(false);
+                        kbInputRef.current?.click();
+                      }}
+                      className="w-full text-left p-2 rounded-xl hover:bg-indigo-50 text-indigo-600 text-xs font-semibold flex items-center space-x-2"
+                    >
+                      <Book className="w-3.5 h-3.5" />
+                      <span>Upload Knowledge Base File</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Right Controls: Attachment + Microphone + Circular Blue Send Button */}
