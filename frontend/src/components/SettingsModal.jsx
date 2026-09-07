@@ -168,7 +168,7 @@ export default function SettingsModal({
                 <div>
                   <h3 className="font-bold text-sm text-slate-900 mb-1 flex items-center space-x-2">
                     <span>LLM Model Engine</span>
-                    <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] bg-slate-100 text-slate-700 border border-slate-200/80 font-medium px-2 py-0.5 rounded-full">
                       Active
                     </span>
                   </h3>

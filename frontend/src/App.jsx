@@ -557,7 +557,7 @@ export default function App() {
 
             {/* Active Session Status Title (No duplicate PixiExpert text!) */}
             <div className="hidden sm:flex items-center space-x-2 text-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="w-2 h-2 rounded-full bg-slate-400"></span>
               <span className="font-semibold text-slate-800 truncate max-w-[200px] md:max-w-[320px]">
                 {currentThreadId 
                   ? (projects.find(p => p.thread_id === currentThreadId)?.title || 'Active Chat')

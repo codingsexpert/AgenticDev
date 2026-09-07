@@ -711,5 +711,16 @@
     "token_expires_at": 1788834488.900696,
     "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User B",
     "created_at": 1788748088.900707
+  },
+  "riyanegi@gmail.com": {
+    "id": "usr_1788776670071",
+    "name": "Riya Singh",
+    "email": "riyanegi@gmail.com",
+    "salt": "866e6ada83aa0b7e5514b692b9323bd3",
+    "password_hash": "87924af1a98e155a796df9f89e908acaf5f8907218a9bae91d4e333f6449eb7c",
+    "token": "pixl_jwt_0774818c37c5bcf3581a8182d8e082b03ddd30d7c9a48880f19504489ea57bb5",
+    "token_expires_at": 1788863070.071292,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Riya Singh",
+    "created_at": 1788776670.071311
   }
 }

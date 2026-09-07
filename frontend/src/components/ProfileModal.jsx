@@ -221,7 +221,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
                   <div className="flex items-center space-x-2">
                     <Crown className="w-5 h-5 text-indigo-400" />
                     <span className="font-bold text-sm tracking-wide">PixiExpert Pro Plan</span>
-                    <span className="px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-300 rounded-full font-semibold border border-emerald-500/30">
+                    <span className="px-2.5 py-0.5 text-[10px] bg-slate-800 text-slate-200 rounded-full font-medium border border-slate-700">
                       Active
                     </span>
                   </div>
