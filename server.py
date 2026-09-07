@@ -214,7 +214,7 @@ async def run_code(
                 except Exception as e:
                     print(f"Failed to read image {img_file}: {e}")
                     
-            return {"output": output.strip() or "Program executed successfully with no console output.", "images": images}
+            return {"output": output.strip() or "Program executed successfully with no console output.", "images": images, "exit_code": result.returncode}
             
         elif lang in ["cpp", "c++", "c"]:
             compiler = "g++" if "cpp" in lang or "c++" in lang else "gcc"
@@ -231,7 +231,7 @@ async def run_code(
             )
             if compile_res.returncode != 0:
                 if tmp_src.exists(): tmp_src.unlink()
-                return {"output": f"[Compilation Error]\n{redact_sensitive_keys(compile_res.stderr)}"}
+                return {"output": f"[Compilation Error]\n{redact_sensitive_keys(compile_res.stderr)}", "exit_code": compile_res.returncode}
                 
             run_res = subprocess.run(
                 [f"./{tmp_bin.name}"], capture_output=True, text=True, timeout=10, cwd=str(sandbox_dir)
@@ -242,7 +242,7 @@ async def run_code(
             output = redact_sensitive_keys(run_res.stdout)
             if run_res.stderr:
                 output += f"\n[Errors]\n{redact_sensitive_keys(run_res.stderr)}"
-            return {"output": output.strip() or "Program executed successfully with no console output."}
+            return {"output": output.strip() or "Program executed successfully with no console output.", "exit_code": run_res.returncode}
 
         elif lang in ["bash", "sh", "shell", "zsh"]:
             result = subprocess.run(
@@ -252,7 +252,7 @@ async def run_code(
             output = redact_sensitive_keys(result.stdout)
             if result.stderr:
                 output += f"\n[Errors]\n{redact_sensitive_keys(result.stderr)}"
-            return {"output": output.strip() or "Script executed with no console output."}
+            return {"output": output.strip() or "Script executed with no console output.", "exit_code": result.returncode}
 
         elif lang in ["javascript", "node", "js", "javascriptreact", "typescript"]:
             with tempfile.NamedTemporaryFile(suffix=".js", delete=False, mode="w") as f:
@@ -271,14 +271,14 @@ async def run_code(
             output = redact_sensitive_keys(result.stdout)
             if result.stderr:
                 output += f"\n[Errors]\n{redact_sensitive_keys(result.stderr)}"
-            return {"output": output.strip() or "Program executed with no output."}
+            return {"output": output.strip() or "Program executed with no output.", "exit_code": result.returncode}
         else:
-            return {"output": f"Code preview/execution for '{lang}' format is ready. (Run via Workspace IDE for full environment execution)."}
+            return {"output": f"Code preview/execution for '{lang}' format is ready. (Run via Workspace IDE for full environment execution).", "exit_code": 0}
             
     except subprocess.TimeoutExpired:
-        return {"output": "Execution timed out (limit 10s)."}
+        return {"output": "Execution timed out (limit 10s).", "exit_code": 124}
     except Exception as e:
-        return {"output": f"Execution failed: {str(e)}"}
+        return {"output": f"Execution failed: {str(e)}", "exit_code": 1}
 
 
 from fastapi import UploadFile, File
