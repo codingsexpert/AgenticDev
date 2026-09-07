@@ -372,7 +372,7 @@ export default function ChatTimeline({
       )}
 
       {/* Clear Bottom Spacer & Scroll Target Anchor */}
-      <div ref={chatEndRef} className="h-6 w-full shrink-0" />
+      <div ref={chatEndRef} className="h-10 w-full shrink-0" />
     </div>
   );
 }
