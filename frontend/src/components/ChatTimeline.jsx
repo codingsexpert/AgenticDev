@@ -302,7 +302,7 @@ export default function ChatTimeline({
       {streamingText && (
         <div className="flex items-start mr-auto w-full animate-fade-in py-1">
           <div className="text-xs sm:text-sm text-slate-800 leading-normal font-sans relative w-full">
-            <FormattedMessage content={streamingText} activeSandboxId={activeSandboxId} onOpenCodeBlock={onOpenCodeBlock} onQuickAction={onQuickAction} />
+            <FormattedMessage content={streamingText} activeSandboxId={activeSandboxId} onOpenCodeBlock={onOpenCodeBlock} onQuickAction={onQuickAction} isStreaming={true} />
             <span className="inline-block w-2 h-4 bg-zinc-400 animate-pulse ml-1 align-middle rounded-sm"></span>
           </div>
         </div>

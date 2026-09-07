@@ -594,35 +594,40 @@ renderTasks();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator App</title>
+    <title>Glassmorphic Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="calculator">
-        <div class="display" id="display">0</div>
-        <div class="buttons">
-            <button class="btn btn-clear" onclick="clearDisplay()">C</button>
-            <button class="btn btn-operator" onclick="appendOperator('/')">&divide;</button>
-            <button class="btn btn-operator" onclick="appendOperator('*')">&times;</button>
-            <button class="btn btn-operator" onclick="deleteLast()">&larr;</button>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 antialiased">
+    <div class="calculator w-80 bg-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-2xl backdrop-blur-xl">
+        <div class="flex items-center justify-between mb-4 px-1">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Calculator</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        </div>
+        <div class="display w-full h-20 bg-slate-950 rounded-2xl text-slate-100 text-3xl font-mono font-bold flex items-center justify-end px-5 mb-5 border border-slate-800/80 shadow-inner overflow-hidden" id="display">0</div>
+        <div class="buttons grid grid-cols-4 gap-3">
+            <button class="btn btn-clear bg-rose-600 hover:bg-rose-500 text-white h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="clearDisplay()">C</button>
+            <button class="btn btn-operator bg-indigo-600 hover:bg-indigo-500 text-white h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendOperator('/')">&divide;</button>
+            <button class="btn btn-operator bg-indigo-600 hover:bg-indigo-500 text-white h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendOperator('*')">&times;</button>
+            <button class="btn btn-operator bg-indigo-600 hover:bg-indigo-500 text-white h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="deleteLast()">&larr;</button>
             
-            <button class="btn" onclick="appendNumber('7')">7</button>
-            <button class="btn" onclick="appendNumber('8')">8</button>
-            <button class="btn" onclick="appendNumber('9')">9</button>
-            <button class="btn btn-operator" onclick="appendOperator('-')">&minus;</button>
+            <button class="btn bg-slate-800 hover:bg-slate-700 text-slate-100 h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendNumber('7')">7</button>
+            <button class="btn bg-slate-800 hover:bg-slate-700 text-slate-100 h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendNumber('8')">8</button>
+            <button class="btn bg-slate-800 hover:bg-slate-700 text-slate-100 h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendNumber('9')">9</button>
+            <button class="btn btn-operator bg-indigo-600 hover:bg-indigo-500 text-white h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendOperator('-')">&minus;</button>
             
-            <button class="btn" onclick="appendNumber('4')">4</button>
-            <button class="btn" onclick="appendNumber('5')">5</button>
-            <button class="btn" onclick="appendNumber('6')">6</button>
-            <button class="btn btn-operator" onclick="appendOperator('+')">+</button>
+            <button class="btn bg-slate-800 hover:bg-slate-700 text-slate-100 h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendNumber('4')">4</button>
+            <button class="btn bg-slate-800 hover:bg-slate-700 text-slate-100 h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendNumber('5')">5</button>
+            <button class="btn bg-slate-800 hover:bg-slate-700 text-slate-100 h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendNumber('6')">6</button>
+            <button class="btn btn-operator bg-indigo-600 hover:bg-indigo-500 text-white h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendOperator('+')">+</button>
             
-            <button class="btn" onclick="appendNumber('1')">1</button>
-            <button class="btn" onclick="appendNumber('2')">2</button>
-            <button class="btn" onclick="appendNumber('3')">3</button>
-            <button class="btn btn-equals" onclick="calculateResult()">=</button>
+            <button class="btn bg-slate-800 hover:bg-slate-700 text-slate-100 h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendNumber('1')">1</button>
+            <button class="btn bg-slate-800 hover:bg-slate-700 text-slate-100 h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendNumber('2')">2</button>
+            <button class="btn bg-slate-800 hover:bg-slate-700 text-slate-100 h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendNumber('3')">3</button>
+            <button class="btn btn-equals bg-emerald-600 hover:bg-emerald-500 text-white h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md row-span-2 flex items-center justify-center cursor-pointer" onclick="calculateResult()">=</button>
             
-            <button class="btn btn-zero" onclick="appendNumber('0')">0</button>
-            <button class="btn" onclick="appendNumber('.')">.</button>
+            <button class="btn btn-zero bg-slate-800 hover:bg-slate-700 text-slate-100 h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md col-span-2 flex items-center justify-center cursor-pointer" onclick="appendNumber('0')">0</button>
+            <button class="btn bg-slate-800 hover:bg-slate-700 text-slate-100 h-12 rounded-xl font-bold text-lg transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer" onclick="appendNumber('.')">.</button>
         </div>
     </div>
     <script src="script.js"></script>
@@ -633,16 +638,7 @@ renderTasks();
 ```css
 /* File: style.css */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); }
-.calculator { width: 320px; background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
-.display { width: 100%; height: 70px; background: #0f172a; border-radius: 16px; color: #ffffff; font-size: 2.2rem; font-weight: 600; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); }
-.buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-.btn { height: 55px; border-radius: 14px; border: none; background: #334155; color: #f8fafc; font-size: 1.25rem; font-weight: 600; cursor: pointer; transition: all 0.15s ease; }
-.btn:hover { background: #475569; }
-.btn-operator { background: #4f46e5; color: #ffffff; }
-.btn-clear { background: #e11d48; color: #ffffff; }
-.btn-equals { background: #10b981; color: #ffffff; grid-row: span 2; height: 122px; }
-.btn-zero { grid-column: span 2; }
+body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #090d16; }
 ```
 
 ```javascript

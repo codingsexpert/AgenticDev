@@ -22,16 +22,23 @@ const getFileIcon = (filename = '', language = '') => {
   return <File className="w-3.5 h-3.5 text-slate-400" />;
 };
 
-function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickAction }) {
+function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickAction, isStreaming = false }) {
   const { addToast } = useToast();
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [copied, setCopied] = useState(false);
   const [applied, setApplied] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [showCode, setShowCode] = useState(false);
+  const [showCode, setShowCode] = useState(isStreaming);
+  const [userToggledCode, setUserToggledCode] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionResult, setExecutionResult] = useState(null);
   const previewRef = useRef(null);
+
+  useEffect(() => {
+    if (!userToggledCode) {
+      setShowCode(isStreaming);
+    }
+  }, [isStreaming, userToggledCode]);
 
   if (!blocks || blocks.length === 0) return null;
 
@@ -59,6 +66,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
     setIsExecuting(true);
     setExecutionResult(null);
     setShowCode(true);
+    setUserToggledCode(true);
     try {
       const res = await fetch('/api/run-code', {
         method: 'POST',
@@ -113,35 +121,60 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
     let css = cssBlock ? cssBlock.code : '';
     let js = jsBlock ? jsBlock.code : '';
 
-    if (htmlBlock || hasWebBlocks) {
-      let combinedHtml = html;
-      if (css) {
-        if (combinedHtml.includes('</head>')) {
-          combinedHtml = combinedHtml.replace('</head>', `<style>${css}</style></head>`);
-        } else {
-          combinedHtml = `<style>${css}</style>\n` + combinedHtml;
-        }
-      }
-      if (js) {
-        if (combinedHtml.includes('</body>')) {
-          combinedHtml = combinedHtml.replace('</body>', `<script>${js}</script></body>`);
-        } else {
-          combinedHtml = combinedHtml + `\n<script>${js}</script>`;
-        }
-      }
+    const tailwindCdn = `<script src="https://cdn.tailwindcss.com"></script>`;
+    const baseHref = activeSandboxId ? `<base href="/api/sandboxes/${activeSandboxId}/preview/">` : '';
 
-      if (!combinedHtml.includes('<html') && !combinedHtml.includes('<!DOCTYPE')) {
-        return `<!DOCTYPE html>
-<html>
+    let combinedHtml = html;
+
+    // Inject base tag & Tailwind CDN if missing
+    if (!combinedHtml.includes('cdn.tailwindcss.com')) {
+      if (combinedHtml.includes('<head>')) {
+        combinedHtml = combinedHtml.replace('<head>', `<head>${baseHref}\n${tailwindCdn}`);
+      } else if (combinedHtml.includes('<html')) {
+        combinedHtml = combinedHtml.replace(/<html[^>]*>/, `$&<head>${baseHref}\n${tailwindCdn}</head>`);
+      } else {
+        combinedHtml = `<head>${baseHref}\n${tailwindCdn}</head>\n` + combinedHtml;
+      }
+    } else if (baseHref && !combinedHtml.includes('<base')) {
+      if (combinedHtml.includes('<head>')) {
+        combinedHtml = combinedHtml.replace('<head>', `<head>${baseHref}`);
+      }
+    }
+
+    // Embed CSS directly so relative <link rel="stylesheet"> references don't fail inside srcDoc
+    if (css) {
+      if (combinedHtml.includes('</head>')) {
+        combinedHtml = combinedHtml.replace('</head>', `<style>\n${css}\n</style></head>`);
+      } else {
+        combinedHtml = `<style>\n${css}\n</style>\n` + combinedHtml;
+      }
+    }
+
+    // Embed JS directly into script tag if external link or at end of body
+    if (js) {
+      if (combinedHtml.includes('<script src="script.js"></script>')) {
+        combinedHtml = combinedHtml.replace('<script src="script.js"></script>', `<script>\ntry {\n${js}\n} catch(e) { console.error(e); }\n</script>`);
+      } else if (combinedHtml.includes('</body>')) {
+        combinedHtml = combinedHtml.replace('</body>', `<script>\ntry {\n${js}\n} catch(e) { console.error(e); }\n</script></body>`);
+      } else {
+        combinedHtml = combinedHtml + `\n<script>\ntry {\n${js}\n} catch(e) { console.error(e); }\n</script>`;
+      }
+    }
+
+    if (!combinedHtml.includes('<html') && !combinedHtml.includes('<!DOCTYPE')) {
+      return `<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  ${baseHref}
+  ${tailwindCdn}
   <style>
-    body { font-family: system-ui, sans-serif; padding: 16px; background: #ffffff; color: #0f172a; }
+    body { font-family: system-ui, -apple-system, sans-serif; padding: 16px; background: #0f172a; color: #f8fafc; }
     ${css}
   </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
   ${combinedHtml}
   <script>
     try {
@@ -152,28 +185,9 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
   </script>
 </body>
 </html>`;
-      }
-      return combinedHtml;
     }
 
-    return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>body { font-family: system-ui, sans-serif; padding: 16px; background: #ffffff; color: #0f172a; }</style>
-</head>
-<body>
-  <div id="root">${currentBlock.code.includes('<') ? currentBlock.code : ''}</div>
-  <script>
-    try {
-      ${!currentBlock.code.includes('<') ? currentBlock.code : ''}
-    } catch(e) {
-      document.body.innerHTML += '<div style="color:red;padding:8px;margin-top:8px;background:#fee2e2;border-radius:6px;font-family:monospace;font-size:12px;">Runtime Error: ' + e.message + '</div>';
-    }
-  </script>
-</body>
-</html>`;
+    return combinedHtml;
   };
 
   const projectTitle = validBlocks.length > 1
@@ -409,7 +423,7 @@ const markdownComponents = {
   hr: ({ node, ...props }) => <hr className="my-3 border-t border-slate-200/70" {...props} />,
 };
 
-export default function FormattedMessage({ content = '', isUser = false, activeSandboxId, onOpenCodeBlock, onQuickAction }) {
+export default function FormattedMessage({ content = '', isUser = false, activeSandboxId, onOpenCodeBlock, onQuickAction, isStreaming = false }) {
   if (!content) return null;
 
   let sanitizedContent = content;
@@ -492,6 +506,7 @@ export default function FormattedMessage({ content = '', isUser = false, activeS
                 activeSandboxId={activeSandboxId}
                 onOpenCodeBlock={onOpenCodeBlock}
                 onQuickAction={onQuickAction}
+                isStreaming={isStreaming}
               />
 
               {subParts[1] && subParts[1].trim() && (
