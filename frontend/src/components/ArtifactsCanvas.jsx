@@ -616,13 +616,9 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                 </div>
 
                 <div className="flex items-center justify-between mb-1.5 pb-1 pt-1 border-b border-[#262a3d] select-none">
-                  <div className="flex items-center space-x-2 text-emerald-400">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                    </span>
-                    <Terminal className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="font-bold uppercase tracking-wider text-[11px] text-emerald-400">TERMINAL CONSOLE OUTPUT</span>
+                  <div className="flex items-center space-x-2 text-slate-300">
+                    <Terminal className="w-3.5 h-3.5 text-indigo-400" />
+                    <span className="font-semibold uppercase tracking-wider text-[11px] text-slate-200">Terminal Console Output</span>
                   </div>
 
                   <div className="flex items-center space-x-2">

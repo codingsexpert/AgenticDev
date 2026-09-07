@@ -316,13 +316,9 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
         {executionResult !== null && (
           <div className="border-t border-slate-800/80 bg-[#050609] p-4 font-mono text-[11.5px] sm:text-xs">
             <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-800/60">
-              <div className="flex items-center space-x-2 text-emerald-400">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                <Terminal className="w-3.5 h-3.5" />
-                <span className="font-bold uppercase tracking-wider text-[11px]">TERMINAL CONSOLE OUTPUT</span>
+              <div className="flex items-center space-x-2 text-slate-300">
+                <Terminal className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="font-semibold uppercase tracking-wider text-[11px] text-slate-200">Terminal Console Output</span>
               </div>
               <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-semibold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
                 {executionResult.exit_code === 0 ? 'EXIT CODE: 0 (SUCCESS)' : executionResult.exit_code ? `EXIT CODE: ${executionResult.exit_code}` : 'EXECUTED'}
