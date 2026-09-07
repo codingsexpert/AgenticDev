@@ -192,7 +192,10 @@ export default function Sidebar({
               <h3 className="font-bold text-xs text-slate-900 tracking-tight">Recent Chats</h3>
               <button
                 type="button"
-                onClick={onNewProject}
+                onClick={() => {
+                  if (onSelectNav) onSelectNav('Chat');
+                  if (onNewProject) onNewProject();
+                }}
                 className="text-[11px] font-semibold text-indigo-600 hover:text-indigo-700 flex items-center space-x-1 transition-colors"
               >
                 <Plus className="w-3 h-3" />
@@ -208,6 +211,7 @@ export default function Sidebar({
                   <div
                     key={chat.thread_id}
                     onClick={() => {
+                      if (onSelectNav) onSelectNav('Chat');
                       if (onSelectProject) onSelectProject(chat.thread_id);
                       if (typeof window !== 'undefined' && window.innerWidth < 1024) setSidebarOpen(false);
                     }}
@@ -260,6 +264,7 @@ export default function Sidebar({
                 <div
                   key={proj.id}
                   onClick={() => {
+                    if (onSelectNav) onSelectNav('Chat');
                     if (onPromptAction) onPromptAction(proj.prompt);
                     if (typeof window !== 'undefined' && window.innerWidth < 1024) setSidebarOpen(false);
                   }}
