@@ -45,3 +45,31 @@ async def kb_upload(
         saved_files.append(safe_filename)
         
     return {"status": "success", "message": f"Uploaded {len(saved_files)} files to Knowledge Base.", "files": saved_files}
+
+
+@router.get("/files")
+def list_kb_files(user: Dict[str, Any] = Depends(get_current_user_optional)):
+    user_kb_dir = get_user_kb_dir(user.get("id", "default_user"))
+    if not user_kb_dir.exists():
+        return {"files": []}
+    files = []
+    for f in user_kb_dir.iterdir():
+        if f.is_file() and not f.name.startswith("."):
+            stat = f.stat()
+            files.append({
+                "name": f.name,
+                "size": stat.st_size,
+                "modified": stat.st_mtime
+            })
+    return {"files": files}
+
+
+@router.delete("/files/{filename}")
+def delete_kb_file(filename: str, user: Dict[str, Any] = Depends(get_current_user_optional)):
+    safe_name = Path(filename).name
+    user_kb_dir = get_user_kb_dir(user.get("id", "default_user"))
+    file_path = user_kb_dir / safe_name
+    if file_path.exists() and file_path.is_file():
+        file_path.unlink()
+        return {"status": "success", "message": f"Deleted {safe_name} from Knowledge Base."}
+    raise HTTPException(status_code=404, detail="File not found in Knowledge Base.")
