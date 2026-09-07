@@ -83,6 +83,24 @@
     {
       "role": "assistant",
       "content": "I am **PixiExpert**, your AI software assistant. I can help you build full-stack web applications, write and debug code, analyze data, and manage your project workspace."
+    },
+    {
+      "role": "user",
+      "content": "Explain in detail and provide code examples for: FastAPI Web Backend & SSE Live Event Stream",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "I am **PixiExpert**, your AI software assistant. I can help you build full-stack web applications, write and debug code, analyze data, and manage your project workspace."
+    },
+    {
+      "role": "user",
+      "content": "Explain in detail and provide code examples for: Gemini 2.0 Flash & LiteLLM Integration",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "I am **PixiExpert**, your AI software assistant. I can help you build full-stack web applications, write and debug code, analyze data, and manage your project workspace."
     }
   ],
   "node_history": [
@@ -98,5 +116,5 @@
     }
   ],
   "user_id": "usr_guest_f528764d624d",
-  "updated_at": 1788771153.3446531
+  "updated_at": 1788775775.703671
 }

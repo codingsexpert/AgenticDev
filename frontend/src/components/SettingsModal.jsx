@@ -84,8 +84,8 @@ export default function SettingsModal({
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
-              <Settings className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-2xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center shadow-2xs">
+              <Settings className="w-5 h-5 text-slate-700" />
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center space-x-2">

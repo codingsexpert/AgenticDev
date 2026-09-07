@@ -69,13 +69,13 @@ export default function ProjectsModal({
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
-              <FolderKanban className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-2xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center shadow-2xs">
+              <FolderKanban className="w-5 h-5 text-slate-700" />
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center space-x-2">
                 <span>Projects & Workspaces</span>
-                <span className="text-xs bg-indigo-100 text-indigo-700 font-semibold px-2.5 py-0.5 rounded-full">
+                <span className="text-xs bg-slate-100 text-slate-600 border border-slate-200/80 font-semibold px-2.5 py-0.5 rounded-full">
                   {safeProjects.length} Total
                 </span>
               </h2>
@@ -91,7 +91,7 @@ export default function ProjectsModal({
                 onClose();
                 onNewProject();
               }}
-              className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center space-x-1.5 shadow-sm transition-all cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center space-x-1.5 shadow-2xs transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>New Project</span>

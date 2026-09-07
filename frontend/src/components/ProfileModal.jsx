@@ -60,7 +60,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white font-bold text-base flex items-center justify-center shadow-md shadow-indigo-200">
+            <div className="w-10 h-10 rounded-2xl bg-slate-100 text-slate-800 border border-slate-200/80 font-bold text-base flex items-center justify-center shadow-2xs">
               {avatar ? (
                 <img src={avatar} alt="Profile" className="w-full h-full object-cover rounded-2xl" />
               ) : (

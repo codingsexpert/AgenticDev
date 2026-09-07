@@ -120,13 +120,13 @@ export default function KnowledgeModal({
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
-              <BookOpen className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-2xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center shadow-2xs">
+              <BookOpen className="w-5 h-5 text-slate-700" />
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center space-x-2">
                 <span>Knowledge Base & Context Memory</span>
-                <span className="text-xs bg-indigo-100 text-indigo-700 font-semibold px-2.5 py-0.5 rounded-full">
+                <span className="text-xs bg-slate-100 text-slate-600 border border-slate-200/80 font-semibold px-2.5 py-0.5 rounded-full">
                   System Context
                 </span>
               </h2>
@@ -212,7 +212,7 @@ export default function KnowledgeModal({
                 >
                   <div>
                     <div className="flex items-center space-x-3 mb-2.5">
-                      <div className={`w-8 h-8 rounded-xl ${item.color} text-white flex items-center justify-center shrink-0 shadow-xs`}>
+                      <div className="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200/80 text-slate-600 group-hover:bg-slate-200 group-hover:text-slate-900 flex items-center justify-center shrink-0 transition-colors shadow-2xs">
                         <Icon className="w-4 h-4" />
                       </div>
                       <h4 className="font-bold text-sm text-slate-900 leading-snug group-hover:text-indigo-600 transition-colors">
