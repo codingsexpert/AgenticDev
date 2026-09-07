@@ -199,12 +199,12 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
         </div>
 
         {/* Header Action Buttons (Only 1 Run Code Button) */}
-        <div className="flex items-center space-x-2 shrink-0 flex-wrap gap-2">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
           {isExecutable && (
             <button
               onClick={handleRunCode}
               disabled={isExecuting}
-              className="text-xs px-4 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-xl font-bold transition-all duration-200 shadow-md flex items-center space-x-2 disabled:opacity-50 cursor-pointer border border-emerald-400/40 active:scale-95"
+              className="text-xs px-4 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-xl font-bold transition-colors duration-150 shadow-md flex items-center space-x-2 shrink-0 disabled:opacity-50 cursor-pointer border border-emerald-400/40 active:scale-95 hover:shadow-lg"
               title="Execute code natively and view output console"
             >
               {isExecuting ? (
@@ -219,7 +219,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
           {hasWebBlocks && (
             <button
               onClick={() => setShowPreview(!showPreview)}
-              className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-all duration-200 flex items-center space-x-2 cursor-pointer border active:scale-95 ${showPreview
+              className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-colors duration-150 shrink-0 flex items-center space-x-2 cursor-pointer border active:scale-95 ${showPreview
                 ? 'bg-indigo-600 text-white border-indigo-400 shadow-md'
                 : 'bg-indigo-950/70 hover:bg-indigo-900/90 text-indigo-200 border-indigo-500/40 shadow-sm'
                 }`}
@@ -233,7 +233,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
           {activeSandboxId && (
             <button
               onClick={handleApplyAll}
-              className="text-xs px-3.5 py-1.5 bg-indigo-600/90 hover:bg-indigo-500 text-white rounded-xl font-semibold transition-all duration-200 border border-indigo-400/40 flex items-center space-x-2 cursor-pointer active:scale-95 shadow-md"
+              className="text-xs px-3.5 py-1.5 bg-indigo-600/90 hover:bg-indigo-500 text-white rounded-xl font-semibold transition-colors duration-150 shrink-0 border border-indigo-400/40 flex items-center space-x-2 cursor-pointer active:scale-95 shadow-md"
               title="Save all files directly to sandbox workspace"
             >
               {applied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Save className="w-3.5 h-3.5" />}
@@ -243,7 +243,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
 
           <button
             onClick={() => onOpenCodeBlock && onOpenCodeBlock(validBlocks)}
-            className="text-xs px-3.5 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-indigo-300 hover:text-white rounded-xl font-semibold transition-all duration-200 border border-indigo-500/40 hover:border-indigo-400 flex items-center space-x-2 shadow-md cursor-pointer active:scale-95"
+            className="text-xs px-3.5 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-indigo-300 hover:text-white rounded-xl font-semibold transition-colors duration-150 shrink-0 border border-indigo-500/40 hover:border-indigo-400 flex items-center space-x-2 shadow-md cursor-pointer active:scale-95"
             title="Open full interactive Workspace IDE canvas"
           >
             <Layers className="w-3.5 h-3.5 text-indigo-400" />
