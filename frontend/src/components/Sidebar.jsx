@@ -1,20 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   MessageSquare,
   FolderKanban, 
   BookOpen, 
   Wrench, 
   Settings, 
-  ChevronLeft, 
-  ChevronRight,
+  ChevronDown,
   User,
   Code2,
   FileText,
-  Folder,
-  ArrowRight,
   Plus,
   PanelLeftClose,
-  Trash2
+  Trash2,
+  Pin,
+  MoreHorizontal,
+  Edit3,
+  Share2,
+  Archive,
+  Check,
+  X
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -35,11 +39,29 @@ export default function Sidebar({
   activeNav = 'Chat',
   onSelectNav
 }) {
+  const [pinnedThreadIds, setPinnedThreadIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem('pixlexpert_pinned_chats');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [openMenuThreadId, setOpenMenuThreadId] = useState(null);
+  const [editingThreadId, setEditingThreadId] = useState(null);
+  const [editingTitle, setEditingTitle] = useState('');
+  const menuRef = useRef(null);
+
   // ESC key listener & body scroll lock on mobile
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && sidebarOpen) {
-        setSidebarOpen(false);
+      if (e.key === 'Escape') {
+        if (sidebarOpen && typeof window !== 'undefined' && window.innerWidth < 1024) {
+          setSidebarOpen(false);
+        }
+        setOpenMenuThreadId(null);
+        setEditingThreadId(null);
       }
     };
 
@@ -55,6 +77,25 @@ export default function Sidebar({
       document.body.style.overflow = '';
     };
   }, [sidebarOpen, setSidebarOpen]);
+
+  // Click outside to close context menu
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpenMenuThreadId(null);
+      }
+    };
+
+    if (openMenuThreadId) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [openMenuThreadId]);
 
   const navItems = [
     { name: 'Chat', icon: MessageSquare },
@@ -77,51 +118,66 @@ export default function Sidebar({
     }
   };
 
+  const togglePinThread = (threadId, e) => {
+    e?.stopPropagation();
+    setPinnedThreadIds((prev) => {
+      const next = prev.includes(threadId)
+        ? prev.filter((id) => id !== threadId)
+        : [...prev, threadId];
+      try {
+        localStorage.setItem('pixlexpert_pinned_chats', JSON.stringify(next));
+      } catch (err) {}
+      return next;
+    });
+    setOpenMenuThreadId(null);
+  };
+
+  const handleStartRename = (chat, e) => {
+    e?.stopPropagation();
+    setEditingThreadId(chat.thread_id);
+    setEditingTitle(chat.title);
+    setOpenMenuThreadId(null);
+  };
+
+  const handleSaveRename = (threadId, e) => {
+    e?.stopPropagation();
+    if (editingTitle.trim() && onRenameProject) {
+      onRenameProject(threadId, editingTitle.trim());
+    }
+    setEditingThreadId(null);
+  };
+
+  const handleShareThread = (chat, e) => {
+    e?.stopPropagation();
+    setOpenMenuThreadId(null);
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(`${window.location.origin}?chat=${chat.thread_id}`);
+      alert(`Chat link copied to clipboard: "${chat.title}"`);
+    }
+  };
+
   const safeProjects = Array.isArray(projects) ? projects : [];
 
-  // Default Recent Chats if real conversation list is empty
-  const defaultRecentChats = [
-    {
-      thread_id: 'chat-1',
-      title: 'Build a calculator app',
-      time: '2 hours ago',
-      icon: Code2
-    },
-    {
-      thread_id: 'chat-2',
-      title: 'Explain React hooks',
-      time: '4 hours ago',
-      icon: MessageSquare
-    },
-    {
-      thread_id: 'chat-3',
-      title: 'Fix this code error',
-      time: '6 hours ago',
-      icon: Code2
-    },
-    {
-      thread_id: 'chat-4',
-      title: 'Summarize this document',
-      time: '8 hours ago',
-      icon: FileText
-    },
+  const defaultChats = [
+    { thread_id: 'chat-1', title: 'Improve AI Response Speed', time: 'Recently', mode: 'chat' },
+    { thread_id: 'chat-2', title: 'Python Array Practice', time: '2 hours ago', mode: 'chat' },
+    { thread_id: 'chat-3', title: 'AI Capabilities Overview', time: '4 hours ago', mode: 'chat' },
+    { thread_id: 'chat-4', title: 'React Hooks & State Guide', time: '6 hours ago', mode: 'chat' },
   ];
 
-  const recentChats = safeProjects.length > 0
-    ? safeProjects.slice(0, 5).map((p, idx) => ({
-      thread_id: p.thread_id,
-      title: p.title || p.requirement || 'Chat Session',
-      time: p.updated_at ? 'Recently' : `${(idx + 1) * 2} hours ago`,
-      icon: idx % 2 === 0 ? Code2 : MessageSquare
-    }))
-    : defaultRecentChats;
+  const allChats = safeProjects.length > 0
+    ? safeProjects.map((p, idx) => ({
+        thread_id: p.thread_id,
+        title: p.title || p.requirement || 'Chat Session',
+        time: p.updated_at ? 'Recently' : `${(idx + 1) * 2} hours ago`,
+        mode: p.mode || 'chat'
+      }))
+    : defaultChats;
 
-  const sampleProjects = [
-    { id: 'proj-1', title: 'College Management System', prompt: 'Build a full-stack College Management System web app with student records and admin dashboard', updated: 'Updated 2 days ago' },
-    { id: 'proj-2', title: 'E-commerce Website', prompt: 'Create a modern E-commerce Storefront web application with shopping cart and product grid', updated: 'Updated 3 days ago' },
-    { id: 'proj-3', title: 'Portfolio Website', prompt: 'Build a developer portfolio website with interactive projects showcase and glassmorphic UI', updated: 'Updated 5 days ago' },
-    { id: 'proj-4', title: 'Task Manager', prompt: 'Create a Task Manager app with kanban board and drag-and-drop task status', updated: 'Updated 1 week ago' },
-  ];
+  // Separate pinned chats and unpinned chats
+  const pinnedChats = allChats.filter((c) => pinnedThreadIds.includes(c.thread_id));
+  const unpinnedChats = allChats.filter((c) => !pinnedThreadIds.includes(c.thread_id));
+  const sortedChats = [...pinnedChats, ...unpinnedChats];
 
   return (
     <>
@@ -134,21 +190,21 @@ export default function Sidebar({
       )}
 
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto bg-white/80 backdrop-blur-md border-r border-slate-200/60 flex flex-col transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none shrink-0 ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto bg-white/90 backdrop-blur-md border-r border-slate-200/70 flex flex-col transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none shrink-0 ${
           sidebarOpen
             ? 'translate-x-0 w-72 lg:w-[270px] lg:opacity-100'
             : '-translate-x-full lg:translate-x-0 lg:w-0 lg:opacity-0 lg:overflow-hidden lg:border-none'
         }`}
       >
-        {/* Text Branding & Sidebar Collapse Toggle */}
-        <div className="p-4 sm:p-5 flex items-center justify-between border-b border-slate-100/60 shrink-0">
+        {/* Branding & Sidebar Collapse Button */}
+        <div className="p-4 sm:p-4.5 flex items-center justify-between border-b border-slate-100/80 shrink-0">
           <div className="cursor-pointer flex items-center space-x-2.5" onClick={() => handleNavClick('Chat')}>
             <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
               P
             </div>
             <div>
-              <h1 className="font-bold text-base tracking-tight text-slate-900 leading-tight">PixiExpert</h1>
-              <span className="text-[11px] font-medium text-slate-400">AI Assistant</span>
+              <h1 className="font-bold text-sm tracking-tight text-slate-900 leading-tight">PixiExpert</h1>
+              <span className="text-[10px] font-medium text-slate-400">AI Studio</span>
             </div>
           </div>
 
@@ -161,10 +217,10 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* Scrollable Container containing Nav Links, Recent Chats & Sample Projects */}
-        <div className="px-3 py-4 space-y-5 flex-1 overflow-y-auto custom-scrollbar">
-          {/* Main Navigation Links */}
-          <div className="space-y-1">
+        {/* Scrollable Container for Navigation & ChatGPT-Style Recents List */}
+        <div className="px-3 py-3 space-y-4 flex-1 overflow-y-auto custom-scrollbar">
+          {/* Main Top Navigation Tabs */}
+          <div className="space-y-0.5">
             {navItems.map((nav) => {
               const Icon = nav.icon;
               const isActive = activeNav === nav.name;
@@ -173,10 +229,10 @@ export default function Sidebar({
                   key={nav.name}
                   type="button"
                   onClick={() => handleNavClick(nav.name)}
-                  className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all min-h-[40px] ${
+                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all min-h-[36px] ${
                     isActive
-                      ? 'bg-indigo-50/90 text-indigo-600 font-semibold shadow-2xs'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                      ? 'bg-indigo-50/90 text-indigo-600 font-bold shadow-2xs'
+                      : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
                   }`}
                 >
                   <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
@@ -186,118 +242,190 @@ export default function Sidebar({
             })}
           </div>
 
-          {/* Recent Chats Section */}
-          <div className="space-y-2 pt-3 border-t border-slate-100">
-            <div className="flex items-center justify-between px-1">
-              <h3 className="font-bold text-xs text-slate-900 tracking-tight">Recent Chats</h3>
+          {/* ChatGPT-Style Recents List Section */}
+          <div className="pt-2 border-t border-slate-100 space-y-1.5">
+            {/* Header: Recents ∨ & + New Chat */}
+            <div className="flex items-center justify-between px-2 py-1">
+              <div className="flex items-center space-x-1 text-slate-500 font-semibold text-xs cursor-pointer hover:text-slate-800 transition-colors">
+                <span>Recents</span>
+                <ChevronDown className="w-3 h-3 text-slate-400" />
+              </div>
+
               <button
                 type="button"
                 onClick={() => {
                   if (onSelectNav) onSelectNav('Chat');
                   if (onNewProject) onNewProject();
                 }}
-                className="text-[11px] font-semibold text-indigo-600 hover:text-indigo-700 flex items-center space-x-1 transition-colors"
+                title="Start New Chat"
+                className="p-1 rounded-lg text-indigo-600 hover:bg-indigo-50 font-semibold text-xs flex items-center space-x-1 transition-all"
               >
-                <Plus className="w-3 h-3" />
-                <span>New</span>
+                <Plus className="w-3.5 h-3.5" />
+                <span className="text-[11px]">New</span>
               </button>
             </div>
 
-            <div className="space-y-1">
-              {recentChats.map((chat) => {
-                const Icon = chat.icon;
+            {/* Chat Items Vertical List (ChatGPT Style) */}
+            <div className="space-y-0.5">
+              {sortedChats.map((chat) => {
                 const isSelected = currentThreadId === chat.thread_id;
+                const isPinned = pinnedThreadIds.includes(chat.thread_id);
+                const isMenuOpen = openMenuThreadId === chat.thread_id;
+                const isEditing = editingThreadId === chat.thread_id;
+
                 return (
                   <div
                     key={chat.thread_id}
                     onClick={() => {
-                      if (onSelectNav) onSelectNav('Chat');
-                      if (onSelectProject) onSelectProject(chat.thread_id);
-                      if (typeof window !== 'undefined' && window.innerWidth < 1024) setSidebarOpen(false);
+                      if (!isEditing) {
+                        if (onSelectNav) onSelectNav('Chat');
+                        if (onSelectProject) onSelectProject(chat.thread_id);
+                        if (typeof window !== 'undefined' && window.innerWidth < 1024) setSidebarOpen(false);
+                      }
                     }}
-                    className={`flex items-center justify-between p-2 rounded-xl transition-all cursor-pointer group border ${
+                    className={`group relative flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all cursor-pointer select-none ${
                       isSelected
-                        ? 'bg-indigo-50/80 border-indigo-200 text-indigo-700 font-semibold'
-                        : 'border-transparent hover:bg-slate-100/70 hover:border-slate-200/60'
+                        ? 'bg-slate-100/90 text-slate-900 font-semibold'
+                        : 'text-slate-700 hover:bg-slate-100/60 hover:text-slate-900'
                     }`}
                   >
-                    <div className="flex items-center space-x-2.5 truncate min-w-0 flex-1">
-                      <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-indigo-600' : 'text-slate-400 group-hover:text-indigo-600'} transition-colors`} />
-                      <div className="truncate text-left leading-tight min-w-0 flex-1">
-                        <div className={`font-medium text-xs truncate ${isSelected ? 'text-indigo-900 font-semibold' : 'text-slate-800 group-hover:text-indigo-600'} transition-colors`}>
-                          {chat.title}
-                        </div>
-                        <div className="text-[10px] text-slate-400 mt-0.5">{chat.time}</div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-1 shrink-0 ml-1">
-                      {onDeleteProject && chat.thread_id && !chat.thread_id.startsWith('chat-') && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDeleteProject(chat.thread_id);
+                    {/* Title Text or Inline Title Editing Field */}
+                    {isEditing ? (
+                      <div className="flex items-center space-x-1.5 flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="text"
+                          value={editingTitle}
+                          onChange={(e) => setEditingTitle(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSaveRename(chat.thread_id, e);
+                            if (e.key === 'Escape') setEditingThreadId(null);
                           }}
-                          title="Delete Chat Session"
-                          className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all"
+                          className="w-full px-2 py-0.5 text-xs border border-indigo-400 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white"
+                          autoFocus
+                        />
+                        <button
+                          onClick={(e) => handleSaveRename(chat.thread_id, e)}
+                          className="p-1 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 shrink-0"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Check className="w-3 h-3" />
                         </button>
-                      )}
-                      <ChevronRight className={`w-3.5 h-3.5 ${isSelected ? 'text-indigo-500' : 'text-slate-300 group-hover:text-slate-500'} group-hover:translate-x-0.5 transition-all`} />
-                    </div>
+                        <button
+                          onClick={() => setEditingThreadId(null)}
+                          className="p-1 rounded-md bg-slate-200 text-slate-600 hover:bg-slate-300 shrink-0"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-2 truncate min-w-0 flex-1 pr-1">
+                        <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-indigo-600' : 'text-slate-400'}`} />
+                        <span className="truncate text-xs font-normal leading-snug">
+                          {chat.title}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Right Hover Actions (Pin icon & Three Dots Menu) */}
+                    {!isEditing && (
+                      <div className="flex items-center space-x-1 shrink-0">
+                        {/* Pin Indicator Badge or Hover Pin Button */}
+                        {isPinned && (
+                          <button
+                            type="button"
+                            onClick={(e) => togglePinThread(chat.thread_id, e)}
+                            title="Unpin Chat"
+                            className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-200/60"
+                          >
+                            <Pin className="w-3 h-3 fill-slate-500 text-slate-500 rotate-45" />
+                          </button>
+                        )}
+
+                        {/* Three Dots Button (...) */}
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenMenuThreadId(isMenuOpen ? null : chat.thread_id);
+                            }}
+                            className={`p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-opacity ${
+                              isMenuOpen ? 'opacity-100 bg-slate-200/70 text-slate-700' : 'opacity-0 group-hover:opacity-100'
+                            }`}
+                          >
+                            <MoreHorizontal className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* ChatGPT-Style Three Dots Context Menu Dropdown */}
+                          {isMenuOpen && (
+                            <div
+                              ref={menuRef}
+                              onClick={(e) => e.stopPropagation()}
+                              className="absolute right-0 top-full mt-1 w-44 bg-white/95 backdrop-blur-md border border-slate-200 rounded-2xl shadow-xl p-1.5 z-50 animate-fade-in space-y-0.5 text-xs text-slate-700"
+                            >
+                              <button
+                                type="button"
+                                onClick={(e) => handleShareThread(chat, e)}
+                                className="w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 text-slate-700 transition-colors"
+                              >
+                                <Share2 className="w-3.5 h-3.5 text-slate-400" />
+                                <span>Share</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={(e) => handleStartRename(chat, e)}
+                                className="w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 text-slate-700 transition-colors"
+                              >
+                                <Edit3 className="w-3.5 h-3.5 text-slate-400" />
+                                <span>Rename</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={(e) => togglePinThread(chat.thread_id, e)}
+                                className="w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 text-slate-700 transition-colors"
+                              >
+                                <Pin className="w-3.5 h-3.5 text-slate-400" />
+                                <span>{isPinned ? 'Unpin chat' : 'Pin chat'}</span>
+                              </button>
+
+                              {onDeleteProject && !chat.thread_id.startsWith('chat-') && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setOpenMenuThreadId(null);
+                                    onDeleteProject(chat.thread_id);
+                                  }}
+                                  className="w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-xl hover:bg-rose-50 text-rose-600 transition-colors"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                                  <span>Delete</span>
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
           </div>
-
-          {/* Sample Projects Section */}
-          <div className="space-y-2 pt-3 border-t border-slate-100">
-            <div className="px-1">
-              <h3 className="font-bold text-xs text-slate-900 tracking-tight">Sample Projects</h3>
-            </div>
-
-            <div className="space-y-1">
-              {sampleProjects.map((proj) => (
-                <div
-                  key={proj.id}
-                  onClick={() => {
-                    if (onSelectNav) onSelectNav('Chat');
-                    if (onPromptAction) onPromptAction(proj.prompt);
-                    if (typeof window !== 'undefined' && window.innerWidth < 1024) setSidebarOpen(false);
-                  }}
-                  className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100/70 transition-all cursor-pointer group border border-transparent hover:border-slate-200/60"
-                >
-                  <div className="flex items-center space-x-2.5 truncate">
-                    <Folder className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-indigo-600 transition-colors" />
-                    <div className="truncate text-left leading-tight">
-                      <div className="font-medium text-xs text-slate-800 truncate group-hover:text-indigo-600 transition-colors">
-                        {proj.title}
-                      </div>
-                      <div className="text-[10px] text-slate-400 mt-0.5">{proj.updated}</div>
-                    </div>
-                  </div>
-
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* Bottom User Profile */}
-        <div className="p-3 border-t border-slate-100/60 bg-transparent shrink-0">
+        <div className="p-3 border-t border-slate-100/80 bg-transparent shrink-0">
           <div 
             onClick={() => {
               if (!user && onOpenAuth) onOpenAuth();
               if (typeof window !== 'undefined' && window.innerWidth < 1024) setSidebarOpen(false);
             }}
-            className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200/60 transition-all cursor-pointer group min-h-[44px]"
+            className="flex items-center justify-between p-2 rounded-2xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200/60 transition-all cursor-pointer group min-h-[44px]"
           >
             <div className="flex items-center space-x-2.5 truncate">
-              <div className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden">
+              <div className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
                 {user?.avatar ? (
                   <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -313,14 +441,9 @@ export default function Sidebar({
                 </div>
               </div>
             </div>
-
-            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-0.5 transition-all shrink-0" />
           </div>
         </div>
       </aside>
     </>
   );
 }
-
-
-
