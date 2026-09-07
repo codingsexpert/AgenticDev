@@ -587,37 +587,31 @@ export default function App() {
 
           {/* Right Header Quick Actions - Profile Section ONLY */}
           <div className="flex items-center space-x-2 shrink-0">
-            {/* ChatGPT-Style User Profile Avatar & Dropdown */}
+            {/* ChatGPT-Style User Profile Avatar Button (ONLY Photo Avatar, No Name) */}
             <div className="relative" ref={userMenuRef}>
               <button
                 type="button"
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center space-x-2 p-1 pl-1 pr-2.5 rounded-full hover:bg-slate-100/90 border border-slate-200/80 bg-white/80 transition-all cursor-pointer shadow-2xs group"
+                className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white font-bold text-sm flex items-center justify-center overflow-hidden shadow-xs hover:ring-4 hover:ring-indigo-100 ring-2 ring-indigo-50 transition-all cursor-pointer shrink-0"
                 title="Profile & Account Settings"
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden shadow-xs ring-2 ring-indigo-50">
-                  {user?.avatar ? (
-                    <img src={user.avatar} alt="User" className="w-full h-full object-cover" />
-                  ) : (
-                    user?.name?.charAt(0) || 'M'
-                  )}
-                </div>
-                <span className="text-xs font-semibold text-slate-800 hidden sm:inline-block max-w-[100px] truncate">
-                  {user?.name || 'Mukesh Singh'}
-                </span>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
+                {user?.avatar ? (
+                  <img src={user.avatar} alt="User Profile" className="w-full h-full object-cover" />
+                ) : (
+                  user?.name?.charAt(0) || 'M'
+                )}
               </button>
 
-              {/* ChatGPT-Style Profile Dropdown Menu */}
+              {/* ChatGPT-Style Profile Dropdown Menu (Solid High-Contrast Readable Box) */}
               {userMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 w-64 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-2xl p-2 z-50 animate-fade-in space-y-1.5 text-xs">
+                <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-2xl p-2 z-[100] animate-fade-in space-y-1 text-slate-900 font-sans">
                   {/* User Profile Card */}
                   <div 
                     onClick={() => {
                       setUserMenuOpen(false);
                       setActiveNav('Profile');
                     }}
-                    className="p-2.5 bg-gradient-to-r from-slate-50 to-indigo-50/30 border border-slate-100 rounded-xl flex items-center space-x-3 cursor-pointer hover:bg-indigo-50/50 transition-colors group"
+                    className="p-2.5 bg-slate-50 hover:bg-indigo-50/60 border border-slate-200/80 rounded-xl flex items-center space-x-3 cursor-pointer transition-colors group"
                   >
                     <div className="w-9 h-9 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
                       {user?.avatar ? (
@@ -627,12 +621,12 @@ export default function App() {
                       )}
                     </div>
                     <div className="truncate text-left leading-tight flex-1">
-                      <div className="font-bold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
+                      <div className="font-bold text-xs text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
                         {user?.name || 'Mukesh Singh'}
                       </div>
-                      <div className="text-[10px] text-slate-500 truncate">{user?.email || 'mukesh@gmail.com'}</div>
+                      <div className="text-[11px] text-slate-500 font-medium truncate">{user?.email || 'mukesh@gmail.com'}</div>
                     </div>
-                    <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-200 shrink-0">
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
                       PRO
                     </span>
                   </div>
@@ -645,13 +639,13 @@ export default function App() {
                         setUserMenuOpen(false);
                         setActiveNav('Profile');
                       }}
-                      className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors font-medium cursor-pointer"
+                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-800 hover:bg-slate-100 hover:text-indigo-600 transition-colors text-xs font-semibold cursor-pointer text-left"
                     >
                       <div className="flex items-center space-x-2.5">
-                        <User className="w-4 h-4 text-indigo-600" />
-                        <span>My Account & Plan</span>
+                        <User className="w-4 h-4 text-indigo-600 shrink-0" />
+                        <span className="text-slate-800 font-semibold">My Account & Plan</span>
                       </div>
-                      <Crown className="w-3.5 h-3.5 text-amber-500" />
+                      <Crown className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                     </button>
 
                     <button
@@ -660,12 +654,10 @@ export default function App() {
                         setUserMenuOpen(false);
                         setActiveNav('Settings');
                       }}
-                      className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors font-medium cursor-pointer"
+                      className="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-slate-800 hover:bg-slate-100 hover:text-indigo-600 transition-colors text-xs font-semibold cursor-pointer text-left"
                     >
-                      <div className="flex items-center space-x-2.5">
-                        <Settings className="w-4 h-4 text-slate-500" />
-                        <span>Settings</span>
-                      </div>
+                      <Settings className="w-4 h-4 text-slate-600 shrink-0" />
+                      <span className="text-slate-800 font-semibold">Settings</span>
                     </button>
 
                     <button
@@ -674,10 +666,10 @@ export default function App() {
                         setUserMenuOpen(false);
                         setActiveNav('Projects');
                       }}
-                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors font-medium cursor-pointer"
+                      className="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-slate-800 hover:bg-slate-100 hover:text-indigo-600 transition-colors text-xs font-semibold cursor-pointer text-left"
                     >
-                      <Layers className="w-4 h-4 text-slate-500" />
-                      <span>My Projects</span>
+                      <Layers className="w-4 h-4 text-slate-600 shrink-0" />
+                      <span className="text-slate-800 font-semibold">My Projects</span>
                     </button>
 
                     <button
@@ -686,10 +678,10 @@ export default function App() {
                         setUserMenuOpen(false);
                         setActiveNav('Knowledge');
                       }}
-                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors font-medium cursor-pointer"
+                      className="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-slate-800 hover:bg-slate-100 hover:text-indigo-600 transition-colors text-xs font-semibold cursor-pointer text-left"
                     >
-                      <Sparkles className="w-4 h-4 text-slate-500" />
-                      <span>Knowledge Base</span>
+                      <Sparkles className="w-4 h-4 text-slate-600 shrink-0" />
+                      <span className="text-slate-800 font-semibold">Knowledge Base</span>
                     </button>
 
                     <button
@@ -698,31 +690,31 @@ export default function App() {
                         setUserMenuOpen(false);
                         setActiveNav('Tools');
                       }}
-                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors font-medium cursor-pointer"
+                      className="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-slate-800 hover:bg-slate-100 hover:text-indigo-600 transition-colors text-xs font-semibold cursor-pointer text-left"
                     >
-                      <Activity className="w-4 h-4 text-slate-500" />
-                      <span>Custom Tools</span>
+                      <Activity className="w-4 h-4 text-slate-600 shrink-0" />
+                      <span className="text-slate-800 font-semibold">Custom Tools</span>
                     </button>
                   </div>
 
-                  <div className="border-t border-slate-100 my-1"></div>
+                  <div className="border-t border-slate-200/80 my-1"></div>
 
                   {/* Theme Mode Quick Toggle */}
                   <button
                     type="button"
                     onClick={() => setIsDarkMode(!isDarkMode)}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors font-medium cursor-pointer"
+                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-800 hover:bg-slate-100 transition-colors text-xs font-semibold cursor-pointer text-left"
                   >
                     <div className="flex items-center space-x-2.5">
-                      {isDarkMode ? <Moon className="w-4 h-4 text-indigo-500" /> : <Sun className="w-4 h-4 text-amber-500" />}
-                      <span>Appearance</span>
+                      {isDarkMode ? <Moon className="w-4 h-4 text-indigo-600 shrink-0" /> : <Sun className="w-4 h-4 text-amber-500 shrink-0" />}
+                      <span className="text-slate-800 font-semibold">Appearance</span>
                     </div>
-                    <span className="text-[10px] text-slate-400 font-normal">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase bg-slate-100 px-2 py-0.5 rounded-md">
                       {isDarkMode ? 'Dark' : 'Light'}
                     </span>
                   </button>
 
-                  <div className="border-t border-slate-100 my-1"></div>
+                  <div className="border-t border-slate-200/80 my-1"></div>
 
                   {/* Sign Out / Sign In Action */}
                   {user ? (
@@ -732,9 +724,9 @@ export default function App() {
                         setUserMenuOpen(false);
                         handleLogout();
                       }}
-                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                      className="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer text-left"
                     >
-                      <LogOut className="w-4 h-4 text-rose-500 shrink-0" />
+                      <LogOut className="w-4 h-4 text-rose-600 shrink-0" />
                       <span>Sign Out</span>
                     </button>
                   ) : (
@@ -744,7 +736,7 @@ export default function App() {
                         setUserMenuOpen(false);
                         setAuthModalOpen(true);
                       }}
-                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
+                      className="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer text-left"
                     >
                       <User className="w-4 h-4 text-indigo-600 shrink-0" />
                       <span>Sign In / Register</span>
