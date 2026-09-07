@@ -61,8 +61,13 @@
       "state_delta": {
         "sandboxId": "sb_1788751281355"
       }
+    },
+    {
+      "state_delta": {
+        "sandboxId": "sb_1788751518621"
+      }
     }
   ],
   "user_id": "usr_guest_f528764d624d",
-  "updated_at": 1788751281.71777
+  "updated_at": 1788751519.837444
 }

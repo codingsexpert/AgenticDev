@@ -7,7 +7,12 @@ import {
   Settings, 
   ChevronLeft, 
   ChevronRight,
-  User
+  User,
+  Code2,
+  FileText,
+  Folder,
+  ArrowRight,
+  Plus
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -24,6 +29,7 @@ export default function Sidebar({
   user,
   onOpenAuth,
   onLogout,
+  onPromptAction
 }) {
   const [activeNav, setActiveNav] = useState('Chat');
 
@@ -64,6 +70,57 @@ export default function Sidebar({
     }
   };
 
+  const safeProjects = Array.isArray(projects) ? projects : [];
+
+  // Default Recent Chats if real conversation list is empty
+  const defaultRecentChats = [
+    {
+      thread_id: 'chat-1',
+      title: 'Build a calculator app',
+      time: '2 hours ago',
+      icon: Code2,
+      color: 'bg-indigo-50 text-indigo-600 border-indigo-100'
+    },
+    {
+      thread_id: 'chat-2',
+      title: 'Explain React hooks',
+      time: '4 hours ago',
+      icon: MessageSquare,
+      color: 'bg-purple-50 text-purple-600 border-purple-100'
+    },
+    {
+      thread_id: 'chat-3',
+      title: 'Fix this code error',
+      time: '6 hours ago',
+      icon: Code2,
+      color: 'bg-blue-50 text-blue-600 border-blue-100'
+    },
+    {
+      thread_id: 'chat-4',
+      title: 'Summarize this document',
+      time: '8 hours ago',
+      icon: FileText,
+      color: 'bg-emerald-50 text-emerald-600 border-emerald-100'
+    },
+  ];
+
+  const recentChats = safeProjects.length > 0
+    ? safeProjects.slice(0, 5).map((p, idx) => ({
+      thread_id: p.thread_id,
+      title: p.title || p.requirement || 'Chat Session',
+      time: p.updated_at ? 'Recently' : `${(idx + 1) * 2} hours ago`,
+      icon: idx % 2 === 0 ? Code2 : MessageSquare,
+      color: idx % 3 === 0 ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : idx % 3 === 1 ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-blue-50 text-blue-600 border-blue-100'
+    }))
+    : defaultRecentChats;
+
+  const sampleProjects = [
+    { id: 'proj-1', title: 'College Management System', updated: 'Updated 2 days ago', color: 'bg-blue-50 text-blue-600 border-blue-100' },
+    { id: 'proj-2', title: 'E-commerce Website', updated: 'Updated 3 days ago', color: 'bg-purple-50 text-purple-600 border-purple-100' },
+    { id: 'proj-3', title: 'Portfolio Website', updated: 'Updated 5 days ago', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+    { id: 'proj-4', title: 'Task Manager', updated: 'Updated 1 week ago', color: 'bg-amber-50 text-amber-600 border-amber-100' },
+  ];
+
   return (
     <>
       {/* Mobile Backdrop Overlay */}
@@ -77,12 +134,12 @@ export default function Sidebar({
       <aside
         className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto bg-white border-r border-slate-200/80 flex flex-col transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none shrink-0 ${
           sidebarOpen
-            ? 'translate-x-0 w-72 lg:w-[260px] lg:opacity-100'
+            ? 'translate-x-0 w-72 lg:w-[270px] lg:opacity-100'
             : '-translate-x-full lg:translate-x-0 lg:w-0 lg:opacity-0 lg:overflow-hidden lg:border-none'
         }`}
       >
         {/* Text Branding */}
-        <div className="p-4 sm:p-5 flex items-center justify-between border-b border-slate-100">
+        <div className="p-4 sm:p-5 flex items-center justify-between border-b border-slate-100 shrink-0">
           <div className="cursor-pointer flex items-center space-x-2.5" onClick={() => handleNavClick('Chat')}>
             <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
               P
@@ -102,31 +159,118 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* Sidebar Navigation Links */}
-        <div className="px-3 py-4 space-y-1.5 flex-1 overflow-y-auto">
-          {navItems.map((nav) => {
-            const Icon = nav.icon;
-            const isActive = activeNav === nav.name;
-            return (
+        {/* Scrollable Container containing Nav Links, Recent Chats & Sample Projects */}
+        <div className="px-3 py-4 space-y-5 flex-1 overflow-y-auto custom-scrollbar">
+          {/* Main Navigation Links */}
+          <div className="space-y-1">
+            {navItems.map((nav) => {
+              const Icon = nav.icon;
+              const isActive = activeNav === nav.name;
+              return (
+                <button
+                  key={nav.name}
+                  type="button"
+                  onClick={() => handleNavClick(nav.name)}
+                  className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all min-h-[40px] ${
+                    isActive
+                      ? 'bg-indigo-50/90 text-indigo-600 font-semibold shadow-2xs'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                  <span>{nav.name}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Recent Chats Section */}
+          <div className="space-y-2 pt-3 border-t border-slate-100">
+            <div className="flex items-center justify-between px-1">
+              <h3 className="font-bold text-xs text-slate-900 tracking-tight">Recent Chats</h3>
               <button
-                key={nav.name}
                 type="button"
-                onClick={() => handleNavClick(nav.name)}
-                className={`w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs sm:text-sm font-medium transition-all min-h-[44px] ${
-                  isActive
-                    ? 'bg-indigo-50/90 text-indigo-600 font-semibold shadow-2xs'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                }`}
+                onClick={onNewProject}
+                className="text-[11px] font-semibold text-indigo-600 hover:text-indigo-700 flex items-center space-x-1 transition-colors"
               >
-                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
-                <span>{nav.name}</span>
+                <Plus className="w-3 h-3" />
+                <span>New</span>
               </button>
-            );
-          })}
+            </div>
+
+            <div className="space-y-1">
+              {recentChats.map((chat) => {
+                const Icon = chat.icon;
+                const isSelected = currentThreadId === chat.thread_id;
+                return (
+                  <div
+                    key={chat.thread_id}
+                    onClick={() => {
+                      if (onSelectProject) onSelectProject(chat.thread_id);
+                      if (typeof window !== 'undefined' && window.innerWidth < 1024) setSidebarOpen(false);
+                    }}
+                    className={`flex items-center justify-between p-2 rounded-xl transition-all cursor-pointer group border ${
+                      isSelected
+                        ? 'bg-indigo-50/80 border-indigo-200 text-indigo-700 font-semibold'
+                        : 'border-transparent hover:bg-slate-100/70 hover:border-slate-200/60'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2.5 truncate">
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${chat.color}`}>
+                        <Icon className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="truncate text-left leading-tight">
+                        <div className={`font-medium text-xs truncate ${isSelected ? 'text-indigo-900 font-semibold' : 'text-slate-800 group-hover:text-indigo-600'} transition-colors`}>
+                          {chat.title}
+                        </div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">{chat.time}</div>
+                      </div>
+                    </div>
+
+                    <ChevronRight className={`w-3.5 h-3.5 ${isSelected ? 'text-indigo-500' : 'text-slate-300 group-hover:text-slate-500'} group-hover:translate-x-0.5 transition-all shrink-0 ml-1`} />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Sample Projects Section */}
+          <div className="space-y-2 pt-3 border-t border-slate-100">
+            <div className="px-1">
+              <h3 className="font-bold text-xs text-slate-900 tracking-tight">Sample Projects</h3>
+            </div>
+
+            <div className="space-y-1">
+              {sampleProjects.map((proj) => (
+                <div
+                  key={proj.id}
+                  onClick={() => {
+                    if (onPromptAction) onPromptAction(`Open sample project: ${proj.title}`);
+                    if (typeof window !== 'undefined' && window.innerWidth < 1024) setSidebarOpen(false);
+                  }}
+                  className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100/70 transition-all cursor-pointer group border border-transparent hover:border-slate-200/60"
+                >
+                  <div className="flex items-center space-x-2.5 truncate">
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${proj.color}`}>
+                      <Folder className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="truncate text-left leading-tight">
+                      <div className="font-medium text-xs text-slate-800 truncate group-hover:text-indigo-600 transition-colors">
+                        {proj.title}
+                      </div>
+                      <div className="text-[10px] text-slate-400 mt-0.5">{proj.updated}</div>
+                    </div>
+                  </div>
+
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Bottom User Profile */}
-        <div className="p-3 border-t border-slate-100 bg-white">
+        <div className="p-3 border-t border-slate-100 bg-white shrink-0">
           <div 
             onClick={() => {
               if (!user && onOpenAuth) onOpenAuth();
@@ -159,5 +303,6 @@ export default function Sidebar({
     </>
   );
 }
+
 
 

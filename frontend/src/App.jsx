@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from './components/Sidebar';
-import RightSidebar from './components/RightSidebar';
 import ChatTimeline from './components/ChatTimeline';
 import PromptBar from './components/PromptBar';
 import ArtifactsCanvas from './components/ArtifactsCanvas';
@@ -503,6 +502,7 @@ export default function App() {
         user={user}
         onOpenAuth={() => setAuthModalOpen(true)}
         onLogout={handleLogout}
+        onPromptAction={(p) => handlePromptSubmit(p, 'gemini-1.5-flash', mode)}
       />
 
       {/* 2. Main Content Area */}
@@ -757,15 +757,6 @@ export default function App() {
                 </div>
               </div>
             </div>
-          )}
-
-          {/* 4. Right Sidebar (Recent Chats & Sample Projects) - Hidden when Workspace IDE canvas is active */}
-          {!showCanvas && (
-            <RightSidebar
-              projects={projects}
-              onSelectProject={handleSelectChat}
-              onPromptAction={(p) => handlePromptSubmit(p, 'gemini-1.5-flash', mode)}
-            />
           )}
 
           {/* Sliding Code Canvas / Artifact Preview */}
