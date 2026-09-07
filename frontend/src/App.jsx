@@ -6,6 +6,7 @@ import PromptBar from './components/PromptBar';
 import ArtifactsCanvas from './components/ArtifactsCanvas';
 import GraphCanvas from './components/GraphCanvas';
 import AuthModal from './components/AuthModal';
+import { getCleanFilename } from './utils/fileUtils';
 import {
   Menu,
   Layers,
@@ -242,12 +243,12 @@ export default function App() {
 
     try {
       await Promise.all(blocks.map(block => {
-        const filename = block.filename || (block.language === 'html' ? 'index.html' : block.language === 'css' ? 'style.css' : block.language === 'javascript' || block.language === 'js' ? 'script.js' : 'file.txt');
+        const cleanPath = getCleanFilename(block.filename, block.language);
 
         return fetch(`/api/sandboxes/${newSandboxId}/file`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ path: filename, content: block.code })
+          body: JSON.stringify({ path: cleanPath, content: block.code })
         });
       }));
       setActiveSandboxId(newSandboxId);

@@ -31,7 +31,18 @@
       "content": "```cpp\n// File: main.cpp\n#include <iostream>\n\nint main() {\n    std::cout << \"Hello, World!\" << std::endl;\n    return 0;\n}\n```\n\n### Explanation:\n* **`#include <iostream>`**: Ye standard input/output library include karta hai taaki hum screen par print (`cout`) kar sakein.\n* **`int main()`**: C++ program ka entry point, jahan se execution shuru hoti hai.\n* **`std::cout << \"Hello, World!\"`**: Text ko console par print karne ke liye use hota hai.\n* **`std::endl`**: New line insert karta hai aur output buffer flush karta hai.\n* **`return 0;`**: Operating system ko batata hai ki program successfully execute ho gaya.\n\n### How to Compile & Run:\n```bash\ng++ main.cpp -o main\n./main\n```"
     }
   ],
-  "node_history": [],
+  "node_history": [
+    {
+      "state_delta": {
+        "sandboxId": "sb_1788748950445"
+      }
+    },
+    {
+      "state_delta": {
+        "sandboxId": "sb_1788749164437"
+      }
+    }
+  ],
   "user_id": "usr_guest_f528764d624d",
-  "updated_at": 1788747612.828013
+  "updated_at": 1788749165.802732
 }

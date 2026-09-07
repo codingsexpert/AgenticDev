@@ -4,22 +4,7 @@ import remarkGfm from 'remark-gfm';
 import { Check, Copy, Code2, Eye, Play, Save, Sparkles, Bug, RefreshCw, MessageCircle, Terminal, Loader2, Folder, FileCode, FileJson, FileText, File, ExternalLink, Layers } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-
-const getCleanFilename = (filename = '', language = '') => {
-  let name = (filename || '').trim();
-  name = name.replace(/^[\/\*<\!#>\-]+\s*/g, '').replace(/^file:\s*/i, '').replace(/^file:\s*/i, '').trim();
-  if (!name) {
-    const l = (language || '').toLowerCase();
-    if (l === 'html') return 'index.html';
-    if (l === 'css') return 'style.css';
-    if (l === 'js' || l === 'javascript' || l === 'jsx') return 'script.js';
-    if (l === 'py' || l === 'python') return 'main.py';
-    if (l === 'cpp' || l === 'c++' || l === 'c') return 'main.cpp';
-    if (l === 'bash' || l === 'sh') return 'script.sh';
-    return `main.${l || 'txt'}`;
-  }
-  return name;
-};
+import { getCleanFilename } from '../utils/fileUtils';
 
 const getFileIcon = (filename = '', language = '') => {
   const name = getCleanFilename(filename, language).toLowerCase();
@@ -418,15 +403,9 @@ export default function FormattedMessage({ content = '', isUser = false, activeS
       let filename = '';
       const firstLine = code.split('\n')[0].trim();
       if (firstLine.startsWith('//') || firstLine.startsWith('<!--') || firstLine.startsWith('/*') || firstLine.startsWith('#')) {
-        filename = firstLine.replace(/[\/\*<\!#>\-]/g, '').replace(/^file:\s*/i, '').trim();
+        filename = getCleanFilename(firstLine, lang);
       }
-      if (!filename) {
-        if (lang === 'html') filename = 'index.html';
-        else if (lang === 'css') filename = 'style.css';
-        else if (lang === 'js' || lang === 'javascript') filename = 'script.js';
-        else if (lang === 'py' || lang === 'python') filename = 'main.py';
-        else filename = `file_${blocks.length + 1}.${lang || 'txt'}`;
-      }
+      filename = getCleanFilename(filename, lang);
       blocks.push({ language: lang, code, filename });
     }
     return blocks;

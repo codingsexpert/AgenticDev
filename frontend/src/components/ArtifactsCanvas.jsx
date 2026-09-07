@@ -4,6 +4,7 @@ import Editor from '@monaco-editor/react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { getCleanFilename } from '../utils/fileUtils';
 
 const getFileIcon = (name) => {
   if (name.endsWith('.js') || name.endsWith('.jsx')) return <FileJson className="w-3.5 h-3.5 text-[#cbcb41]" />;
@@ -52,7 +53,7 @@ const FileTreeNode = ({ node, level, selectedFile, onSelect, onRename, hasUnsave
           )}
         </div>
         
-        <span className="text-[13px] truncate font-sans tracking-wide flex-1">{node.name}</span>
+        <span className="text-[13px] truncate font-sans tracking-wide flex-1">{getCleanFilename(node.name)}</span>
         
         {isFile && isHovered && (
           <button 
@@ -443,7 +444,7 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'spli
             <div className={`${activeTab === 'split' ? 'w-1/2 border-r border-[#333]' : 'flex-1'} flex flex-col bg-[#1e1e1e] overflow-hidden`}>
               <div className="text-[10px] font-mono text-slate-400 px-4 py-2 border-b border-[#333] flex items-center justify-between">
                 <span className="flex items-center space-x-2">
-                   <span>{safeSelectedFile}</span>
+                   <span>{getCleanFilename(safeSelectedFile)}</span>
                    {hasUnsavedChanges && <span className="w-2 h-2 rounded-full bg-blue-500 inline-block animate-pulse" title="Unsaved changes"></span>}
                 </span>
                 <span>{fileContent.length} bytes</span>
