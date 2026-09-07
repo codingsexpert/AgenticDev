@@ -1,0 +1,15 @@
+{
+  "thread_id": "session_1788744543427",
+  "title": "hi",
+  "mode": "build",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi",
+      "attachments": []
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_guest_f528764d624d",
+  "updated_at": 1788744544.653218
+}

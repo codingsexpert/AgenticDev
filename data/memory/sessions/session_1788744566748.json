@@ -1,0 +1,19 @@
+{
+  "thread_id": "session_1788744566748",
+  "title": "hi",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "🛡️ **Security Guardrail Notice**: Input requirement is too short. Please describe what you want to build."
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_guest_f528764d624d",
+  "updated_at": 1788744567.858279
+}

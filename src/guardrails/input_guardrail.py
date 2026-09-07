@@ -68,8 +68,8 @@ def validate_user_input(user_input: str) -> Tuple[bool, str, Dict[str, Any]]:
     cleaned = user_input.replace("\x00", "").strip()
 
     # 2. Length Checks
-    if len(cleaned) < 3:
-        return False, "Input requirement is too short. Please describe what you want to build.", {"reason": "too_short"}
+    if len(cleaned) < 1:
+        return False, "Input requirement cannot be empty.", {"reason": "empty_input"}
 
     if len(cleaned) > 10000:
         return False, "Input requirement is too long (max 10000 characters).", {"reason": "too_long"}
