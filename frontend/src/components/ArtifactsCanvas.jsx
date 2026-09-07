@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Code, Eye, Copy, Check, FileText, Folder, RefreshCw, ExternalLink, Save, Rocket, LayoutList, ChevronRight, ChevronDown, FileJson, FileCode, FileType, File, FolderOpen, FilePlus, FolderPlus, Play, Terminal, Loader2 } from 'lucide-react';
+import { X, Code, Eye, Copy, Check, FileText, Folder, RefreshCw, ExternalLink, Save, Rocket, LayoutList, ChevronRight, ChevronDown, FileJson, FileCode, FileType, File, FolderOpen, FilePlus, FolderPlus, Play, Terminal, Loader2, Maximize2, Minimize2, Trash2 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -25,8 +25,12 @@ const FileTreeNode = ({ node, level, selectedFile, onSelect, onRename, hasUnsave
   return (
     <div className="select-none">
       <div 
-        className={`flex items-center px-1 py-1 cursor-pointer transition-colors group ${isSelected ? 'bg-[#37373d] text-white' : 'hover:bg-[#2a2d2e] text-[#cccccc]'}`}
-        style={{ paddingLeft: `${level * 12 + 4}px` }}
+        className={`flex items-center px-2 py-1.5 cursor-pointer transition-all duration-150 group rounded-md mx-1 my-0.5 ${
+          isSelected 
+            ? 'bg-[#292e45] text-white font-medium shadow-2xs border-l-2 border-indigo-400' 
+            : 'hover:bg-[#1e2233] text-slate-300 hover:text-white'
+        }`}
+        style={{ paddingLeft: `${level * 12 + 8}px` }}
         onClick={() => {
           if (isFile) {
             onSelect(node.path);
@@ -38,26 +42,26 @@ const FileTreeNode = ({ node, level, selectedFile, onSelect, onRename, hasUnsave
         onMouseLeave={() => setIsHovered(false)}
       >
         {!isFile ? (
-          <div className="flex items-center justify-center w-4 h-4 shrink-0 mr-0.5">
-            {isOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+          <div className="flex items-center justify-center w-4 h-4 shrink-0 mr-1 text-slate-400 group-hover:text-amber-400">
+            {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-amber-400" /> : <ChevronRight className="w-3.5 h-3.5" />}
           </div>
         ) : (
-          <div className="w-4 h-4 shrink-0 mr-0.5" />
+          <div className="w-4 h-4 shrink-0 mr-1" />
         )}
         
-        <div className="flex items-center justify-center w-4 h-4 shrink-0 mr-1.5">
+        <div className="flex items-center justify-center w-4 h-4 shrink-0 mr-2">
           {!isFile ? (
-            isOpen ? <FolderOpen className="w-3.5 h-3.5 text-[#dcb67a]" fill="currentColor" /> : <Folder className="w-3.5 h-3.5 text-[#dcb67a]" fill="currentColor" />
+            isOpen ? <FolderOpen className="w-3.5 h-3.5 text-amber-400" fill="currentColor" /> : <Folder className="w-3.5 h-3.5 text-amber-400" fill="currentColor" />
           ) : (
             getFileIcon(node.name)
           )}
         </div>
         
-        <span className="text-[13px] truncate font-sans tracking-wide flex-1">{getCleanFilename(node.name)}</span>
+        <span className="text-[12.5px] truncate font-mono tracking-tight flex-1">{getCleanFilename(node.name)}</span>
         
         {isFile && isHovered && (
           <button 
-            className="ml-auto mr-1 p-0.5 hover:bg-slate-600 rounded text-slate-300 transition-colors shrink-0"
+            className="ml-auto mr-1 p-0.5 hover:bg-slate-700/70 rounded text-slate-400 hover:text-white transition-colors shrink-0"
             onClick={(e) => {
               e.stopPropagation();
               onRename(node.path);
@@ -69,7 +73,7 @@ const FileTreeNode = ({ node, level, selectedFile, onSelect, onRename, hasUnsave
         )}
         
         {isFile && isSelected && hasUnsavedChanges && !isHovered && (
-          <span className="ml-auto w-2 h-2 rounded-full bg-[#1e88e5] shrink-0 mr-2"></span>
+          <span className="ml-auto w-2 h-2 rounded-full bg-blue-400 shrink-0 mr-1.5 animate-pulse" title="Unsaved changes"></span>
         )}
       </div>
       
@@ -113,8 +117,35 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
   const [isDeploying, setIsDeploying] = useState(false);
   const [deployedUrl, setDeployedUrl] = useState(null);
   const [previewKey, setPreviewKey] = useState(Date.now());
+  const [terminalHeight, setTerminalHeight] = useState(130);
+  const [isTerminalMaximized, setIsTerminalMaximized] = useState(false);
   
+  const isDraggingRef = useRef(false);
+  const startYRef = useRef(0);
+  const startHeightRef = useRef(0);
   const editorRef = useRef(null);
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    isDraggingRef.current = true;
+    startYRef.current = e.clientY;
+    startHeightRef.current = terminalHeight;
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDraggingRef.current) return;
+    const deltaY = startYRef.current - e.clientY;
+    const newHeight = Math.max(80, Math.min(500, startHeightRef.current + deltaY));
+    setTerminalHeight(newHeight);
+  };
+
+  const handleMouseUp = () => {
+    isDraggingRef.current = false;
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+  };
 
   useEffect(() => {
     if (sandboxId) {
@@ -214,8 +245,14 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
       });
       const data = await res.json();
       setExecutionResult(data);
+
+      // Auto-fit terminal height based on output lines
+      const lines = (data.output || '').split('\n').length;
+      const fitHeight = Math.max(90, Math.min(300, (lines * 22) + 65));
+      setTerminalHeight(fitHeight);
     } catch (err) {
       setExecutionResult({ output: "Execution error: " + err.message, exit_code: 1 });
+      setTerminalHeight(120);
     } finally {
       setIsExecuting(false);
     }
@@ -364,21 +401,21 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
   }, [files]);
 
   return (
-    <div className="fixed inset-0 lg:relative lg:inset-auto z-40 lg:z-30 w-full h-full lg:flex-1 min-w-0 bg-white flex flex-col transition-all duration-300">
-      {/* Header */}
-      <div className="p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+    <div className="fixed inset-0 lg:relative lg:inset-auto z-40 lg:z-30 w-full h-full lg:flex-1 min-w-0 bg-[#181a24] text-slate-200 flex flex-col transition-all duration-300 select-none">
+      {/* Header (VS Code Slate Theme) */}
+      <div className="p-3 border-b border-[#282c3f] flex items-center justify-between bg-[#151722]">
         <div className="flex items-center space-x-2">
-          <div className="flex bg-white p-0.5 rounded-lg border border-slate-200 text-xs shadow-2xs overflow-x-auto hide-scrollbar whitespace-nowrap">
+          <div className="flex bg-[#1d2030] p-1 rounded-lg border border-[#2b3044] text-xs shadow-inner overflow-x-auto hide-scrollbar whitespace-nowrap">
             <button
               onClick={() => setActiveTab('code')}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded-md transition-colors ${activeTab === 'code' ? 'bg-slate-900 text-white font-medium shadow-2xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded-md transition-all font-medium ${activeTab === 'code' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-100 hover:bg-[#262a3e]'}`}
             >
               <Code className="w-3.5 h-3.5" />
               <span>Code Editor</span>
             </button>
             <button
               onClick={() => setActiveTab('preview')}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded-md transition-colors ${activeTab === 'preview' ? 'bg-slate-900 text-white font-medium shadow-2xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded-md transition-all font-medium ${activeTab === 'preview' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-100 hover:bg-[#262a3e]'}`}
             >
               <Eye className="w-3.5 h-3.5" />
               <span>Live Web Preview</span>
@@ -392,7 +429,7 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
               <button
                 onClick={handleRunCode}
                 disabled={isExecuting}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 hover:bg-emerald-500 text-white shadow-md cursor-pointer border border-emerald-400/40 active:scale-95 disabled:opacity-50"
+                className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 hover:bg-emerald-500 text-white shadow-md cursor-pointer border border-emerald-400/40 active:scale-95 disabled:opacity-50"
                 title="Save & Run Code Natively"
               >
                 {isExecuting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5 fill-white" />}
@@ -402,10 +439,10 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
               <button
                 onClick={handleSave}
                 disabled={!hasUnsavedChanges || saving}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                     hasUnsavedChanges 
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20' 
-                        : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                        ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-500/20' 
+                        : 'bg-[#212434] text-slate-500 cursor-not-allowed border border-[#2b3044]'
                 }`}
                 title="Save Changes (Cmd+S)"
               >
@@ -418,10 +455,10 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                   href={rawPreviewUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-colors"
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-300 bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-500/40 transition-colors"
                   title="Open Live Web Preview in New Browser Tab"
                 >
-                  <ExternalLink className="w-3.5 h-3.5 text-indigo-600" />
+                  <ExternalLink className="w-3.5 h-3.5 text-indigo-400" />
                   <span>Open in New Tab</span>
                 </a>
               )}
@@ -430,14 +467,14 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
           
           <button
             onClick={handleCopy}
-            className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-[#25293d] text-slate-400 hover:text-white transition-colors"
             title="Copy Code"
           >
-            {copied ? <Check className="w-4 h-4 text-slate-900" /> : <Copy className="w-4 h-4" />}
+            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
           </button>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-[#25293d] text-slate-400 hover:text-white transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -448,8 +485,8 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
       {activeTab === 'code' ? (
         <div className="flex-1 flex overflow-hidden">
           {/* File Tree Drawer */}
-          <div className="w-56 bg-[#181818] border-r border-[#2b2b2b] p-0 overflow-y-auto flex flex-col shrink-0">
-            <div className="text-[10px] text-[#cccccc] px-4 py-2 uppercase tracking-widest flex items-center justify-between font-medium shrink-0">
+          <div className="w-56 bg-[#141622] border-r border-[#262a3c] p-0 overflow-y-auto flex flex-col shrink-0">
+            <div className="text-[10px] text-slate-400 px-4 py-2 uppercase tracking-widest flex items-center justify-between font-mono font-medium shrink-0 border-b border-[#212435]">
               <span>Explorer</span>
               <div className="flex items-center space-x-2">
                 <button onClick={handleCreateNewFile} className="hover:text-white transition-colors" title="New File"><FilePlus className="w-3.5 h-3.5" /></button>
@@ -487,11 +524,11 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
           </div>
 
           {/* Editor Viewer */}
-          <div className="flex-1 flex flex-col bg-[#1e1e1e] overflow-hidden relative">
-            <div className="text-[10px] font-mono text-slate-400 px-4 py-2 border-b border-[#333] flex items-center justify-between">
+          <div className="flex-1 flex flex-col bg-[#1e202e] overflow-hidden relative">
+            <div className="text-[10px] font-mono text-slate-300 px-4 py-2 border-b border-[#262a3c] bg-[#171926] flex items-center justify-between">
               <span className="flex items-center space-x-2">
-                 <span>{getCleanFilename(safeSelectedFile)}</span>
-                 {hasUnsavedChanges && <span className="w-2 h-2 rounded-full bg-blue-500 inline-block animate-pulse" title="Unsaved changes"></span>}
+                 <span className="font-semibold text-slate-200">{getCleanFilename(safeSelectedFile)}</span>
+                 {hasUnsavedChanges && <span className="w-2 h-2 rounded-full bg-blue-400 inline-block animate-pulse" title="Unsaved changes"></span>}
               </span>
               <div className="flex items-center space-x-3">
                  {executionResult !== null && (
@@ -503,9 +540,10 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                      <span>{showTerminal ? 'Hide Console' : 'Show Console'}</span>
                    </button>
                  )}
-                 <span>{fileContent.length} bytes</span>
+                 <span className="text-slate-400">{fileContent.length} bytes</span>
               </div>
             </div>
+
             <div className="flex-1 min-h-0 w-full relative">
               <Editor
                 height="100%"
@@ -526,31 +564,63 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
               />
             </div>
 
-            {/* Integrated Terminal Console Drawer */}
+            {/* Integrated Terminal Console Drawer (VS Code Resizable Panel) */}
             {(showTerminal && executionResult !== null) && (
-              <div className="border-t border-slate-800 bg-[#07080b] p-3.5 font-mono text-xs max-h-60 overflow-hidden flex flex-col shrink-0">
-                <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-800/80">
+              <div 
+                style={{ height: isTerminalMaximized ? '65%' : `${terminalHeight}px` }}
+                className="border-t border-[#2b3044] bg-[#141622] px-3.5 py-2 font-mono text-xs overflow-hidden flex flex-col shrink-0 relative transition-all duration-150"
+              >
+                {/* Drag Handle Top Border */}
+                <div 
+                  onMouseDown={handleMouseDown}
+                  className="absolute top-0 left-0 right-0 h-2 cursor-row-resize hover:bg-indigo-500/40 transition-colors flex items-center justify-center z-10 group"
+                  title="Drag up or down to resize terminal panel"
+                >
+                  <div className="w-10 h-1 rounded-full bg-slate-600 group-hover:bg-indigo-400 opacity-60 group-hover:opacity-100 transition-opacity" />
+                </div>
+
+                <div className="flex items-center justify-between mb-1.5 pb-1 pt-1 border-b border-[#262a3d] select-none">
                   <div className="flex items-center space-x-2 text-emerald-400">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                     </span>
-                    <Terminal className="w-3.5 h-3.5" />
-                    <span className="font-bold uppercase tracking-wider text-[11px]">TERMINAL CONSOLE OUTPUT</span>
+                    <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="font-bold uppercase tracking-wider text-[11px] text-emerald-400">TERMINAL CONSOLE OUTPUT</span>
                   </div>
+
                   <div className="flex items-center space-x-2">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-semibold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                    <span className="text-[10px] text-slate-300 uppercase tracking-widest font-mono font-semibold bg-[#1d2030] px-2 py-0.5 rounded border border-[#2b3044]">
                       {executionResult.exit_code === 0 ? 'EXIT CODE: 0 (SUCCESS)' : executionResult.exit_code ? `EXIT CODE: ${executionResult.exit_code}` : 'EXECUTED'}
                     </span>
+
+                    <button
+                      onClick={() => setIsTerminalMaximized(!isTerminalMaximized)}
+                      className="text-slate-400 hover:text-white p-1 rounded hover:bg-[#282d42] transition-colors"
+                      title={isTerminalMaximized ? "Restore Terminal Panel" : "Maximize Terminal Panel"}
+                    >
+                      {isTerminalMaximized ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+                    </button>
+
+                    <button
+                      onClick={() => setExecutionResult(null)}
+                      className="text-slate-400 hover:text-rose-400 p-1 rounded hover:bg-[#282d42] transition-colors"
+                      title="Clear Terminal Output"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+
                     <button
                       onClick={() => setShowTerminal(false)}
-                      className="text-slate-500 hover:text-slate-300 p-0.5"
+                      className="text-slate-400 hover:text-white p-1 rounded hover:bg-[#282d42] transition-colors"
+                      title="Close Terminal Console"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
-                <div className="text-slate-200 whitespace-pre-wrap font-mono p-3 bg-[#0d0f17] rounded-xl border border-slate-800/80 overflow-y-auto leading-relaxed shadow-inner flex-1">
+
+                <div className="text-slate-100 whitespace-pre-wrap font-mono p-3 bg-[#191c2b] rounded-xl border border-[#272b40] overflow-y-auto leading-relaxed shadow-inner flex-1 select-text">
                   {executionResult.output || 'No output produced.'}
                 </div>
               </div>
@@ -600,7 +670,7 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
               />
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center bg-[#0e1017] text-slate-400 p-8 text-center">
+            <div className="flex-1 flex flex-col items-center justify-center bg-[#151722] text-slate-400 p-8 text-center">
               <Code className="w-12 h-12 text-slate-600 mb-3" />
               <h3 className="text-sm font-bold text-slate-200 mb-1">No Web Preview Available</h3>
               <p className="text-xs text-slate-400 max-w-md leading-relaxed">
