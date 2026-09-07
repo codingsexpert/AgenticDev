@@ -62,7 +62,26 @@ export default function App() {
 
   // Search & Theme State
   const [searchQuery, setSearchQuery] = useState('');
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('pixlexpert_theme');
+      if (saved) return saved === 'dark';
+      return typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDarkMode) {
+      root.classList.add('dark');
+      localStorage.setItem('pixlexpert_theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('pixlexpert_theme', 'light');
+    }
+  }, [isDarkMode]);
 
   // Authentication State & Top Profile Dropdown State
   const [user, setUser] = useState(null);

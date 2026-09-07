@@ -43,6 +43,7 @@ export default function SettingsModal({
   const [tokenBudget, setTokenBudget] = useState(2.0);
 
   // Appearance State
+  const [themeMode, setThemeMode] = useState(() => localStorage.getItem('pixlexpert_theme') || 'light');
   const [monacoTheme, setMonacoTheme] = useState('vs-dark');
 
   const [savedStatus, setSavedStatus] = useState(false);
@@ -51,10 +52,12 @@ export default function SettingsModal({
     const savedApiKey = localStorage.getItem('pixlexpert_gemini_key') || '';
     const savedModel = localStorage.getItem('pixlexpert_model') || 'gemini-2.0-flash';
     const savedBudget = localStorage.getItem('pixlexpert_budget') || '2.0';
+    const savedTheme = localStorage.getItem('pixlexpert_theme') || 'light';
 
     setGeminiApiKey(savedApiKey);
     setSelectedModel(savedModel);
     setTokenBudget(parseFloat(savedBudget));
+    setThemeMode(savedTheme);
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -64,6 +67,14 @@ export default function SettingsModal({
     localStorage.setItem('pixlexpert_gemini_key', geminiApiKey);
     localStorage.setItem('pixlexpert_model', selectedModel);
     localStorage.setItem('pixlexpert_budget', tokenBudget.toString());
+    localStorage.setItem('pixlexpert_theme', themeMode);
+
+    const root = document.documentElement;
+    if (themeMode === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
 
     setSavedStatus(true);
     setTimeout(() => {
@@ -146,6 +157,18 @@ export default function SettingsModal({
             >
               <DollarSign className="w-4 h-4 shrink-0" />
               <span>Token Budget & Usage</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('appearance')}
+              className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === 'appearance'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+              }`}
+            >
+              <Sun className="w-4 h-4 shrink-0" />
+              <span>Appearance & Theme</span>
             </button>
 
             <button
@@ -330,6 +353,56 @@ export default function SettingsModal({
                     <span className="font-mono text-sm font-bold text-emerald-600">
                       ${(tokenUsage?.estimatedCost || 0).toFixed(4)} USD
                     </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'appearance' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900 mb-1 flex items-center space-x-2">
+                    <Sun className="w-4 h-4 text-indigo-600" />
+                    <span>Visual Appearance & Theme</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 mb-4">
+                    Switch between sleek Light Mode and immersive Dark Mode.
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div
+                      onClick={() => setThemeMode('light')}
+                      className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center space-x-3 ${
+                        themeMode === 'light'
+                          ? 'bg-indigo-50/70 border-indigo-500 ring-1 ring-indigo-400'
+                          : 'border-slate-200 hover:border-slate-300 bg-white'
+                      }`}
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0 border border-amber-200">
+                        <Sun className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs text-slate-900">Light Mode</div>
+                        <div className="text-[11px] text-slate-500">Clean white liquid glass aesthetics</div>
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setThemeMode('dark')}
+                      className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center space-x-3 ${
+                        themeMode === 'dark'
+                          ? 'bg-indigo-50/70 border-indigo-500 ring-1 ring-indigo-400'
+                          : 'border-slate-200 hover:border-slate-300 bg-white'
+                      }`}
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-indigo-950 text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-800">
+                        <Moon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs text-slate-900">Dark Mode</div>
+                        <div className="text-[11px] text-slate-500">Immersive dark obsidian theme</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
