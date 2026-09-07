@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { getCleanFilename } from '../utils/fileUtils';
+import { useToast } from './Toast';
 
 const getFileIcon = (name) => {
   if (name.endsWith('.js') || name.endsWith('.jsx')) return <FileJson className="w-3.5 h-3.5 text-[#cbcb41]" />;
@@ -103,6 +104,7 @@ const FileTreeNode = ({ node, level, selectedFile, onSelect, onRename, hasUnsave
 };
 
 export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code' }) {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState(initialTab); // 'code' | 'preview'
   const [files, setFiles] = useState([]);
   const [selectedFile, setSelectedFile] = useState('index.html');
@@ -221,15 +223,17 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
         setSelectedFile(newName.trim());
       }
       fetchFiles();
+      toast.success(`Renamed file to ${newName.trim()}`);
     } catch (e) {
       console.error('Failed to rename file', e);
-      alert('Failed to rename file');
+      toast.error('Failed to rename file');
     }
   };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(fileContent || '');
     setCopied(true);
+    toast.info('Code copied to clipboard!');
     setTimeout(() => setCopied(false), 2000);
   };
   
@@ -286,9 +290,10 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
         if (!res.ok) throw new Error("Failed to save");
         setOriginalContent(fileContent);
         setPreviewKey(Date.now());
+        toast.success(`Saved ${selectedFile}`);
     } catch (err) {
         console.error("Save error:", err);
-        alert("Failed to save file.");
+        toast.error("Failed to save file.");
     } finally {
         setSaving(false);
     }
@@ -306,8 +311,10 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
       });
       fetchFiles();
       setSelectedFile(filename.trim());
+      toast.success(`Created file ${filename.trim()}`);
     } catch (e) {
       console.error('Failed to create file', e);
+      toast.error('Failed to create file');
     }
   };
 
@@ -326,8 +333,10 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
         body: JSON.stringify({ path: keepPath, content: '' })
       });
       fetchFiles();
+      toast.success(`Created folder ${foldername.trim()}`);
     } catch (e) {
       console.error('Failed to create folder', e);
+      toast.error('Failed to create folder');
     }
   };
 
@@ -344,10 +353,10 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || 'Deploy failed');
       setDeployedUrl(data.url);
-      alert(`Deployment successful! URL: ${data.url}`);
+      toast.success(`Deployment successful! URL: ${data.url}`, 8000);
     } catch (err) {
       console.error("Deploy error:", err);
-      alert(`Deployment failed: ${err.message}`);
+      toast.error(`Deployment failed: ${err.message}`);
     } finally {
       setIsDeploying(false);
     }

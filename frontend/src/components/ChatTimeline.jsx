@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { HelpCircle, Copy, Check, Volume2, VolumeX, ThumbsUp, ThumbsDown, RotateCw, Pencil, Send, X, Sparkles, User } from 'lucide-react';
 import FormattedMessage from './FormattedMessage';
+import { useToast } from './Toast';
 
 function UserMessageActions({ msg, onStartEdit, onRetry }) {
   const [copied, setCopied] = useState(false);
@@ -56,6 +57,7 @@ function UserMessageActions({ msg, onStartEdit, onRetry }) {
 }
 
 function MessageActions({ content, onRegenerate }) {
+  const toast = useToast();
   const [copied, setCopied] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [feedback, setFeedback] = useState(null); // 'like' | 'dislike' | null
@@ -64,12 +66,13 @@ function MessageActions({ content, onRegenerate }) {
     if (!content) return;
     navigator.clipboard.writeText(content);
     setCopied(true);
+    toast.info('Message copied!');
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleSpeak = () => {
     if (!('speechSynthesis' in window)) {
-      alert('Text-to-speech is not supported in this browser.');
+      toast.warning('Text-to-speech is not supported in this browser.');
       return;
     }
     if (speaking) {

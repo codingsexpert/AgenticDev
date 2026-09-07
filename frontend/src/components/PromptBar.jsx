@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Sparkles, Layers, Database, ChevronDown, Cpu, MessageSquare, Wrench, Mic, MicOff, Volume2, Paperclip, X, FileText, Book, Image as ImageIcon, Square } from 'lucide-react';
+import { useToast } from './Toast';
 
 export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }) {
+  const toast = useToast();
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState([]);
   const [selectedModel, setSelectedModel] = useState('gemini-flash-latest');
@@ -81,7 +83,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
   const startFreshRecognition = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert('Voice dictation requires Google Chrome, Microsoft Edge, or Apple Safari browser.');
+      toast.warning('Voice dictation requires Google Chrome, Microsoft Edge, or Apple Safari browser.');
       setIsListening(false);
       isListeningRef.current = false;
       return;
@@ -137,7 +139,6 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
 
       recognition.onend = () => {
         if (isListeningRef.current) {
-          // Restart fresh recognition instance on pause
           setTimeout(() => {
             if (isListeningRef.current) {
               startFreshRecognition();
@@ -163,7 +164,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
   const toggleListening = async () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert('Voice dictation requires Google Chrome, Microsoft Edge, or Apple Safari browser.');
+      toast.warning('Voice dictation requires Google Chrome, Microsoft Edge, or Apple Safari browser.');
       return;
     }
 
@@ -180,14 +181,13 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
       isListeningRef.current = true;
       setDictationStatus('Requesting microphone access...');
 
-      // Explicitly prompt browser for microphone permission via getUserMedia
       try {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
           await navigator.mediaDevices.getUserMedia({ audio: true });
         }
       } catch (micErr) {
         console.error('Microphone Permission Error:', micErr);
-        alert('Microphone access is blocked! Please click the lock/camera icon in your browser URL bar and allow Microphone access.');
+        toast.error('Microphone access blocked. Please allow Microphone access in browser settings.');
         setDictationStatus('Microphone access denied in browser.');
         isListeningRef.current = false;
         setIsListening(false);
@@ -263,10 +263,10 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
       });
       const data = await res.json();
       if (data.status === 'success') {
-        alert(data.message);
+        toast.success(data.message);
       }
     } catch (err) {
-      alert("Failed to upload to Knowledge Base.");
+      toast.error("Failed to upload to Knowledge Base.");
     }
     
     setIsUploadingKb(false);

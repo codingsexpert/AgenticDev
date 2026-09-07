@@ -22,6 +22,7 @@ import {
   Search,
   Download
 } from 'lucide-react';
+import { useToast } from './Toast';
 
 export default function Sidebar({
   projects = [],
@@ -41,6 +42,7 @@ export default function Sidebar({
   activeNav = 'Chat',
   onSelectNav
 }) {
+  const toast = useToast();
   const [pinnedThreadIds, setPinnedThreadIds] = useState(() => {
     try {
       const saved = localStorage.getItem('pixlexpert_pinned_chats');
@@ -194,7 +196,7 @@ export default function Sidebar({
     setOpenMenuThreadId(null);
     if (navigator.clipboard) {
       navigator.clipboard.writeText(`${window.location.origin}?chat=${chat.thread_id}`);
-      alert(`Chat link copied to clipboard: "${chat.title}"`);
+      toast.info(`Link copied to clipboard: "${chat.title}"`);
     }
   };
 
@@ -232,8 +234,9 @@ export default function Sidebar({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      toast.success(`Chat exported: ${chat.title}.md`);
     } catch (err) {
-      alert(`Export failed: ${err.message}`);
+      toast.error(`Export failed: ${err.message}`);
     }
   };
 

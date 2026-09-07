@@ -20,10 +20,12 @@ import {
   Camera,
   Trash2
 } from 'lucide-react';
+import { useToast } from './Toast';
 
 export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLogout, tokenUsage }) {
   if (!isOpen) return null;
 
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState('account'); // 'account' | 'subscription' | 'usage' | 'security'
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef(null);
@@ -48,7 +50,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        alert('Please select an image file under 5MB.');
+        toast.warning('Please select an image file under 5MB.');
         return;
       }
       const reader = new FileReader();
@@ -311,7 +313,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
 
                 <button
                   type="button"
-                  onClick={() => alert('You are on the highest tier plan! (Pro Tier Active)')}
+                  onClick={() => toast.info('You are on the highest tier plan! (Pro Tier Active)')}
                   className="px-3.5 py-1.5 bg-white hover:bg-slate-100 text-slate-900 font-semibold text-xs rounded-xl border border-slate-200/80 shadow-2xs transition-all shrink-0 cursor-pointer"
                 >
                   Manage Plan
