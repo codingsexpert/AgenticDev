@@ -651,7 +651,7 @@ export default function App() {
               <div className="w-full flex flex-col items-center justify-center my-auto py-4">
                 {/* Flowing Crisp Greeting */}
                 <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-2 text-center">
-                  Good morning, <span className="accent-gradient-text">Mukesh</span> <Sparkles className="w-5 h-5 text-indigo-600 inline-block align-middle ml-1" />
+                  Good morning, <span className="accent-gradient-text">Mukesh</span>
                 </h1>
 
                 {/* Short Description */}

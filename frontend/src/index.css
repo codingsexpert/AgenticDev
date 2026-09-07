@@ -61,9 +61,9 @@ code, pre, input, textarea, button, select {
     radial-gradient(at 50% 100%, rgba(59, 130, 246, 0.04) 0px, transparent 50%);
 }
 
-/* Crisp Indigo Accent Text */
+/* Crisp Vibrant Accent Text */
 .accent-gradient-text {
-  background: linear-gradient(135deg, #4338ca 0%, #6366f1 50%, #0ea5e9 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #6366f1 45%, #ec4899 90%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
