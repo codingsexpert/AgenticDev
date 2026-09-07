@@ -11,6 +11,7 @@ import {
   Layers,
   Sparkles,
   PanelLeft,
+  PanelLeftClose,
   User,
   LogOut,
   ChevronDown,
@@ -513,10 +514,10 @@ export default function App() {
           <div className="flex items-center space-x-3 flex-1 max-w-lg">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              title="Toggle Navigation Menu"
-              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-all shrink-0"
+              title={sidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+              className="p-1.5 rounded-lg border border-slate-200/60 hover:bg-slate-100/80 text-slate-600 transition-all shrink-0 cursor-pointer"
             >
-              <Menu className="w-5 h-5" />
+              {sidebarOpen ? <PanelLeftClose className="w-4 h-4 text-slate-500" /> : <PanelLeft className="w-4 h-4 text-indigo-600" />}
             </button>
 
             {/* Clean Search Input with ⌘ K badge */}

@@ -12,7 +12,8 @@ import {
   FileText,
   Folder,
   ArrowRight,
-  Plus
+  Plus,
+  PanelLeftClose
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -133,8 +134,8 @@ export default function Sidebar({
             : '-translate-x-full lg:translate-x-0 lg:w-0 lg:opacity-0 lg:overflow-hidden lg:border-none'
         }`}
       >
-        {/* Text Branding */}
-        <div className="p-4 sm:p-5 flex items-center justify-between border-b border-slate-100 shrink-0">
+        {/* Text Branding & Sidebar Collapse Toggle */}
+        <div className="p-4 sm:p-5 flex items-center justify-between border-b border-slate-100/60 shrink-0">
           <div className="cursor-pointer flex items-center space-x-2.5" onClick={() => handleNavClick('Chat')}>
             <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
               P
@@ -147,10 +148,10 @@ export default function Sidebar({
 
           <button
             onClick={() => setSidebarOpen(false)}
-            title="Close Sidebar"
-            className="w-9 h-9 rounded-full border border-slate-200/80 hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-all shrink-0 lg:hidden min-h-[44px] min-w-[44px]"
+            title="Collapse Sidebar"
+            className="p-1.5 rounded-lg border border-slate-200/70 hover:bg-slate-100/80 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-all shrink-0 cursor-pointer"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <PanelLeftClose className="w-4 h-4" />
           </button>
         </div>
 
