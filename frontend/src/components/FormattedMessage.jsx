@@ -481,14 +481,21 @@ export default function FormattedMessage({ content = '', isUser = false, activeS
         const allBlocks = extractAllCodeBlocks(part);
 
         if (allBlocks.length > 0) {
-          // Replace code blocks in markdown with a marker
-          let markerIndex = 0;
-          const textWithMarker = part.replace(/```([a-zA-Z0-9_+\-#]*)[ \t]*\r?\n?([\s\S]*?)```/g, () => {
-            markerIndex++;
-            return markerIndex === 1 ? '___PROJECT_ARTIFACT_MARKER___' : '';
+          // Completely strip out all code block definitions from the markdown text
+          // so ReactMarkdown only renders prose text before or after the artifact card.
+          let hasPlacedMarker = false;
+          const textWithMarker = part.replace(/```([a-zA-Z0-9_+\-#]*)[ \t]*\r?\n?([\s\S]*?)(?:```|$)/g, () => {
+            if (!hasPlacedMarker) {
+              hasPlacedMarker = true;
+              return '___PROJECT_ARTIFACT_MARKER___';
+            }
+            return '';
           });
 
-          const subParts = textWithMarker.split('___PROJECT_ARTIFACT_MARKER___');
+          // Clean up leftover language labels or stray whitespace between stripped blocks
+          const subParts = textWithMarker.split('___PROJECT_ARTIFACT_MARKER___').map(s => {
+            return s.replace(/^\s*(?:html|css|javascript|js|jsx|tsx|python|py|cpp|c|java|json|bash|sh)\b/gi, '').trim();
+          });
 
           return (
             <React.Fragment key={index}>
