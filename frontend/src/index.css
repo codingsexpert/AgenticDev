@@ -63,7 +63,7 @@ code, pre, input, textarea, button, select {
 
 /* Crisp Indigo Accent Text */
 .accent-gradient-text {
-  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
+  background: linear-gradient(135deg, #4338ca 0%, #6366f1 50%, #0ea5e9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

@@ -649,14 +649,9 @@ export default function App() {
             /* Welcome Hero View with Crisp Minimal Glassmorphic Aesthetics */
             <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-10 max-w-4xl mx-auto w-full h-full overflow-y-auto">
               <div className="w-full flex flex-col items-center justify-center my-auto py-4">
-                {/* Minimal AI Sparkle Badge */}
-                <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 mb-4 shadow-xs">
-                  <Sparkles className="w-5 h-5 text-indigo-600" />
-                </div>
-
                 {/* Flowing Crisp Greeting */}
                 <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-2 text-center">
-                  Good morning, <span className="accent-gradient-text">Mukesh</span> 👋
+                  Good morning, <span className="accent-gradient-text">Mukesh</span> <Sparkles className="w-5 h-5 text-indigo-600 inline-block align-middle ml-1" />
                 </h1>
 
                 {/* Short Description */}
