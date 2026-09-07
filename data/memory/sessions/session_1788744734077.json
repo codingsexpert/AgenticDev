@@ -1,0 +1,19 @@
+{
+  "thread_id": "session_1788744734077",
+  "title": "hlo",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hlo",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "⚠️ Service Notice: The LLM API is currently rate-limited or unavailable. Please wait a few seconds and try your request again."
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_guest_f528764d624d",
+  "updated_at": 1788744738.046687
+}
