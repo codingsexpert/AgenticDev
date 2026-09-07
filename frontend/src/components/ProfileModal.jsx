@@ -70,8 +70,8 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
             <div>
               <h2 className="text-base font-bold text-slate-900 flex items-center space-x-2">
                 <span>{name}</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gradient-to-r from-amber-500 to-indigo-600 text-white flex items-center space-x-1 shadow-2xs">
-                  <Crown className="w-3 h-3 inline" />
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center space-x-1 shadow-2xs">
+                  <Crown className="w-3 h-3 text-slate-600 inline" />
                   <span>{plan}</span>
                 </span>
               </h2>
@@ -109,7 +109,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
-            <Crown className="w-3.5 h-3.5 text-amber-500" />
+            <Crown className="w-3.5 h-3.5 text-slate-500" />
             <span>Plan & Subscription</span>
           </button>
 
@@ -216,10 +216,10 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
           {activeTab === 'subscription' && (
             <div className="space-y-5">
               {/* Current Active Plan Banner */}
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between shadow-lg">
+              <div className="p-4 rounded-2xl bg-slate-900 text-white flex items-center justify-between shadow-md">
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2">
-                    <Crown className="w-5 h-5 text-amber-400" />
+                    <Crown className="w-5 h-5 text-indigo-400" />
                     <span className="font-bold text-sm tracking-wide">PixiExpert Pro Plan</span>
                     <span className="px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-300 rounded-full font-semibold border border-emerald-500/30">
                       Active
@@ -231,7 +231,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
                 <button
                   type="button"
                   onClick={() => alert('You are on the highest tier plan! (Pro Tier Active)')}
-                  className="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all shrink-0 cursor-pointer"
+                  className="px-3.5 py-1.5 bg-white hover:bg-slate-100 text-slate-900 font-semibold text-xs rounded-xl border border-slate-200/80 shadow-2xs transition-all shrink-0 cursor-pointer"
                 >
                   Manage Plan
                 </button>
@@ -260,26 +260,26 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
                   </ul>
                 </div>
 
-                <div className="p-4 rounded-2xl border-2 border-indigo-500/40 bg-indigo-50/30 space-y-3 relative">
-                  <span className="absolute -top-2.5 right-4 px-2 py-0.5 bg-indigo-600 text-white font-bold text-[9px] rounded-full uppercase tracking-wider">
+                <div className="p-4 rounded-2xl border border-slate-300 bg-slate-50/50 space-y-3 relative">
+                  <span className="absolute -top-2.5 right-4 px-2 py-0.5 bg-slate-900 text-white font-bold text-[9px] rounded-full uppercase tracking-wider shadow-2xs">
                     Current Plan
                   </span>
                   <div className="flex justify-between items-center">
-                    <h4 className="font-bold text-xs text-indigo-900">Pro Plus Tier</h4>
-                    <span className="text-xs font-bold text-indigo-600">\$20 / mo</span>
+                    <h4 className="font-bold text-xs text-slate-900">Pro Plus Tier</h4>
+                    <span className="text-xs font-bold text-slate-700">\$20 / mo</span>
                   </div>
-                  <ul className="space-y-2 text-xs text-indigo-950">
+                  <ul className="space-y-2 text-xs text-slate-700">
                     <li className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
-                      <span>⚡ Ultra Fast AI Response</span>
+                      <CheckCircle2 className="w-3.5 h-3.5 text-slate-700" />
+                      <span>Ultra Fast AI Response</span>
                     </li>
                     <li className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
-                      <span>🧠 Advanced Reasoning & Code Generation</span>
+                      <CheckCircle2 className="w-3.5 h-3.5 text-slate-700" />
+                      <span>Advanced Reasoning & Code Generation</span>
                     </li>
                     <li className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
-                      <span>🛠️ Custom Tools, Skills & Files Upload</span>
+                      <CheckCircle2 className="w-3.5 h-3.5 text-slate-700" />
+                      <span>Custom Tools, Skills & Files Upload</span>
                     </li>
                   </ul>
                 </div>

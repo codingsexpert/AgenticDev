@@ -626,7 +626,7 @@ export default function App() {
                       </div>
                       <div className="text-[11px] text-slate-500 font-medium truncate">{user?.email || 'mukesh@gmail.com'}</div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
                       PRO
                     </span>
                   </div>
@@ -642,10 +642,10 @@ export default function App() {
                       className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-800 hover:bg-slate-100 hover:text-indigo-600 transition-colors text-xs font-semibold cursor-pointer text-left"
                     >
                       <div className="flex items-center space-x-2.5">
-                        <User className="w-4 h-4 text-indigo-600 shrink-0" />
+                        <User className="w-4 h-4 text-slate-600 shrink-0" />
                         <span className="text-slate-800 font-semibold">My Account & Plan</span>
                       </div>
-                      <Crown className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                      <Crown className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                     </button>
 
                     <button
