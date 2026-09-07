@@ -339,10 +339,10 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
         </div>
       </div>
 
-      {/* Clean Rounded Rectangular Composer with Multi-Gradient Card Glow */}
+      {/* Clean Rounded Rectangular Composer with Ultra-Clean Glassmorphism */}
       <form
         onSubmit={handleSubmit}
-        className="multi-gradient-card p-4 rounded-2xl border border-slate-200 shadow-md transition-all duration-200 relative w-full"
+        className="clean-glass-card p-4 rounded-2xl relative w-full"
       >
         {/* Attachments Preview Area */}
         {attachments.length > 0 && (
@@ -492,7 +492,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
               )}
             </button>
 
-            {/* Send or Stop Button with Multi-Gradient Background */}
+            {/* Send or Stop Button with Clean Primary Indigo Background */}
             {isLoading ? (
               <button
                 type="button"
@@ -508,7 +508,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
                 disabled={!input.trim() && attachments.length === 0}
                 className={`w-9 h-9 rounded-full transition-all flex items-center justify-center ${
                   input.trim() || attachments.length > 0
-                    ? 'multi-gradient-btn text-white shadow-md cursor-pointer'
+                    ? 'clean-primary-btn text-white shadow-xs cursor-pointer'
                     : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 }`}
               >

@@ -84,13 +84,11 @@ export default function Sidebar({
         {/* Text Branding */}
         <div className="p-4 sm:p-5 flex items-center justify-between border-b border-slate-100">
           <div className="cursor-pointer flex items-center space-x-2.5" onClick={() => handleNavClick('Chat')}>
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 via-pink-500 to-amber-400 p-0.5 shadow-md shadow-purple-500/20 shrink-0">
-              <div className="w-full h-full bg-white rounded-[10px] flex items-center justify-center font-black text-xs multi-gradient-text">
-                P
-              </div>
+            <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
+              P
             </div>
             <div>
-              <h1 className="font-extrabold text-base tracking-tight multi-gradient-text leading-tight">PixiExpert</h1>
+              <h1 className="font-bold text-base tracking-tight text-slate-900 leading-tight">PixiExpert</h1>
               <span className="text-[11px] font-medium text-slate-400">AI Assistant</span>
             </div>
           </div>
@@ -116,7 +114,7 @@ export default function Sidebar({
                 onClick={() => handleNavClick(nav.name)}
                 className={`w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs sm:text-sm font-medium transition-all min-h-[44px] ${
                   isActive
-                    ? 'bg-gradient-to-r from-indigo-500/10 via-purple-500/10 via-pink-500/10 to-transparent text-indigo-600 font-bold border-l-4 border-indigo-600 shadow-xs'
+                    ? 'bg-indigo-50/90 text-indigo-600 font-semibold shadow-2xs'
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`}
               >
