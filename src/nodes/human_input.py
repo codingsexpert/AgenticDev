@@ -10,7 +10,7 @@ def human_input_node(state: Dict[str, Any]) -> Dict[str, Any]:
     if not questions:
         return {}
 
-    print("\n❓ [PM Agent] Clarification needed:\n")
+    print("\n [PM Agent] Clarification needed:\n")
     answers_list = []
     for idx, q in enumerate(questions, 1):
         print(f"  {idx}. {q}")

@@ -12,7 +12,7 @@ def context_builder_node(state: Dict[str, Any]) -> Dict[str, Any]:
     file_registry = state.get("fileRegistry", [])
     patterns = state.get("projectPatterns", {})
 
-    print("\n📦 [Context Builder] Assembling context package for Coder...")
+    print("\n [Context Builder] Assembling context package for Coder...")
 
     context_package = {
         "task": task,

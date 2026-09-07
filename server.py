@@ -50,7 +50,7 @@ async def add_security_headers_and_latency(request: Request, call_next):
         response = await call_next(request)
     except Exception as exc:
         process_time = (time.time() - start_time) * 1000
-        print(f"❌ Exception processing {request.method} {request.url.path}: {exc} ({process_time:.2f}ms)")
+        print(f" Exception processing {request.method} {request.url.path}: {exc} ({process_time:.2f}ms)")
         raise exc
 
     process_time = (time.time() - start_time) * 1000
@@ -64,7 +64,7 @@ async def add_security_headers_and_latency(request: Request, call_next):
 # 4. Global Exception Handler for 500 Unhandled Errors (Suppresses internal stack trace leakage)
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    print(f"🔥 Unhandled Error at {request.url.path}: {str(exc)}")
+    print(f" Unhandled Error at {request.url.path}: {str(exc)}")
     return JSONResponse(
         status_code=500,
         content={"detail": "An internal server error occurred while processing your request."},
@@ -94,7 +94,7 @@ if os.path.exists(frontend_dist):
 if __name__ == "__main__":
     import uvicorn
     print("\n" + "═" * 60)
-    print("  🤖 AI DEV TEAM — Web Dashboard UI Server")
-    print("  🌐 Dashboard running at: http://localhost:8000")
+    print("   AI DEV TEAM — Web Dashboard UI Server")
+    print("   Dashboard running at: http://localhost:8000")
     print("═" * 60 + "\n")
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -491,7 +491,7 @@ export default function App() {
         setStreamingText('');
       } else {
         console.error('Chat stream error', e);
-        const errMsgs = [...updatedMessages, { role: 'assistant', content: '⚠️ Network connection interrupted. Please click retry.' }];
+        const errMsgs = [...updatedMessages, { role: 'assistant', content: '️ Network connection interrupted. Please click retry.' }];
         setMessages(errMsgs);
         setStreamingText('');
       }

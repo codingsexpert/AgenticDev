@@ -58,7 +58,7 @@ def extract_text_from_file(file_path: Path) -> str:
             doc = Document(file_path)
             text = "\n".join(paragraph.text for paragraph in doc.paragraphs)
     except Exception as e:
-        print(f"⚠️ Error reading document {file_path.name}: {e}")
+        print(f"️ Error reading document {file_path.name}: {e}")
     return text
 
 
@@ -146,7 +146,7 @@ def retrieve_from_kb(query: str, user_id: str = "default_user", top_k: int = 3) 
                 + "\n\n".join(results)
             )
     except Exception as e:
-        print(f"⚠️ RAG retrieval error: {e}")
+        print(f"️ RAG retrieval error: {e}")
         
     return ""
 

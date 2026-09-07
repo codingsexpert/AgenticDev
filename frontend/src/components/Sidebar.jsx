@@ -220,7 +220,7 @@ export default function Sidebar({
         markdown += `*No message history found for this session.*`;
       } else {
         messages.forEach((msg) => {
-          const roleName = msg.role === 'user' ? '👤 User' : '🤖 PixiExpert';
+          const roleName = msg.role === 'user' ? ' User' : ' PixiExpert';
           markdown += `### ${roleName}\n${msg.content}\n\n---\n\n`;
         });
       }

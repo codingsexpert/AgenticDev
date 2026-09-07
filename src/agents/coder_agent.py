@@ -40,14 +40,14 @@ RULES:
 
 
 def coder_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("\n💻 [Coder Agent] Writing code...\n")
+    print("\n [Coder Agent] Writing code...\n")
 
     current_task = state.get("currentTask")
     context_pkg = state.get("contextPackage")
     sandbox_id = state.get("sandboxId")
 
     if not current_task or not sandbox_id:
-        print("   ⚠️ Missing task or sandbox")
+        print("   ️ Missing task or sandbox")
         return {"coderOutput": None}
 
     user_prompt = f"TASK: {current_task.get('title')}\n"
@@ -60,7 +60,7 @@ def coder_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
 
     review_issues = state.get("reviewResult", {}).get("issues", [])
     if review_issues and state.get("reviewResult", {}).get("verdict") == "rejected":
-        user_prompt += "\n⚠️ FIX THESE ISSUES FROM PREVIOUS REVIEW:\n"
+        user_prompt += "\n️ FIX THESE ISSUES FROM PREVIOUS REVIEW:\n"
         for iss in review_issues:
             user_prompt += f"  - {iss}\n"
 
@@ -86,11 +86,11 @@ def coder_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
                 write_file(sandbox_id, f_path, f_content)
                 files_written += 1
                 line_count = len(f_content.splitlines())
-                print(f"   ✅ Written: {f_path} ({line_count} lines)")
+                print(f"    Written: {f_path} ({line_count} lines)")
             except Exception as err:
-                print(f"   ❌ Failed to write {f_path}: {str(err)}")
+                print(f"    Failed to write {f_path}: {str(err)}")
 
-    print(f"\n   📝 {files_written} files written to local sandbox")
+    print(f"\n    {files_written} files written to local sandbox")
 
     return {
         "coderOutput": {

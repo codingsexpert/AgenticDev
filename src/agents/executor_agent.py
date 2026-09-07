@@ -12,7 +12,7 @@ from src.utils.sandbox_manager import read_file, execute_command
 
 
 def executor_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("\n⚡ [Executor] Testing code in local sandbox (Docker-Free)...\n")
+    print("\n [Executor] Testing code in local sandbox (Docker-Free)...\n")
 
     current_task = state.get("currentTask")
     coder_output = state.get("coderOutput")
@@ -35,7 +35,7 @@ def executor_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
             errors.append(f"File not found: {f_path}")
         else:
             line_count = len(content.splitlines())
-            outputs.append(f"✓ {f_path} exists ({line_count} lines)")
+            outputs.append(f" {f_path} exists ({line_count} lines)")
 
     if errors:
         return _build_result(False, outputs, errors)
@@ -49,29 +49,29 @@ def executor_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
         if f_path.endswith(".py"):
             res = execute_command(sandbox_id, f"python3 -m py_compile {f_path}")
             if res["exitCode"] == 0:
-                outputs.append(f"✓ {f_path} Python syntax valid")
+                outputs.append(f" {f_path} Python syntax valid")
             else:
                 errors.append(f"Python syntax error in {f_path}: {res['stderr'][:200]}")
 
         elif f_path.endswith(".js"):
             res = execute_command(sandbox_id, f"node --check {f_path}")
             if res["exitCode"] == 0:
-                outputs.append(f"✓ {f_path} Node syntax valid")
+                outputs.append(f" {f_path} Node syntax valid")
             elif "SyntaxError" in res["stderr"]:
                 errors.append(f"JS syntax error in {f_path}: {res['stderr'][:200]}")
             else:
-                outputs.append(f"✓ {f_path} syntax checked")
+                outputs.append(f" {f_path} syntax checked")
 
     return _build_result(len(errors) == 0, outputs, errors)
 
 
 def _build_result(passed: bool, outputs: list, errors: list) -> Dict[str, Any]:
-    print(f"\n   {'✅' if passed else '❌'} Local Execution {'PASSED' if passed else 'FAILED'}")
+    print(f"\n   {'' if passed else ''} Local Execution {'PASSED' if passed else 'FAILED'}")
     for o in outputs:
         print(f"   {o}")
     if errors:
         for e in errors:
-            print(f"   ❌ {e}")
+            print(f"    {e}")
 
     return {
         "executionResult": {

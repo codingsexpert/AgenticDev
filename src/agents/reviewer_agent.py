@@ -26,14 +26,14 @@ OUTPUT FORMAT (strict JSON):
 
 def reviewer_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
     current_cycle = state.get("reviewResult", {}).get("reviewCycle", 0)
-    print(f"\n🔍 [Reviewer] Reviewing code (cycle {current_cycle + 1}/3)...\n")
+    print(f"\n [Reviewer] Reviewing code (cycle {current_cycle + 1}/3)...\n")
 
     current_task = state.get("currentTask")
     coder_output = state.get("coderOutput")
     sandbox_id = state.get("sandboxId")
 
     if not current_task or not coder_output or not coder_output.get("files"):
-        print("   ⚠️ Nothing to review")
+        print("   ️ Nothing to review")
         return {"reviewResult": {"verdict": "approved", "issues": [], "reviewCycle": 0}}
 
     code_content = ""
@@ -61,9 +61,9 @@ def reviewer_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
     issues = review.get("issues", [])
 
     if verdict == "approved":
-        print(f"   ✅ APPROVED: {review.get('summary', 'Code looks good')}")
+        print(f"    APPROVED: {review.get('summary', 'Code looks good')}")
     else:
-        print(f"   ❌ REJECTED: {review.get('summary', 'Issues found')}")
+        print(f"    REJECTED: {review.get('summary', 'Issues found')}")
         for iss in issues:
             print(f"   • {iss}")
 

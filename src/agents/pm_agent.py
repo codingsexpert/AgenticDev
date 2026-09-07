@@ -57,7 +57,7 @@ OUTPUT FORMAT — You MUST return JSON with "status": "spec_ready":
 
 
 def pm_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("\n🤖 [PM Agent] Analyzing requirement...\n")
+    print("\n [PM Agent] Analyzing requirement...\n")
 
     user_req = state.get("userRequirement", "")
     conversation = state.get("pmConversation", [])
@@ -90,7 +90,7 @@ def pm_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
     if status == "needs_clarification":
         questions = response.get("questions", [])
         assumptions = response.get("assumptions", [])
-        print("❓ [PM Agent] Need more info. Questions:")
+        print(" [PM Agent] Need more info. Questions:")
         for idx, q in enumerate(questions, 1):
             print(f"   {idx}. {q}")
 
@@ -104,7 +104,7 @@ def pm_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
 
     # Spec ready
     spec = response.get("spec") or response
-    print("✅ [PM Agent] Spec ready!")
+    print(" [PM Agent] Spec ready!")
     print(f"   App: {spec.get('appName', 'app')}")
     print(f"   Features: {len(spec.get('features', []))}")
 

@@ -7,7 +7,7 @@ from src.utils.sandbox_manager import create_sandbox
 
 
 def setup_sandbox_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("\n📦 [Setup Sandbox] Creating local filesystem sandbox workspace...\n")
+    print("\n [Setup Sandbox] Creating local filesystem sandbox workspace...\n")
     blueprint = state.get("blueprint", {})
 
     folder_struct = blueprint.get("folderStructure")
@@ -20,5 +20,5 @@ def setup_sandbox_node(state: Dict[str, Any]) -> Dict[str, Any]:
         db_schema=db_schema,
     )
 
-    print(f"   ✅ Sandbox initialized: {sandbox_id}")
+    print(f"    Sandbox initialized: {sandbox_id}")
     return {"sandboxId": sandbox_id}

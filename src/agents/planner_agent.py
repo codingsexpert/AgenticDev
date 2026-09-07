@@ -37,7 +37,7 @@ OUTPUT FORMAT (strict JSON):
 
 
 def planner_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("\n📋 [Planner Agent] Creating task queue...\n")
+    print("\n [Planner Agent] Creating task queue...\n")
 
     blueprint = state.get("blueprint", {})
     spec = state.get("clarifiedSpec", {})

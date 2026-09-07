@@ -7,7 +7,7 @@ from typing import Dict, Any
 
 
 def pattern_extractor_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("\n✨ [Pattern Extractor] Updating project architectural patterns...")
+    print("\n [Pattern Extractor] Updating project architectural patterns...")
 
     return {
         "projectPatterns": {

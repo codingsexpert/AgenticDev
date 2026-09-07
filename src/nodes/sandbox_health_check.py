@@ -11,7 +11,7 @@ def sandbox_health_check_node(state: Dict[str, Any]) -> Dict[str, Any]:
     info = get_sandbox_info(sandbox_id) if sandbox_id else None
 
     healthy = info.get("healthy", False) if info else False
-    print(f"\n🏥 [Sandbox Health Check] Status: {'HEALTHY' if healthy else 'UNHEALTHY'}")
+    print(f"\n [Sandbox Health Check] Status: {'HEALTHY' if healthy else 'UNHEALTHY'}")
 
     return {"sandboxHealthy": healthy}
 

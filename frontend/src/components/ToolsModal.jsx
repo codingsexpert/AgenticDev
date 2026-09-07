@@ -140,7 +140,7 @@ export default function ToolsModal({
         const data = await res.json();
         setTestResult({
           safe: data.exit_code === 0,
-          message: data.exit_code === 0 ? '✅ Subprocess Executed Successfully' : '⚠️ Subprocess Error Output',
+          message: data.exit_code === 0 ? ' Subprocess Executed Successfully' : '️ Subprocess Error Output',
           details: data.output || 'No output'
         });
         if (data.exit_code === 0) toast.success('Tool Execution Passed');
@@ -148,7 +148,7 @@ export default function ToolsModal({
       } catch (err) {
         setTestResult({
           safe: false,
-          message: '❌ Subprocess Call Failed',
+          message: ' Subprocess Call Failed',
           details: err.message
         });
         toast.error('Subprocess Execution Failed');
@@ -166,14 +166,14 @@ export default function ToolsModal({
         if (isMalicious) {
           setTestResult({
             safe: false,
-            message: '🛑 Guardrail Triggered: Potential unsafe pattern detected! Command blocked by Execution Guardrail.',
+            message: ' Guardrail Triggered: Potential unsafe pattern detected! Command blocked by Execution Guardrail.',
             details: `Sanitization status: Blocked | Pattern: "${testInput}"`
           });
           toast.warning('Security Guardrail Intercepted Malicious Input');
         } else {
           setTestResult({
             safe: true,
-            message: '✅ Guardrail Passed: Input prompt sanitization clear. Valid request format.',
+            message: ' Guardrail Passed: Input prompt sanitization clear. Valid request format.',
             details: `Sanitization status: Clean | Input: "${testInput}"`
           });
           toast.success('Guardrail Test Passed');
@@ -181,14 +181,14 @@ export default function ToolsModal({
       } else if (toolId === 'tool_sandbox') {
         setTestResult({
           safe: true,
-          message: `✅ Sandbox Path Validated: File isolated in './sandboxes/sandbox_demo/${testInput}'`,
+          message: ` Sandbox Path Validated: File isolated in './sandboxes/sandbox_demo/${testInput}'`,
           details: 'Boundary check passed. Path is inside sandbox limits.'
         });
         toast.success('Sandbox Path Validated');
       } else {
         setTestResult({
           safe: true,
-          message: `✅ Tool Executed Successfully for "${testInput}"`,
+          message: ` Tool Executed Successfully for "${testInput}"`,
           details: 'Status: 200 OK | Response received'
         });
         toast.success('Tool Execution Test Passed');

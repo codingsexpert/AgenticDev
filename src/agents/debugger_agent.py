@@ -29,7 +29,7 @@ def debugger_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
     tier = debug_state.get("tier", 1)
     attempts = debug_state.get("attempts", 0)
 
-    print(f"\n🐛 [Debugger] Analyzing error (Tier {tier}, Attempt {attempts + 1})...\n")
+    print(f"\n [Debugger] Analyzing error (Tier {tier}, Attempt {attempts + 1})...\n")
 
     current_task = state.get("currentTask")
     exec_res = state.get("executionResult", {})
@@ -38,10 +38,10 @@ def debugger_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
 
     # Tier 2.5 Rollback
     if tier == 2 and attempts >= 2 and not debug_state.get("rollbackAttempted", False):
-        print("   🔄 Tier 2.5: Attempting rollback to last good git snapshot...")
+        print("    Tier 2.5: Attempting rollback to last good git snapshot...")
         rb_res = rollback(sandbox_id, "v0.0.0")
         if rb_res.get("success"):
-            print("   ✅ Rolled back cleanly. Retrying task.")
+            print("    Rolled back cleanly. Retrying task.")
             return {
                 "debugState": {**debug_state, "rollbackAttempted": True, "tier": 1, "attempts": 0},
                 "reviewResult": {"verdict": "", "issues": [], "reviewCycle": 0},
@@ -73,8 +73,8 @@ def debugger_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
     )
 
     debug_info = result["parsed"]
-    print(f"   🔍 Root cause: {debug_info.get('rootCause')}")
-    print(f"   🔧 Fix: {debug_info.get('fix')}")
+    print(f"    Root cause: {debug_info.get('rootCause')}")
+    print(f"    Fix: {debug_info.get('fix')}")
 
     new_attempts = attempts + 1
     should_promote = new_attempts >= debug_state.get("maxAttempts", 3)

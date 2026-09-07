@@ -414,7 +414,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
                 }}
                 className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-medium text-slate-700 transition-colors cursor-pointer"
               >
-                <span className="text-xs">⚡</span>
+                <span className="text-xs"></span>
                 <span className="truncate max-w-[110px] sm:max-w-none">{currentModelLabel}</span>
                 <ChevronDown className="w-3 h-3 text-slate-400" />
               </button>
@@ -454,7 +454,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
                 }}
                 className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-medium text-slate-700 transition-colors cursor-pointer"
               >
-                <span className="text-xs">🛠️</span>
+                <span className="text-xs">️</span>
                 <span>Tools</span>
                 <ChevronDown className="w-3 h-3 text-slate-400" />
               </button>

@@ -81,7 +81,7 @@ export default function ProjectsModal({
 
     if (proj.messages && proj.messages.length > 0) {
       proj.messages.forEach((msg, idx) => {
-        const role = msg.sender === 'user' ? '👤 User' : '🤖 AI Agent';
+        const role = msg.sender === 'user' ? ' User' : ' AI Agent';
         content += `### Message ${idx + 1} (${role})\n\n${msg.text || msg.content || ''}\n\n`;
       });
     } else {

@@ -1,0 +1,37 @@
+{
+  "thread_id": "session_1788791496384",
+  "title": "hi",
+  "mode": "build",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! 👋 How can I help you build your project, write code, or answer your questions today?"
+    },
+    {
+      "role": "user",
+      "content": "kaise ho",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! 👋 Main bilkul sahi hu. Aaj aapko kya build karna hai ya kya help chahiye?"
+    },
+    {
+      "role": "user",
+      "content": "build portfolio website using html css",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "I am **PixiExpert**, your AI software assistant. I can help you build full-stack web applications, write and debug code, analyze data, and manage your project workspace."
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_1788777734257",
+  "updated_at": 1788791541.359734
+}

@@ -6,7 +6,7 @@ from typing import Dict, Any
 
 
 def blueprint_validator_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("\n🔍 [Blueprint Validator] Validating architectural blueprint...\n")
+    print("\n [Blueprint Validator] Validating architectural blueprint...\n")
     blueprint = state.get("blueprint", {})
     validation = state.get("blueprintValidation", {"isValid": False, "issues": [], "validationCycles": 0})
     cycles = validation.get("validationCycles", 0) + 1
@@ -24,7 +24,7 @@ def blueprint_validator_node(state: Dict[str, Any]) -> Dict[str, Any]:
     print(f"   Validation: {'PASSED' if is_valid else 'ISSUES FOUND'} (Cycle {cycles})")
     if issues:
         for iss in issues:
-            print(f"   ⚠️ {iss}")
+            print(f"   ️ {iss}")
 
     return {
         "blueprintValidation": {

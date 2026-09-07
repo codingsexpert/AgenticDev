@@ -20,14 +20,14 @@ def init_langsmith_tracer() -> Dict[str, Any]:
     project = os.getenv("LANGCHAIN_PROJECT", "ai-dev-team")
 
     if tracing_enabled and api_key:
-        print(f"🔍 [LangSmith] Tracing ENABLED → Project: '{project}' (https://smith.langchain.com)")
+        print(f" [LangSmith] Tracing ENABLED → Project: '{project}' (https://smith.langchain.com)")
         return {
             "enabled": True,
             "project": project,
             "status": "active"
         }
     elif tracing_enabled and not api_key:
-        print("⚠️ [LangSmith] Tracing is set to true, but LANGCHAIN_API_KEY is missing in .env")
+        print("️ [LangSmith] Tracing is set to true, but LANGCHAIN_API_KEY is missing in .env")
         return {
             "enabled": False,
             "project": project,

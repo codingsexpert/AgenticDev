@@ -129,7 +129,7 @@ def create_sandbox(
         subprocess.run(["git", "commit", "-m", "Initial scaffold", "--allow-empty"], cwd=sandbox_path, capture_output=True, check=True)
         subprocess.run(["git", "tag", "v0.0.0"], cwd=sandbox_path, capture_output=True, check=True)
     except Exception as e:
-        print(f"⚠️ Git init warning: {str(e)}")
+        print(f"️ Git init warning: {str(e)}")
 
     _sandboxes[sandbox_id] = {
         "id": sandbox_id,

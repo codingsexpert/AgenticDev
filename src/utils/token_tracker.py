@@ -35,7 +35,7 @@ def make_token_delta(agent_name: str, tokens: Dict[str, int]) -> Dict[str, Any]:
 
 def print_token_summary(token_usage: Dict[str, Any]) -> None:
     if not token_usage:
-        print("\n📊 Token Usage: No data recorded.")
+        print("\n Token Usage: No data recorded.")
         return
 
     calls: List[Dict[str, Any]] = token_usage.get("calls", [])
@@ -44,7 +44,7 @@ def print_token_summary(token_usage: Dict[str, Any]) -> None:
     total_cost = token_usage.get("estimatedCost", 0.0)
 
     print("\n" + "═" * 60)
-    print("  📊 TOKEN USAGE & COST SUMMARY")
+    print("   TOKEN USAGE & COST SUMMARY")
     print("═" * 60)
     print(f"  Total API Calls:     {len(calls)}")
     print(f"  Total Input Tokens:  {total_input:,}")

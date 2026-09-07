@@ -7,7 +7,7 @@ from typing import Dict, Any
 
 def phase_verification_node(state: Dict[str, Any]) -> Dict[str, Any]:
     phase_idx = state.get("currentPhaseIndex", 0)
-    print(f"\n🔍 [Phase Verification] Verifying Phase {phase_idx + 1} deliverables...")
+    print(f"\n [Phase Verification] Verifying Phase {phase_idx + 1} deliverables...")
 
     return {
         "currentPhaseIndex": phase_idx + 1,

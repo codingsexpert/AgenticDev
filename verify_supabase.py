@@ -20,19 +20,19 @@ def test_supabase():
     session = get_chat_session(thread_id)
     
     if session:
-        print("✅ Success! Found session in database:")
+        print(" Success! Found session in database:")
         print(f"Title: {session.get('title')}")
         print(f"Messages: {session.get('messages')}")
     else:
-        print("❌ Failed! Could not retrieve the session from the database.")
+        print(" Failed! Could not retrieve the session from the database.")
         sys.exit(1)
         
     print("\n3. Cleaning up test data...")
     success = delete_chat_session(thread_id)
     if success:
-        print("✅ Cleanup successful!")
+        print(" Cleanup successful!")
     else:
-        print("⚠️ Cleanup failed, but insert/read worked.")
+        print("️ Cleanup failed, but insert/read worked.")
 
 if __name__ == "__main__":
     test_supabase()

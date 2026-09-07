@@ -13,7 +13,7 @@ def snapshot_manager_node(state: Dict[str, Any]) -> Dict[str, Any]:
     task_idx = state.get("currentTaskIndex", 0)
     task_id = task.get("taskId", f"task-{task_idx}")
 
-    print(f"\n📸 [Snapshot Manager] Checkpointing git state after task completion: {task_id}")
+    print(f"\n [Snapshot Manager] Checkpointing git state after task completion: {task_id}")
 
     if sandbox_id:
         sandbox_path = get_sandbox_path(sandbox_id)
@@ -22,9 +22,9 @@ def snapshot_manager_node(state: Dict[str, Any]) -> Dict[str, Any]:
             subprocess.run(["git", "commit", "-m", f"Task done: {task_id}"], cwd=sandbox_path, capture_output=True, check=True)
             tag_name = f"v0.{task_idx + 1}.0"
             subprocess.run(["git", "tag", tag_name], cwd=sandbox_path, capture_output=True, check=True)
-            print(f"   ✅ Created snapshot tag: {tag_name}")
+            print(f"    Created snapshot tag: {tag_name}")
         except Exception as e:
-            print(f"   ⚠️ Git snapshot notice: {str(e)}")
+            print(f"   ️ Git snapshot notice: {str(e)}")
 
     return {
         "currentTaskIndex": task_idx + 1,

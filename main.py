@@ -28,7 +28,7 @@ def print_banner():
     print("")
     print("╔══════════════════════════════════════════════════════════╗")
     print("║                                                          ║")
-    print("║    🤖  AI DEV TEAM — Multi-Agent System (Python)        ║")
+    print("║      AI DEV TEAM — Multi-Agent System (Python)        ║")
     print("║                                                          ║")
     print("║    LangGraph + Gemini + Guardrails + Pure Local Sandbox ║")
     print("║    Observability & Tracing via LangSmith                ║")
@@ -48,9 +48,9 @@ def main():
     # 1. Initialize Gemini API Client & LangSmith Tracer
     try:
         init_gemini()
-        print("✅ Gemini API initialized cleanly")
+        print(" Gemini API initialized cleanly")
     except Exception as err:
-        print(f"❌ Gemini Initialization Error: {str(err)}")
+        print(f" Gemini Initialization Error: {str(err)}")
         print("   Please ensure GEMINI_API_KEY is set in your .env file.")
         sys.exit(1)
 
@@ -65,7 +65,7 @@ def main():
     }
 
     if args.resume:
-        print(f"  🔄 RESUMING thread: {thread_id}\n")
+        print(f"   RESUMING thread: {thread_id}\n")
         final_state = graph.invoke(None, config)
     else:
         req_text = " ".join(args.requirement).strip()
@@ -81,12 +81,12 @@ def main():
         # Apply Input Guardrail
         is_valid, msg_or_cleaned, meta = validate_user_input(req_text)
         if not is_valid:
-            print(f"\n  ❌ Input Guardrail Violation: {msg_or_cleaned} (reason: {meta.get('reason')})")
+            print(f"\n   Input Guardrail Violation: {msg_or_cleaned} (reason: {meta.get('reason')})")
             sys.exit(1)
 
         requirement = msg_or_cleaned
-        print(f'\n  📝 Requirement: "{requirement}"')
-        print(f"  🧵 Thread ID: {thread_id}  (save this to resume if needed)\n")
+        print(f'\n   Requirement: "{requirement}"')
+        print(f"   Thread ID: {thread_id}  (save this to resume if needed)\n")
         print("─" * 60)
 
         initial_state = create_initial_state(user_requirement=requirement, token_budget=2.0)

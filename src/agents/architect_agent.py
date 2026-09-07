@@ -125,7 +125,7 @@ OUTPUT FORMAT (strict JSON):
 
 
 def architect_step1_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("\n🏗️  [Architect Step 1/5] Identifying entities & naming map...\n")
+    print("\n️  [Architect Step 1/5] Identifying entities & naming map...\n")
     spec = state.get("clarifiedSpec", {})
     result = call_llm(
         system_prompt=STEP1_PROMPT,
@@ -143,7 +143,7 @@ def architect_step1_node(state: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def architect_step2_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("\n🏗️  [Architect Step 2/5] Designing database schema...\n")
+    print("\n️  [Architect Step 2/5] Designing database schema...\n")
     blueprint = state.get("blueprint", {})
     spec = state.get("clarifiedSpec", {})
     result = call_llm(
@@ -162,7 +162,7 @@ def architect_step2_node(state: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def architect_step3_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("\n🏗️  [Architect Step 3/5] Designing API endpoints...\n")
+    print("\n️  [Architect Step 3/5] Designing API endpoints...\n")
     blueprint = state.get("blueprint", {})
     result = call_llm(
         system_prompt=STEP3_PROMPT,
@@ -180,7 +180,7 @@ def architect_step3_node(state: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def architect_step4_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("\n🏗️  [Architect Step 4/5] Designing frontend pages...\n")
+    print("\n️  [Architect Step 4/5] Designing frontend pages...\n")
     blueprint = state.get("blueprint", {})
     result = call_llm(
         system_prompt=STEP4_PROMPT,
@@ -198,7 +198,7 @@ def architect_step4_node(state: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def architect_step5_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("\n🏗️  [Architect Step 5/5] Generating folder structure & dependencies...\n")
+    print("\n️  [Architect Step 5/5] Generating folder structure & dependencies...\n")
     blueprint = state.get("blueprint", {})
     result = call_llm(
         system_prompt=STEP5_PROMPT,

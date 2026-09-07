@@ -218,7 +218,7 @@ def build_graph(options: dict = None):
     graph.add_edge("presentToUser", END)
 
     compiled = graph.compile(checkpointer=checkpointer)
-    print("✅ Python StateGraph compiled successfully (27 nodes)")
+    print(" Python StateGraph compiled successfully (27 nodes)")
     return compiled
 
 

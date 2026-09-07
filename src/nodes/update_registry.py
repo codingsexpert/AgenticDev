@@ -17,5 +17,5 @@ def update_registry_node(state: Dict[str, Any]) -> Dict[str, Any]:
                 "lines": f.get("lines", 0),
             })
 
-    print(f"\n📂 [File Registry] Registered {len(new_entries)} files")
+    print(f"\n [File Registry] Registered {len(new_entries)} files")
     return {"fileRegistry": new_entries}

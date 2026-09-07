@@ -21,9 +21,9 @@ if SUPABASE_URL and SUPABASE_KEY:
     try:
         from supabase import create_client, Client
         supabase_client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-        print("✅ Supabase Client Initialized in memory_manager.py")
+        print(" Supabase Client Initialized in memory_manager.py")
     except Exception as e:
-        print(f"⚠️ Failed to initialize Supabase client: {e}")
+        print(f"️ Failed to initialize Supabase client: {e}")
 
 # Local Fallback Constants
 MEMORY_DIR = os.path.join(os.getcwd(), "data", "memory")
@@ -50,7 +50,7 @@ def _save_json(file_path: str, data: Any):
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
     except Exception as e:
-        print(f"⚠️ Memory save error: {str(e)}")
+        print(f"️ Memory save error: {str(e)}")
 
 
 # -----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ def save_chat_session(thread_id: str, title: str, messages: List[Dict[str, Any]]
         try:
             supabase_client.table("sessions").upsert(data).execute()
         except Exception as e:
-            print(f"⚠️ Supabase save_chat_session error (falling back to local): {e}")
+            print(f"️ Supabase save_chat_session error (falling back to local): {e}")
 
     return data
 
@@ -136,7 +136,7 @@ def list_chat_sessions(user_id: Optional[str] = None) -> List[Dict[str, Any]]:
                 sessions.append(row)
             return sessions
         except Exception as e:
-            print(f"⚠️ Supabase list_chat_sessions error (falling back to local): {e}")
+            print(f"️ Supabase list_chat_sessions error (falling back to local): {e}")
 
     # Local Fallback
     if os.path.exists(SESSION_HISTORY_DIR):
@@ -175,7 +175,7 @@ def get_chat_session(thread_id: str) -> Optional[Dict[str, Any]]:
             if response.data and len(response.data) > 0:
                 return response.data[0]
         except Exception as e:
-            print(f"⚠️ Supabase get_chat_session error (falling back to local): {e}")
+            print(f"️ Supabase get_chat_session error (falling back to local): {e}")
 
     # Local Fallback
     session_file = os.path.join(SESSION_HISTORY_DIR, f"{thread_id}.json")
@@ -192,7 +192,7 @@ def delete_chat_session(thread_id: str) -> bool:
             supabase_client.table("sessions").delete().eq("thread_id", thread_id).execute()
             success = True
         except Exception as e:
-            print(f"⚠️ Supabase delete_chat_session error: {e}")
+            print(f"️ Supabase delete_chat_session error: {e}")
 
     # Local Fallback
     session_file = os.path.join(SESSION_HISTORY_DIR, f"{thread_id}.json")
@@ -201,7 +201,7 @@ def delete_chat_session(thread_id: str) -> bool:
             os.remove(session_file)
             success = True
         except Exception as e:
-            print(f"⚠️ Error deleting local chat session file {thread_id}: {e}")
+            print(f"️ Error deleting local chat session file {thread_id}: {e}")
             
     return success
 
@@ -248,7 +248,7 @@ def save_long_term_memory(category: str, key: str, value: Any):
             }
             supabase_client.table("long_term_memory").upsert(data).execute()
         except Exception as e:
-            print(f"⚠️ Supabase save_long_term_memory error: {e}")
+            print(f"️ Supabase save_long_term_memory error: {e}")
 
 
 def get_long_term_memory(category: Optional[str] = None) -> Dict[str, Any]:
@@ -287,7 +287,7 @@ def get_long_term_memory(category: Optional[str] = None) -> Dict[str, Any]:
             if category or any(result.values()):
                 return result
         except Exception as e:
-            print(f"⚠️ Supabase get_long_term_memory error (falling back to local): {e}")
+            print(f"️ Supabase get_long_term_memory error (falling back to local): {e}")
 
     # Local Fallback
     memory_data = _load_json(LONG_TERM_FILE, {
@@ -327,7 +327,7 @@ def get_user_preferences() -> Dict[str, Any]:
                 merged.update(prefs)
                 return merged
         except Exception as e:
-            print(f"⚠️ Supabase get_user_preferences error (falling back to local): {e}")
+            print(f"️ Supabase get_user_preferences error (falling back to local): {e}")
 
     return _load_json(PREFERENCES_FILE, DEFAULT_PREFERENCES)
 
@@ -351,7 +351,7 @@ def update_user_preference(key: str, value: Any) -> Dict[str, Any]:
             }
             supabase_client.table("user_preferences").upsert(data).execute()
         except Exception as e:
-            print(f"⚠️ Supabase update_user_preference error: {e}")
+            print(f"️ Supabase update_user_preference error: {e}")
 
     return prefs
 
@@ -382,7 +382,7 @@ def save_user_profile(user_obj: Dict[str, Any]) -> Dict[str, Any]:
             }
             supabase_client.table("users").upsert(db_data).execute()
         except Exception as e:
-            print(f"⚠️ Supabase save_user_profile notice: {e}")
+            print(f"️ Supabase save_user_profile notice: {e}")
 
     return user_obj
 
@@ -400,6 +400,6 @@ def get_user_profile(email: str) -> Optional[Dict[str, Any]]:
             if res.data and len(res.data) > 0:
                 return res.data[0]
         except Exception as e:
-            print(f"⚠️ Supabase get_user_profile notice: {e}")
+            print(f"️ Supabase get_user_profile notice: {e}")
 
     return None

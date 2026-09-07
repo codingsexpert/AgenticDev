@@ -14,18 +14,18 @@ def select_next_task_node(state: Dict[str, Any]) -> Dict[str, Any]:
     task_statuses = state.get("taskStatuses", {})
 
     if phase_idx >= len(phases):
-        print("\n🎉 [Task Scheduler] All phases complete!")
+        print("\n [Task Scheduler] All phases complete!")
         return {"currentTask": None}
 
     current_phase = phases[phase_idx]
     tasks = current_phase.get("tasks", [])
 
     if task_idx >= len(tasks):
-        print(f"\n✅ [Task Scheduler] Phase {phase_idx + 1} complete. Verifying phase...")
+        print(f"\n [Task Scheduler] Phase {phase_idx + 1} complete. Verifying phase...")
         return {"currentTask": None, "_phaseComplete": True}
 
     task = tasks[task_idx]
-    print(f"\n📌 [Task Scheduler] Selected Task [{task.get('taskId')}]: {task.get('title')}")
+    print(f"\n [Task Scheduler] Selected Task [{task.get('taskId')}]: {task.get('title')}")
 
     return {
         "currentTask": task,

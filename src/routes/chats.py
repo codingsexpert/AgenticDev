@@ -66,7 +66,7 @@ async def chat_stream(
         allowed, limit_msg = global_rate_limiter.check_rate_limit(user.get("id"), is_user=True, max_requests=30, window_seconds=60)
         if not allowed:
             async def rate_limit_error_stream():
-                err_text = f"⚠️ **Rate Limit Notice**: {limit_msg}"
+                err_text = f"️ **Rate Limit Notice**: {limit_msg}"
                 yield f"data: {json.dumps({'text': err_text})}\n\n"
                 yield f"data: {json.dumps({'done': True})}\n\n"
             return StreamingResponse(rate_limit_error_stream(), media_type="text/event-stream")
@@ -115,7 +115,7 @@ async def chat_stream(
         is_valid, guardrail_msg, meta = validate_user_input(raw_last_user_msg)
         if not is_valid:
             async def guardrail_error_stream():
-                err_text = f"🛡️ **Security Guardrail Notice**: {guardrail_msg}"
+                err_text = f"️ **Security Guardrail Notice**: {guardrail_msg}"
                 yield f"data: {json.dumps({'text': err_text})}\n\n"
                 yield f"data: {json.dumps({'done': True})}\n\n"
             return StreamingResponse(guardrail_error_stream(), media_type="text/event-stream")
@@ -281,9 +281,9 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
         if is_simple_greeting(raw_last_user_msg):
             user_msg_clean = raw_last_user_msg.strip().lower()
             if any(w in user_msg_clean for w in ["kaise ho", "kaise", "bhai"]):
-                reply = "Hello! 👋 Main bilkul sahi hu. Aaj aapko kya build karna hai ya kya help chahiye?"
+                reply = "Hello!  Main bilkul sahi hu. Aaj aapko kya build karna hai ya kya help chahiye?"
             else:
-                reply = "Hello! 👋 How can I help you build your project, write code, or answer your questions today?"
+                reply = "Hello!  How can I help you build your project, write code, or answer your questions today?"
             yield f"data: {json.dumps({'text': reply})}\n\n"
             yield f"data: {json.dumps({'done': True})}\n\n"
             return
@@ -337,13 +337,13 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
                     reconnect_sandbox(sandbox_id)
                     written = extract_and_write_code_files(sandbox_id, full_text)
                     if written:
-                        print(f"   📁 Auto-scaffolded {len(written)} physical files & folders on disk in sandbox '{sandbox_id}'")
+                        print(f"    Auto-scaffolded {len(written)} physical files & folders on disk in sandbox '{sandbox_id}'")
                         yield f"data: {json.dumps({'sandbox': {'sandbox_id': sandbox_id, 'files': written}})}\n\n"
 
                 stream_success = True
                 break
             except Exception as e:
-                print(f"⚡ Model '{m_name}' stream notice: {str(e)[:100]}")
+                print(f" Model '{m_name}' stream notice: {str(e)[:100]}")
                 continue
 
         if not stream_success:
@@ -407,7 +407,7 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
 
             if full_text == "":
                 if any(g in user_msg_clean for g in greetings):
-                    fallback_reply = "Hello! 👋 How can I help you build your project or answer your questions today?"
+                    fallback_reply = "Hello!  How can I help you build your project or answer your questions today?"
                 elif "weather" in user_msg_clean:
                     fallback_reply = """```html
 <!-- File: index.html -->
@@ -424,7 +424,7 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
     <div class="weather-card w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl backdrop-blur-xl">
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-xl font-bold tracking-tight text-white flex items-center space-x-2">
-                <span>🌤️ Weather App</span>
+                <span>️ Weather App</span>
             </h1>
             <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold px-2.5 py-1 rounded-full">Live Forecast</span>
         </div>
@@ -509,7 +509,7 @@ function getWeather() {
     <div class="w-full max-w-lg bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl backdrop-blur-xl">
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-xl font-bold text-white flex items-center space-x-2">
-                <span>📝 Task Manager</span>
+                <span> Task Manager</span>
             </h1>
             <span id="taskCount" class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold px-2.5 py-1 rounded-full">0 Tasks</span>
         </div>
@@ -703,7 +703,7 @@ function calculateResult() { try { currentInput = eval(currentInput).toString();
 <body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-xl bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl text-center">
         <div class="w-16 h-16 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">⚡</span>
+            <span class="text-2xl"></span>
         </div>
         <h1 class="text-2xl font-extrabold text-white mb-2">{app_name} Workspace</h1>
         <p class="text-sm text-slate-400 mb-6">Your custom application "{app_name}" has been generated and is ready for live development.</p>

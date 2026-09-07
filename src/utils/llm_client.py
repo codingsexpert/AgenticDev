@@ -17,7 +17,7 @@ from src.utils.token_tracker import calculate_gemini_cost
 
 def search_internet(query: str, max_results: int = 3) -> str:
     """Searches the internet for information."""
-    print(f"   🔍 [Web Search] Searching for: '{query}'")
+    print(f"    [Web Search] Searching for: '{query}'")
     try:
         results = DDGS().text(query, max_results=max_results)
         if not results:
