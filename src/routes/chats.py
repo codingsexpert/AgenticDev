@@ -84,14 +84,19 @@ async def chat_stream(
     combined_msgs = []
     raw_req_msgs = [m.model_dump() if hasattr(m, 'model_dump') else m for m in req.messages]
 
-    if persistent_msgs and isinstance(persistent_msgs, list):
+    if raw_req_msgs and persistent_msgs:
+        # Check if persistent_msgs has older turns not present in raw_req_msgs
+        req_first_text = raw_req_msgs[0].get("content", "").strip() if raw_req_msgs else ""
+        older_turns = []
+        for p_msg in persistent_msgs:
+            if p_msg.get("content", "").strip() == req_first_text:
+                break
+            older_turns.append(p_msg)
+        combined_msgs = older_turns + raw_req_msgs
+    elif raw_req_msgs:
+        combined_msgs = list(raw_req_msgs)
+    elif persistent_msgs:
         combined_msgs = list(persistent_msgs)
-        if len(raw_req_msgs) > len(combined_msgs):
-            combined_msgs.extend(raw_req_msgs[len(combined_msgs):])
-        elif len(raw_req_msgs) > 0 and len(combined_msgs) == 0:
-            combined_msgs = raw_req_msgs
-    else:
-        combined_msgs = raw_req_msgs
 
     # Sanitize and validate turn sequence integrity
     sanitized_msgs = []
@@ -256,9 +261,15 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
    - IF THE USER WRITES IN ENGLISH: Respond ONLY in clear, professional English.
    - IF THE USER WRITES IN HINGLISH: Respond naturally in Hinglish.
    - IF THE USER WRITES IN HINDI: Respond in Hindi.
-7. DATA ANALYSIS & CHARTS: If the user uploads CSV/Excel files, write Python pandas & matplotlib code reading from `./data/sandbox/<filename>` and saving plots to `chart.png`.
-8. STRICT CODE-ONLY RESPONSE RULE: When asked to write code or build an app, output ONLY the requested code block(s). Do NOT append unasked code explanations or summary text below the code UNLESS explicitly asked ("explain this code").
 """
+    # Inject Active Sandbox Workspace Code Files Context for multi-turn follow-ups & code edits
+    sandbox_id = req.thread_id if (req.thread_id and req.thread_id.startswith("sandbox-")) else (f"sandbox-{req.thread_id}" if req.thread_id else None)
+    if sandbox_id:
+        from src.utils.sandbox_manager import get_sandbox_workspace_context
+        workspace_context = get_sandbox_workspace_context(sandbox_id)
+        if workspace_context:
+            system_instruction += f"\n\n{workspace_context}\n\nCRITICAL INSTRUCTION FOR MULTI-TURN CODE EDITS / FOLLOW-UPS:\nBuild upon, update, or refactor the existing project workspace files shown above. Retain all existing features, styling, and paths while adding the newly requested features or modifications.\n"
+
     if req.mode == "reasoning":
         system_instruction += "\n7. DEEP REASONING MODE: You MUST deeply analyze the problem step-by-step. Before outputting your final answer, you MUST wrap your entire logical thought process inside <thinking> and </thinking> tags. Break down complex logic, consider edge cases, and formulate a solid plan. Your final answer must be outside the tags.\n"
 

@@ -196,6 +196,38 @@ def get_file_list(sandbox_id: str) -> List[str]:
     return sorted(file_list)
 
 
+def get_sandbox_workspace_context(sandbox_id: str, max_files: int = 12) -> str:
+    """
+    Reads existing code files from the active sandbox workspace directory
+    and formats them as structured context for LLM multi-turn code edits.
+    """
+    sandbox_path = get_sandbox_path(sandbox_id)
+    if not os.path.exists(sandbox_path):
+        return ""
+
+    file_list = get_file_list(sandbox_id)
+    if not file_list:
+        return ""
+
+    code_files = [
+        f for f in file_list 
+        if not f.endswith(('.lock', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.min.js', '.min.css', '.map', '.DS_Store'))
+    ]
+
+    if not code_files:
+        return ""
+
+    context_str = "[ACTIVE PROJECT WORKSPACE FILES ON DISK]\n"
+    context_str += "The following files currently exist in the user's active sandbox workspace. Use these as reference for follow-ups, refactoring, or code edits:\n"
+
+    for rel_path in code_files[:max_files]:
+        content = read_file(sandbox_id, rel_path)
+        if content and len(content.strip()) > 0:
+            context_str += f"\n--- File: {rel_path} ---\n{content.strip()}\n"
+
+    return context_str
+
+
 MAX_OUTPUT_BYTES = 500 * 1024  # 500 KB limit to prevent memory bloat
 
 
