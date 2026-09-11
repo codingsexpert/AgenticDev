@@ -856,7 +856,7 @@ export default function App() {
                   {/* Card 1: Write Code */}
                   <div
                     onClick={() => handlePromptSubmit('Write and debug Python code for data processing', 'gemini-1.5-flash', 'chat')}
-                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
+                    className="clean-glass-card floating-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
                       <Code className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-2.5" />
@@ -875,7 +875,7 @@ export default function App() {
                   {/* Card 2: Analyze Document */}
                   <div
                     onClick={() => handlePromptSubmit('Analyze this document and extract key insights', 'gemini-1.5-flash', 'chat')}
-                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
+                    className="clean-glass-card floating-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
                       <FileText className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-2.5" />
@@ -894,7 +894,7 @@ export default function App() {
                   {/* Card 3: Solve Problem */}
                   <div
                     onClick={() => handlePromptSubmit('Help me solve this logic problem step by step', 'gemini-1.5-flash', 'chat')}
-                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
+                    className="clean-glass-card floating-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
                       <Sparkles className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-2.5" />
@@ -912,8 +912,8 @@ export default function App() {
 
                   {/* Card 4: Research */}
                   <div
-                    onClick={() => handlePromptSubmit('Search and research information on this topic', 'gemini-1.5-flash', 'chat')}
-                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
+                    onClick={() => handlePromptSubmit('Research the latest trends in AI agents and write a summary', 'gemini-1.5-flash', 'chat')}
+                    className="clean-glass-card floating-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
                       <Search className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-2.5" />
