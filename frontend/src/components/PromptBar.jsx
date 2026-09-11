@@ -348,11 +348,12 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
         </div>
       </div>
 
-      {/* Clean Rounded Rectangular Composer with Ultra-Clean Glassmorphism */}
-      <form
-        onSubmit={handleSubmit}
-        className="clean-glass-card p-4 rounded-2xl relative w-full"
-      >
+      {/* Clean Rounded Rectangular Composer with Gemini Border Animation */}
+      <div className="gemini-border-wrapper w-full mt-2">
+        <form
+          onSubmit={handleSubmit}
+          className="clean-glass-card p-4 rounded-2xl relative w-full bg-white/95"
+        >
         {/* Attachments Preview Area */}
         {attachments.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
@@ -590,6 +591,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
           </div>
         </div>
       </form>
+      </div>
     </div>
   );
 }
