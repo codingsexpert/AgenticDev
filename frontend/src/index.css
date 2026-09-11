@@ -73,7 +73,7 @@ select {
     radial-gradient(at 100% 100%, rgba(221, 214, 254, 0.65) 0px, transparent 55%);
   background-attachment: fixed;
   background-size: 200% 200%;
-  animation: liquidMesh 12s ease-in-out infinite;
+  animation: liquidMesh 35s ease-in-out infinite;
 }
 
 @keyframes liquidMesh {
@@ -105,7 +105,7 @@ select {
   width: 250%;
   height: 250%;
   background: conic-gradient(from 180deg at 50% 50%, transparent 0deg, #4f46e5 90deg, #c084fc 180deg, #ec4899 270deg, transparent 360deg);
-  animation: spin-gradient 4s linear infinite;
+  animation: spin-gradient 6s linear infinite;
   z-index: -1;
 }
 
