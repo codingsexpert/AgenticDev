@@ -342,13 +342,20 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
 
   const handleDeploy = async () => {
     if (!sandboxId) return;
+    
+    const token = localStorage.getItem('pixlexpert_vercel_token');
+    if (!token) {
+      toast.error('Vercel API Token is missing. Please configure it in Settings > Deploy Integration.');
+      return;
+    }
+
     setIsDeploying(true);
     setDeployedUrl(null);
     try {
       const res = await fetch(`/api/sandboxes/${sandboxId}/deploy`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: '' })
+        body: JSON.stringify({ token: token })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || 'Deploy failed');
@@ -379,8 +386,10 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
   const safeSelectedFile = selectedFile || 'index.html';
   const htmlFile = files.find(f => typeof f?.path === 'string' && f.path.endsWith('.html'));
   const mainHtmlPath = htmlFile ? htmlFile.path : (safeSelectedFile.endsWith('.html') ? safeSelectedFile : null);
-  const rawPreviewUrl = (sandboxId && mainHtmlPath) ? `/api/sandboxes/${sandboxId}/preview/${mainHtmlPath}` : '';
-  const previewUrl = rawPreviewUrl ? `${rawPreviewUrl}?t=${previewKey}` : '';
+  
+  // If deployed to Vercel, use the live Vercel URL. Otherwise, fallback to static HTML preview.
+  const rawPreviewUrl = deployedUrl ? deployedUrl : ((sandboxId && mainHtmlPath) ? `/api/sandboxes/${sandboxId}/preview/${mainHtmlPath}` : '');
+  const previewUrl = deployedUrl ? deployedUrl : (rawPreviewUrl ? `${rawPreviewUrl}?t=${previewKey}` : '');
 
   const getLanguage = (path = '') => {
       const p = (path || '').toLowerCase();

@@ -41,10 +41,29 @@ def planner_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
 
     blueprint = state.get("blueprint", {})
     spec = state.get("clarifiedSpec", {})
+    sandbox_id = state.get("sandboxId")
+    workspace_context = ""
+    
+    if sandbox_id:
+        from src.utils.sandbox_manager import get_sandbox_workspace_context
+        workspace_context = get_sandbox_workspace_context(sandbox_id)
+        if workspace_context:
+            workspace_context = f"\n{workspace_context}\nCRITICAL: A project ALREADY EXISTS. Generate tasks that modify or append to the existing code files.\n"
+
+    chat_history = state.get("chatHistory", [])
+    chat_context = ""
+    if chat_history:
+        chat_context = "PREVIOUS CHAT HISTORY (Last 10 turns):\n"
+        recent_history = chat_history[-10:] if len(chat_history) > 10 else chat_history
+        for msg in recent_history:
+            role = msg.get("role", "user")
+            content = msg.get("content", "")
+            chat_context += f"{role.upper()}: {content}\n"
+        chat_context += "\n"
 
     result = call_llm(
         system_prompt=PLANNER_PROMPT,
-        user_prompt=f"Blueprint:\n{json.dumps(blueprint, indent=2)}\n\nSpec:\n{json.dumps(spec, indent=2)}",
+        user_prompt=f"{workspace_context}\n{chat_context}Blueprint:\n{json.dumps(blueprint, indent=2)}\n\nSpec:\n{json.dumps(spec, indent=2)}",
         agent_name="plannerAgent",
         current_cost=state.get("tokenUsage", {}).get("estimatedCost", 0.0),
         token_budget=state.get("tokenBudget", 2.0),

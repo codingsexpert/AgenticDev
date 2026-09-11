@@ -30,12 +30,14 @@ OUTPUT FORMAT (strict JSON):
 }
 
 RULES:
-- Write 100% complete, functional code. No empty placeholders or missing imports.
-- Make code robust, well-structured, and compliant with project patterns.
-- INTERCONNECTIVITY: You MUST properly connect all generated files to each other so the application works out-of-the-box. (e.g., HTML must link to CSS/JS with `<link>`/`<script>`, React components must `import` each other, Python files must `import` their modules, backend must serve frontend, etc.). The user should NEVER have to manually link or connect files you generated.
+- CRITICAL: Write 100% complete, fully functional code. DO NOT leave ANY empty placeholders, `pass` statements, or "TODO: implement here" comments.
+- Make code robust, well-structured, and compliant with standard full-stack patterns.
+- INTERCONNECTIVITY: You MUST properly connect all generated files to each other so the full-stack application works out-of-the-box. (e.g., React frontend MUST fetch from FastAPI/Node backend endpoints; Backend MUST connect to and query the Database). The user should NEVER have to manually link or connect files you generated.
 - If using Supabase for DB/Auth:
   - Python: Use `from supabase import create_client, Client`, initialize with `os.getenv("SUPABASE_URL")` and `os.getenv("SUPABASE_KEY")`.
   - JS/TS: Use `import { createClient } from '@supabase/supabase-js'`.
+- NEVER generate a mocked UI. The UI MUST talk to the actual backend REST API.
+- ERROR RECOVERY: If fixing a bug from the Debugger or Reviewer, you are allowed to modify and output ANY affected files. SURGICALLY modify only the files that need fixing. DO NOT rewrite files unnecessarily if they don't need changes.
 """
 
 

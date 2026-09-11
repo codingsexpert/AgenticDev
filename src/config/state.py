@@ -64,6 +64,7 @@ def reduce_token_usage(existing: Dict[str, Any], incoming: Optional[Dict[str, An
 class AgentState(TypedDict, total=False):
     # User Input
     userRequirement: str
+    chatHistory: Annotated[List[Any], reduce_conversation]
 
     # PM Agent
     pmStatus: str  # idle | needs_clarification | spec_ready
@@ -127,47 +128,12 @@ class AgentState(TypedDict, total=False):
     error: Optional[str]
 
 
-def create_initial_state(user_requirement: str = "", token_budget: float = 2.0) -> AgentState:
+def create_initial_state(user_requirement: str = "", chat_history: List[Any] = None, token_budget: float = 2.0) -> AgentState:
     return {
         "userRequirement": user_requirement,
+        "chatHistory": chat_history or [],
         "pmStatus": "idle",
-        "pmQuestions": [],
-        "pmConversation": [],
-        "clarifiedSpec": None,
-        "blueprint": {
-            "entities": [],
-            "dbSchema": {},
-            "apiEndpoints": [],
-            "frontendPages": [],
-            "folderStructure": "",
-            "dependencies": {},
-        },
-        "blueprintValidation": {"isValid": False, "issues": [], "validationCycles": 0},
-        "taskQueue": {"phases": []},
-        "currentPhaseIndex": 0,
-        "currentTaskIndex": 0,
-        "fileRegistry": [],
-        "projectPatterns": {
-            "errorHandling": "",
-            "namingConvention": "",
-            "responseFormat": "",
-            "importStyle": "",
-            "stateManagement": "",
-            "commentStyle": "",
-        },
-        "sandboxId": "",
-        "sandboxHealthy": False,
-        "currentTask": None,
-        "taskStatuses": {},
-        "contextPackage": None,
-        "coderOutput": None,
-        "reviewResult": {"verdict": "", "issues": [], "reviewCycle": 0},
-        "executionResult": {"result": "", "output": "", "errors": ""},
-        "debugState": {"tier": 1, "attempts": 0, "maxAttempts": 3, "rollbackAttempted": False},
-        "userFeedback": [],
-        "feedbackIteration": 0,
-        "maxFeedbackIterations": 3,
-        "scopeDrift": 0.0,
+        "tokenBudget": token_budget,
         "userSatisfied": False,
         "deploymentConfig": {"platform": "", "files": [], "instructions": []},
         "deploymentAttempts": 0,

@@ -22,10 +22,32 @@ from src.routes import (
     rag_router,
     system_router,
 )
+from src.routes.billing import router as billing_router
 from src.routes.auth import load_users, save_users, hash_password
 from src.routes.sandboxes import _sanitize_sandbox_env
+from src.utils.sandbox_manager import cleanup_old_sandboxes
+from contextlib import asynccontextmanager
+import asyncio
 
-app = FastAPI(title="AI Dev Team Web Dashboard")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Start background GC task
+    async def run_gc():
+        while True:
+            try:
+                # Cleanup sandboxes older than 24 hours
+                await asyncio.to_thread(cleanup_old_sandboxes, 24)
+            except Exception as e:
+                print(f"GC Error: {e}")
+            # Sleep for 1 hour
+            await asyncio.sleep(3600)
+    
+    gc_task = asyncio.create_task(run_gc())
+    yield
+    # Shutdown: Cancel GC task
+    gc_task.cancel()
+
+app = FastAPI(title="AI Dev Team Web Dashboard", lifespan=lifespan)
 
 # 1. GZip Compression Middleware (for responses >= 1KB)
 app.add_middleware(GZipMiddleware, minimum_size=1000)
@@ -77,6 +99,7 @@ app.include_router(sandboxes_router)
 app.include_router(projects_router)
 app.include_router(rag_router)
 app.include_router(system_router)
+app.include_router(billing_router)
 
 # 6. Serve Frontend Static Assets if Built
 frontend_dist = os.path.join(os.getcwd(), "frontend", "dist")

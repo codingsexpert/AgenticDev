@@ -18,7 +18,9 @@ GOAL: Analyze the user's project requirement and ALWAYS generate a complete proj
 
 RULES:
 - NEVER return "needs_clarification" or ask questions.
-- Make intelligent, reasonable assumptions for any underspecified details (e.g. tech stack, UI layout, pages, database schemas) and list them under "assumptions".
+- CRITICAL: You MUST ALWAYS generate a complete FULL-STACK specification (Frontend, Backend, Database) even if the user only asks for a simple feature (like a "todo list" or "button"). 
+- Default to a robust stack if none is specified: React (Vite) for frontend, Python FastAPI for backend, and SQLite for database.
+- Make intelligent, reasonable assumptions for any underspecified details (e.g. UI layout, pages, database schemas) and list them under "assumptions".
 - ALWAYS return "status": "spec_ready".
 
 OUTPUT FORMAT — You MUST return JSON with "status": "spec_ready":
@@ -61,11 +63,30 @@ def pm_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
 
     user_req = state.get("userRequirement", "")
     conversation = state.get("pmConversation", [])
+    sandbox_id = state.get("sandboxId")
+    workspace_context = ""
+    
+    if sandbox_id:
+        from src.utils.sandbox_manager import get_sandbox_workspace_context
+        workspace_context = get_sandbox_workspace_context(sandbox_id)
+        if workspace_context:
+            workspace_context = f"\n{workspace_context}\nCRITICAL: A project ALREADY EXISTS. Your job is to modify or update this existing project based on the user requirement, NOT to build from scratch.\n"
+
+    chat_history = state.get("chatHistory", [])
+    chat_context = ""
+    if chat_history:
+        chat_context = "PREVIOUS CHAT HISTORY (Last 10 turns):\n"
+        recent_history = chat_history[-10:] if len(chat_history) > 10 else chat_history
+        for msg in recent_history:
+            role = msg.get("role", "user")
+            content = msg.get("content", "")
+            chat_context += f"{role.upper()}: {content}\n"
+        chat_context += "\n"
 
     if not conversation:
-        user_prompt = f'User\'s project requirement:\n"{user_req}"'
+        user_prompt = f'{workspace_context}\n{chat_context}User\'s project requirement:\n"{user_req}"'
     else:
-        user_prompt = f'Original requirement:\n"{user_req}"\n\nConversation history:\n'
+        user_prompt = f'{workspace_context}\n{chat_context}Original requirement:\n"{user_req}"\n\nConversation history:\n'
         for entry in conversation:
             if isinstance(entry, dict):
                 if entry.get("role") == "pm":

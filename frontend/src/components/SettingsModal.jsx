@@ -16,7 +16,8 @@ import {
   Sparkles,
   LogOut,
   Sliders,
-  Lock
+  Lock,
+  Rocket
 } from 'lucide-react';
 import { useToast } from './Toast';
 
@@ -34,7 +35,9 @@ export default function SettingsModal({
   // Model Settings State
   const [selectedModel, setSelectedModel] = useState('gemini-2.0-flash');
   const [geminiApiKey, setGeminiApiKey] = useState('');
+  const [langsmithApiKey, setLangsmithApiKey] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
+  const [showLangsmithKey, setShowLangsmithKey] = useState(false);
 
   // Guardrail Settings State
   const [inputGuardrail, setInputGuardrail] = useState(true);
@@ -43,17 +46,24 @@ export default function SettingsModal({
 
   // Budget Settings State
   const [tokenBudget, setTokenBudget] = useState(2.0);
+  
+  // Deploy Settings State
+  const [vercelToken, setVercelToken] = useState('');
 
   const [savedStatus, setSavedStatus] = useState(false);
 
   useEffect(() => {
     const savedApiKey = localStorage.getItem('pixlexpert_gemini_key') || '';
+    const savedLangsmithKey = localStorage.getItem('pixlexpert_langsmith_key') || '';
     const savedModel = localStorage.getItem('pixlexpert_model') || 'gemini-2.0-flash';
     const savedBudget = localStorage.getItem('pixlexpert_budget') || '2.0';
+    const savedVercelToken = localStorage.getItem('pixlexpert_vercel_token') || '';
 
     setGeminiApiKey(savedApiKey);
+    setLangsmithApiKey(savedLangsmithKey);
     setSelectedModel(savedModel);
     setTokenBudget(parseFloat(savedBudget));
+    setVercelToken(savedVercelToken);
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -61,8 +71,10 @@ export default function SettingsModal({
   const handleSaveSettings = async (e) => {
     e.preventDefault();
     localStorage.setItem('pixlexpert_gemini_key', geminiApiKey);
+    localStorage.setItem('pixlexpert_langsmith_key', langsmithApiKey);
     localStorage.setItem('pixlexpert_model', selectedModel);
     localStorage.setItem('pixlexpert_budget', tokenBudget.toString());
+    localStorage.setItem('pixlexpert_vercel_token', vercelToken);
 
     try {
       await fetch('/api/memory/preferences', {
@@ -165,6 +177,18 @@ export default function SettingsModal({
             </button>
 
             <button
+              onClick={() => setActiveTab('deploy')}
+              className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === 'deploy'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+              }`}
+            >
+              <Rocket className="w-4 h-4 shrink-0" />
+              <span>Deploy Integration</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('account')}
               className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'account'
@@ -246,6 +270,33 @@ export default function SettingsModal({
                     </button>
                   </div>
                 </div>
+
+                <div className="pt-4 border-t border-slate-100">
+                  <h3 className="font-bold text-sm text-slate-900 mb-1 flex items-center space-x-2">
+                    <Sliders className="w-4 h-4 text-emerald-500" />
+                    <span>LangSmith API Key (Optional)</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 mb-3">
+                    Provide your LangSmith API key for tracing and monitoring agent graphs.
+                  </p>
+
+                  <div className="relative">
+                    <input
+                      type={showLangsmithKey ? 'text' : 'password'}
+                      value={langsmithApiKey}
+                      onChange={(e) => setLangsmithApiKey(e.target.value)}
+                      placeholder="lsv2_pt_..."
+                      className="w-full pl-3.5 pr-10 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-500 transition-all font-mono"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowLangsmithKey(!showLangsmithKey)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      {showLangsmithKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -308,43 +359,54 @@ export default function SettingsModal({
               <div className="space-y-6">
                 <div>
                   <h3 className="font-bold text-sm text-slate-900 mb-1 flex items-center space-x-2">
-                    <DollarSign className="w-4 h-4 text-indigo-600" />
-                    <span>Cost & Token Budget Controls</span>
+                    <DollarSign className="w-4 h-4 text-emerald-600" />
+                    <span>Real-Time Account Balance & Billing</span>
                   </h3>
                   <p className="text-xs text-slate-500 mb-4">
-                    Set budget caps to prevent unexpected API costs during autonomous multi-agent loops.
+                    Your secure token budget managed via Stripe backend integration.
                   </p>
 
-                  <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-4">
+                  <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs text-indigo-950">Max Task Token Budget</span>
-                      <span className="text-sm font-black text-indigo-600">${tokenBudget.toFixed(2)} USD</span>
+                      <span className="font-bold text-xs text-emerald-950">Available Token Balance</span>
+                      <span className="text-sm font-black text-emerald-600">
+                        ${user?.token_budget != null ? user.token_budget.toFixed(2) : tokenBudget.toFixed(2)} USD
+                      </span>
                     </div>
 
-                    <input
-                      type="range"
-                      min="0.50"
-                      max="10.00"
-                      step="0.50"
-                      value={tokenBudget}
-                      onChange={(e) => setTokenBudget(parseFloat(e.target.value))}
-                      className="w-full accent-indigo-600 cursor-pointer"
-                    />
-
-                    <div className="flex justify-between text-[10px] text-slate-400 font-medium">
-                      <span>$0.50 Min</span>
-                      <span>$5.00 Standard</span>
-                      <span>$10.00 Max</span>
+                    <div className="pt-2">
+                      <button
+                        onClick={async () => {
+                          try {
+                            const res = await fetch('/api/billing/create-checkout', {
+                              method: 'POST',
+                              headers: { 'Authorization': `Bearer ${localStorage.getItem('session_token')}` }
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.url) {
+                              window.location.href = data.url;
+                            } else {
+                              toast.error(data.detail || "Failed to initiate Stripe Checkout");
+                            }
+                          } catch (e) {
+                            toast.error("Failed to connect to billing server.");
+                          }
+                        }}
+                        className="w-full flex justify-center items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold transition-colors shadow-sm"
+                      >
+                        <DollarSign className="w-4 h-4" />
+                        <span>Top up $10 with Stripe</span>
+                      </button>
                     </div>
                   </div>
 
                   <div className="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 flex justify-between items-center">
                     <div>
-                      <h4 className="font-bold text-xs text-slate-900">Current Session Cost</h4>
-                      <p className="text-[11px] text-slate-500">Tracked via LiteLLM token usage counters</p>
+                      <h4 className="font-bold text-xs text-slate-900">Total Lifetime Cost</h4>
+                      <p className="text-[11px] text-slate-500">Tracked securely via backend</p>
                     </div>
-                    <span className="font-mono text-sm font-bold text-emerald-600">
-                      ${(tokenUsage?.estimatedCost || 0).toFixed(4)} USD
+                    <span className="font-mono text-sm font-bold text-slate-600">
+                      ${user?.total_cost != null ? user.total_cost.toFixed(4) : "0.0000"} USD
                     </span>
                   </div>
                 </div>
@@ -393,6 +455,47 @@ export default function SettingsModal({
                         <span>Sign In</span>
                       </button>
                     )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'deploy' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900 mb-1">
+                    Deployment Integrations
+                  </h3>
+                  <p className="text-xs text-slate-500 mb-4">
+                    Connect your Vercel account to enable one-click deployments and live preview URLs directly in the dashboard.
+                  </p>
+
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-700 flex items-center space-x-1.5">
+                        <Rocket className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Vercel API Token</span>
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showApiKey ? "text" : "password"}
+                          value={vercelToken}
+                          onChange={(e) => setVercelToken(e.target.value)}
+                          placeholder="Paste your Vercel token (e.g., k3y...)"
+                          className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm font-mono transition-all"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowApiKey(!showApiKey)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                        >
+                          {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-slate-400 mt-1">
+                        Get your token from the <a href="https://vercel.com/account/tokens" target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:underline">Vercel Dashboard</a>. We store this locally in your browser.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

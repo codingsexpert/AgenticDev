@@ -18,7 +18,7 @@ STRICT NAMING CONVENTION:
 # STEP 1
 STEP1_PROMPT = f"""You are the Architect Agent in an AI software development team.
 GOAL: Identify ALL entities and relationships, AND generate a standard naming map.
-CRITICAL: Tailor your design to the user's specific tech stack. If the user asks for a simple static site (HTML/CSS/JS) without a backend, DO NOT design database tables or APIs. Leave them empty if not needed.
+CRITICAL: ALWAYS design a complete FULL-STACK architecture (Frontend, Backend, Database) regardless of the simplicity of the user's request. Never leave these empty.
 
 {NAMING_RULES}
 
@@ -42,7 +42,7 @@ OUTPUT FORMAT (strict JSON):
 STEP2_PROMPT = f"""You are the Architect Agent designing the database schema.
 
 {NAMING_RULES}
-CRITICAL: If the user requested a purely frontend or static app (e.g. HTML/CSS/JS) with no backend, set "databaseType" to "None" and leave "tables" empty.
+CRITICAL: ALWAYS design a robust database schema with necessary tables, even for simple apps like a "todo list". Set "databaseType" to a relational or NoSQL DB (e.g. SQLite, PostgreSQL).
 
 OUTPUT FORMAT (strict JSON):
 {{
@@ -67,7 +67,7 @@ OUTPUT FORMAT (strict JSON):
 STEP3_PROMPT = f"""You are the Architect Agent designing REST API endpoints.
 
 {NAMING_RULES}
-CRITICAL: If the user requested a purely frontend or static app with no backend, leave "apiEndpoints" empty.
+CRITICAL: ALWAYS design fully functional REST API endpoints to support the frontend and database interactions. Never leave "apiEndpoints" empty.
 
 OUTPUT FORMAT (strict JSON):
 {{
@@ -106,9 +106,7 @@ OUTPUT FORMAT (strict JSON):
 
 # STEP 5
 STEP5_PROMPT = """You are the Architect Agent generating project structure and dependencies.
-CRITICAL: Tailor the folder structure and dependencies to the requested tech stack. 
-- If the user asked for a simple HTML/CSS/JS app, do NOT create 'backend' or 'frontend' folders. Just place files like 'index.html', 'style.css', 'script.js' in the root structure.
-- If it's a full-stack app, use 'backend' and 'frontend' modules.
+CRITICAL: ALWAYS generate a complete Full-Stack folder structure. You MUST include both 'backend' and 'frontend' modules. Do not generate a simple flat HTML/JS structure.
 
 OUTPUT FORMAT (strict JSON):
 {

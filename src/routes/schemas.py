@@ -13,6 +13,9 @@ class ProjectStartRequest(BaseModel):
     database: Optional[str] = "supabase"
     tokenBudget: Optional[float] = 2.0
     attachments: Optional[List[Dict[str, Any]]] = None
+    thread_id: Optional[str] = None
+    messages: Optional[List[Dict[str, Any]]] = None
+    langsmithApiKey: Optional[str] = None
 
 
 class ChatMessage(BaseModel):

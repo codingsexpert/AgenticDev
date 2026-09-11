@@ -8,6 +8,7 @@ Handles file operations, local process execution, and Git snapshots.
 import os
 import re
 import shutil
+import time
 import secrets
 import subprocess
 import resource
@@ -16,6 +17,29 @@ from src.guardrails.execution_guardrail import is_safe_sandbox_path, validate_sa
 from src.guardrails.output_guardrail import redact_sensitive_keys
 
 _sandboxes: Dict[str, Dict[str, Any]] = {}
+
+
+def cleanup_old_sandboxes(max_age_hours: int = 24):
+    """Deletes sandbox directories that have not been modified recently."""
+    base_dir = get_sandbox_base_dir()
+    if not os.path.exists(base_dir):
+        return
+    
+    current_time = time.time()
+    max_age_seconds = max_age_hours * 3600
+    
+    for item in os.listdir(base_dir):
+        item_path = os.path.join(base_dir, item)
+        if os.path.isdir(item_path) and item.startswith("sandbox-"):
+            try:
+                mtime = os.path.getmtime(item_path)
+                if current_time - mtime > max_age_seconds:
+                    shutil.rmtree(item_path)
+                    if item in _sandboxes:
+                        del _sandboxes[item]
+                    print(f"🗑️ Cleaned up old sandbox: {item}")
+            except Exception as e:
+                print(f"Failed to cleanup sandbox {item}: {e}")
 
 
 def get_sandbox_base_dir() -> str:
@@ -220,10 +244,18 @@ def get_sandbox_workspace_context(sandbox_id: str, max_files: int = 12) -> str:
     context_str = "[ACTIVE PROJECT WORKSPACE FILES ON DISK]\n"
     context_str += "The following files currently exist in the user's active sandbox workspace. Use these as reference for follow-ups, refactoring, or code edits:\n"
 
+    max_chars = 40000
+    current_chars = len(context_str)
+
     for rel_path in code_files[:max_files]:
         content = read_file(sandbox_id, rel_path)
         if content and len(content.strip()) > 0:
-            context_str += f"\n--- File: {rel_path} ---\n{content.strip()}\n"
+            file_content = f"\n--- File: {rel_path} ---\n{content.strip()}\n"
+            if current_chars + len(file_content) > max_chars:
+                context_str += f"\n--- File: {rel_path} ---\n[CONTENT TRUNCATED: File too large to fit in context limit]\n"
+            else:
+                context_str += file_content
+                current_chars += len(file_content)
 
     return context_str
 

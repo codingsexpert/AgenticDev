@@ -110,6 +110,8 @@ def auth_signup(req: AuthSignUpRequest, request: Request):
         "token": session_token,
         "token_expires_at": expires_at,
         "avatar": f"https://api.dicebear.com/7.x/avataaars/svg?seed={req.name.strip()}",
+        "token_budget": 5.0,
+        "total_cost": 0.0,
         "created_at": time.time(),
     }
     users[email_key] = user_obj
@@ -123,6 +125,8 @@ def auth_signup(req: AuthSignUpRequest, request: Request):
         "avatar": user_obj["avatar"],
         "token": session_token,
         "expires_at": expires_at,
+        "token_budget": user_obj.get("token_budget", 5.0),
+        "total_cost": user_obj.get("total_cost", 0.0),
         "created_at": user_obj["created_at"]
     }
     return {"message": "Account created successfully", "user": user_data, "token": session_token}
@@ -164,6 +168,8 @@ def auth_login(req: AuthLoginRequest, request: Request):
         "avatar": user_obj["avatar"],
         "token": session_token,
         "expires_at": expires_at,
+        "token_budget": user_obj.get("token_budget", 5.0),
+        "total_cost": user_obj.get("total_cost", 0.0),
         "created_at": user_obj.get("created_at", time.time())
     }
     return {"message": "Logged in successfully", "user": user_data, "token": session_token}
@@ -211,6 +217,8 @@ def auth_google(req: GoogleAuthRequest):
             "provider": "google",
             "token": session_token,
             "avatar": req.avatar or f"https://api.dicebear.com/7.x/avataaars/svg?seed={user_name}",
+            "token_budget": 5.0,
+            "total_cost": 0.0,
             "created_at": time.time(),
         }
         users[email_key] = user_obj
@@ -228,6 +236,8 @@ def auth_google(req: GoogleAuthRequest):
         "avatar": user_obj["avatar"],
         "provider": "google",
         "token": session_token,
+        "token_budget": user_obj.get("token_budget", 5.0),
+        "total_cost": user_obj.get("total_cost", 0.0),
         "created_at": user_obj.get("created_at", time.time())
     }
     return {"message": "Google authentication successful", "user": user_data, "token": session_token}
@@ -277,7 +287,7 @@ def auth_reset_password(req: ResetPasswordRequest):
         
     salt = secrets.token_hex(16)
     user_obj["salt"] = salt
-    user_obj["password_hash"] = hash_password(req.new_password.strip(), salt)
+    user_obj["password_hash"] = hash_password(req.new_password, salt)
     user_obj.pop("reset_token", None)
     user_obj.pop("reset_token_expires", None)
     
@@ -285,4 +295,30 @@ def auth_reset_password(req: ResetPasswordRequest):
     save_users(users)
     save_user_profile(user_obj)
     
-    return {"status": "success", "message": "Password reset successfully. You can now sign in with your new password."}
+    return {"status": "success", "message": "Password has been successfully reset. You can now login with your new password."}
+
+
+@router.get("/me")
+def auth_me(user: Dict[str, Any] = Depends(get_current_user_optional)):
+    if not user.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    users = load_users()
+    email_key = user.get("email", "").lower()
+    user_obj = users.get(email_key)
+    
+    if not user_obj:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    return {
+        "status": "success",
+        "user": {
+            "id": user_obj.get("id"),
+            "name": user_obj.get("name"),
+            "email": user_obj.get("email"),
+            "avatar": user_obj.get("avatar"),
+            "token_budget": user_obj.get("token_budget", 5.0),
+            "total_cost": user_obj.get("total_cost", 0.0),
+            "created_at": user_obj.get("created_at")
+        }
+    }

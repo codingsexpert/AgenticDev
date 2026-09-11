@@ -34,7 +34,8 @@ import {
   ClipboardList,
   Globe,
   Plus,
-  Settings
+  Settings,
+  Download
 } from 'lucide-react';
 
 export default function App() {
@@ -121,9 +122,24 @@ export default function App() {
 
   useEffect(() => {
     const savedUser = localStorage.getItem('pixlexpert_user');
+    const token = localStorage.getItem('pixlexpert_token');
     if (savedUser) {
       try {
-        setUser(JSON.parse(savedUser));
+        const parsed = JSON.parse(savedUser);
+        setUser(parsed);
+        if (token) {
+          fetch('/api/auth/me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.user) {
+              const mergedUser = { ...parsed, ...data.user };
+              setUser(mergedUser);
+              localStorage.setItem('pixlexpert_user', JSON.stringify(mergedUser));
+            }
+          }).catch(console.error);
+        }
       } catch (e) { }
     }
   }, []);
@@ -409,7 +425,13 @@ export default function App() {
       fetch('/api/projects/start', {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ requirement: promptText, model: modelName }),
+        body: JSON.stringify({ 
+          requirement: promptText, 
+          model: modelName,
+          thread_id: activeThread,
+          messages: updatedMessages,
+          langsmithApiKey: localStorage.getItem('pixlexpert_langsmith_key') || null
+        }),
         signal: controller.signal,
       })
         .then((res) => res.json())
@@ -625,8 +647,20 @@ export default function App() {
             </div>
           </div>
 
-          {/* Right Header Quick Actions - Profile Section ONLY */}
-          <div className="flex items-center space-x-2 shrink-0">
+          {/* Right Header Quick Actions */}
+          <div className="flex items-center space-x-3 shrink-0">
+            {currentThreadId && (
+              <a
+                href={`/api/projects/${currentThreadId}/download`}
+                download={`project_${currentThreadId}.zip`}
+                title="Download Project Workspace"
+                className="p-1.5 px-3 rounded-lg border border-slate-200 hover:bg-indigo-50 text-indigo-600 transition-all cursor-pointer flex items-center space-x-1.5 shadow-sm bg-white"
+              >
+                <Download className="w-4 h-4" />
+                <span className="text-xs font-medium hidden sm:inline">Download</span>
+              </a>
+            )}
+
             {/* ChatGPT-Style User Profile Avatar Button (ONLY Photo Avatar, No Name) */}
             <div className="relative" ref={userMenuRef}>
               <button

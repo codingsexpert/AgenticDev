@@ -10,6 +10,10 @@ def setup_sandbox_node(state: Dict[str, Any]) -> Dict[str, Any]:
     print("\n [Setup Sandbox] Creating local filesystem sandbox workspace...\n")
     blueprint = state.get("blueprint", {})
 
+    if state.get("sandboxId"):
+        print(f"\n [Setup Sandbox] Existing sandbox detected: {state.get('sandboxId')}. Skipping creation.\n")
+        return {}
+
     folder_struct = blueprint.get("folderStructure")
     dependencies = blueprint.get("dependencies")
     db_schema = blueprint.get("dbSchema")

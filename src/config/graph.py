@@ -3,7 +3,8 @@ graph.py — LangGraph Python Definition with Full Dev Loop (27 Nodes)
 """
 
 from langgraph.graph import StateGraph, START, END
-from langgraph.checkpoint.memory import MemorySaver
+from langgraph.checkpoint.sqlite import SqliteSaver
+import sqlite3
 
 from src.config.state import AgentState
 
@@ -52,7 +53,7 @@ from src.nodes.deployment_verifier import deployment_verifier_node, deployment_v
 
 def build_graph(options: dict = None):
     options = options or {}
-    checkpointer = options.get("checkpointer") or MemorySaver()
+    checkpointer = options.get("checkpointer") or create_checkpointer()
 
     graph = StateGraph(AgentState)
 
@@ -98,12 +99,6 @@ def build_graph(options: dict = None):
     graph.add_edge(START, "pmAgent")
 
     def pm_router(state: AgentState):
-        import re
-        req = (state.get("userRequirement") or "").lower()
-        simple_pattern = r"\b(html|css|simple|landing\s+page|single\s+page|component|button)\b"
-        if re.search(simple_pattern, req, re.IGNORECASE):
-            # Skip heavy architecture for simple tasks; go straight to task planning
-            return "plannerAgent"
         return "architectStep1"
 
     graph.add_conditional_edges("pmAgent", pm_router, {
@@ -223,4 +218,7 @@ def build_graph(options: dict = None):
 
 
 def create_checkpointer():
-    return MemorySaver()
+    conn = sqlite3.connect("checkpoints.sqlite", check_same_thread=False)
+    saver = SqliteSaver(conn)
+    saver.setup()
+    return saver
