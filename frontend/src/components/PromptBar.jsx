@@ -352,7 +352,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
       <div className="gemini-border-wrapper w-full mt-2">
         <form
           onSubmit={handleSubmit}
-          className="clean-glass-card p-4 rounded-2xl relative w-full bg-white/95"
+          className="clean-glass-card p-4 rounded-2xl relative w-full inner-prompt-glow"
         >
         {/* Attachments Preview Area */}
         {attachments.length > 0 && (
