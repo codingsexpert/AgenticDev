@@ -115,6 +115,7 @@ select {
   animation: spin-angle 10s linear infinite;
   pointer-events: none;
   z-index: 2;
+  opacity: 0.5; /* Reduced opacity */
 }
 
 /* Blurred outer glow */
@@ -125,7 +126,7 @@ select {
   border-radius: 1.2rem;
   background: conic-gradient(from var(--angle) at 50% 50%, #ff3b82, #8b5cf6, #3b82f6, #10b981, #f59e0b, #ff3b82);
   filter: blur(14px);
-  opacity: 0.65;
+  opacity: 0.3; /* Significantly reduced opacity */
   animation: spin-angle 10s linear infinite;
   z-index: -1;
   pointer-events: none;
