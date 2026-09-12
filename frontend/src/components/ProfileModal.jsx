@@ -31,8 +31,8 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser, onLo
   const fileInputRef = useRef(null);
 
   // Form fields
-  const [name, setName] = useState(user?.name || 'Mukesh Singh');
-  const [email, setEmail] = useState(user?.email || 'mukesh@gmail.com');
+  const [name, setName] = useState(user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
   const [avatar, setAvatar] = useState(() => {
     if (user?.avatar && !user.avatar.includes('dicebear.com')) {
       return user.avatar;

@@ -769,9 +769,9 @@ export default function App() {
                     </div>
                     <div className="truncate text-left leading-tight flex-1">
                       <div className="font-bold text-xs text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
-                        {user?.name || 'Mukesh Singh'}
+                        {user?.name || 'Developer'}
                       </div>
-                      <div className="text-[11px] text-slate-500 font-medium truncate">{user?.email || 'mukesh@gmail.com'}</div>
+                      <div className="text-[11px] text-slate-500 font-medium truncate">{user?.email || 'guest@dev.local'}</div>
                     </div>
                     <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
                       PRO
@@ -911,7 +911,7 @@ export default function App() {
               <div className="w-full flex flex-col items-center justify-center my-auto py-4">
                 {/* Flowing Crisp Greeting */}
                 <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-2 text-center">
-                  Good morning, Mukesh
+                  Good morning{user?.name ? `, ${user.name.split(' ')[0]}` : ''}
                 </h1>
 
                 {/* Short Description */}

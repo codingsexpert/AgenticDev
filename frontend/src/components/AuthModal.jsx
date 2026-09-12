@@ -289,7 +289,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Mukesh Singh"
+                    placeholder="John Doe"
                     className="w-full bg-slate-50/80 border border-slate-200/80 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all font-sans"
                   />
                 </div>

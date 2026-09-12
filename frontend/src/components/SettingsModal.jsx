@@ -433,8 +433,8 @@ export default function SettingsModal({
                         )}
                       </div>
                       <div>
-                        <h4 className="font-bold text-sm text-slate-900">{user?.name || 'Mukesh Singh'}</h4>
-                        <p className="text-xs text-slate-500">{user?.email || 'mukesh@gmail.com'}</p>
+                        <h4 className="font-bold text-sm text-slate-900">{user?.name || 'Developer'}</h4>
+                        <p className="text-xs text-slate-500">{user?.email || 'guest@dev.local'}</p>
                       </div>
                     </div>
 

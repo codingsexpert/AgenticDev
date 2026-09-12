@@ -46,46 +46,13 @@ export default function RightSidebar({ projects = [], onSelectProject, onPromptA
     fetchSysStatus();
   }, []);
 
-  const defaultRecentChats = [
-    {
-      thread_id: 'chat-1',
-      title: 'Build a calculator app',
-      time: '2 hours ago',
-      icon: Code2,
-      color: 'bg-indigo-50 text-indigo-600 border-indigo-100'
-    },
-    {
-      thread_id: 'chat-2',
-      title: 'Explain React hooks',
-      time: '4 hours ago',
-      icon: MessageSquare,
-      color: 'bg-purple-50 text-purple-600 border-purple-100'
-    },
-    {
-      thread_id: 'chat-3',
-      title: 'Fix this code error',
-      time: '6 hours ago',
-      icon: Code2,
-      color: 'bg-blue-50 text-blue-600 border-blue-100'
-    },
-    {
-      thread_id: 'chat-4',
-      title: 'Summarize this document',
-      time: '8 hours ago',
-      icon: FileText,
-      color: 'bg-emerald-50 text-emerald-600 border-emerald-100'
-    },
-  ];
-
-  const recentChats = safeProjects.length > 0
-    ? safeProjects.slice(0, 4).map((p, idx) => ({
-      thread_id: p.thread_id,
-      title: p.title || p.requirement || 'Chat Session',
-      time: p.updated_at ? new Date(p.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recently',
-      icon: idx % 2 === 0 ? Code2 : MessageSquare,
-      color: idx % 3 === 0 ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : idx % 3 === 1 ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-blue-50 text-blue-600 border-blue-100'
-    }))
-    : defaultRecentChats;
+  const recentChats = safeProjects.slice(0, 4).map((p, idx) => ({
+    thread_id: p.thread_id,
+    title: p.title || p.requirement || 'Chat Session',
+    time: p.updated_at ? new Date(p.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recently',
+    icon: idx % 2 === 0 ? Code2 : MessageSquare,
+    color: idx % 3 === 0 ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : idx % 3 === 1 ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-blue-50 text-blue-600 border-blue-100'
+  }));
 
   const quickStarters = [
     { id: 'qs-1', title: 'Fullstack React App', prompt: 'Build a responsive fullstack React component with state management', icon: Code2, color: 'bg-blue-50 text-blue-600 border-blue-100' },

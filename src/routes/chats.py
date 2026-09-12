@@ -698,14 +698,14 @@ function calculateResult() { try { currentInput = eval(currentInput).toString();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mukesh Singh | Developer & AI Engineer</title>
+    <title>Developer Portfolio | Full-Stack & AI Engineer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen">
     <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <span class="font-extrabold text-indigo-400 text-lg tracking-tight">Mukesh.dev</span>
+            <span class="font-extrabold text-indigo-400 text-lg tracking-tight">Portfolio.dev</span>
             <div class="flex items-center space-x-6 text-sm font-medium text-slate-300">
                 <a href="#about" class="hover:text-white transition-colors">About</a>
                 <a href="#projects" class="hover:text-white transition-colors">Projects</a>
@@ -728,7 +728,7 @@ function calculateResult() { try { currentInput = eval(currentInput).toString();
                 </div>
             </div>
             <div class="w-64 h-64 sm:w-80 sm:h-80 rounded-3xl bg-gradient-to-tr from-indigo-600 to-indigo-400 p-1 shadow-2xl shadow-indigo-500/20">
-                <div class="w-full h-full bg-slate-900 rounded-[22px] flex items-center justify-center text-5xl font-extrabold text-indigo-400">MS</div>
+                <div class="w-full h-full bg-slate-900 rounded-[22px] flex items-center justify-center text-5xl font-extrabold text-indigo-400">DEV</div>
             </div>
         </section>
 
@@ -765,13 +765,13 @@ function calculateResult() { try { currentInput = eval(currentInput).toString();
             <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Let's Work Together</h2>
             <p class="text-slate-400 text-sm max-w-lg mx-auto">Have a project in mind or looking for a developer? Feel free to reach out anytime!</p>
             <div class="pt-4">
-                <a href="mailto:mukesh@example.com" class="inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3.5 rounded-xl transition-all shadow-xl shadow-indigo-600/30">mukesh@example.com</a>
+                <a href="mailto:dev@example.com" class="inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3.5 rounded-xl transition-all shadow-xl shadow-indigo-600/30">dev@example.com</a>
             </div>
         </section>
     </main>
 
     <footer class="border-t border-slate-800/80 text-center py-6 text-xs text-slate-500">
-        © 2026 Mukesh Singh. All rights reserved.
+        © 2026 Developer Portfolio. All rights reserved.
     </footer>
 </body>
 </html>

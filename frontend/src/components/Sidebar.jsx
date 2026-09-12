@@ -204,7 +204,7 @@ export default function Sidebar({
     e?.stopPropagation();
     setOpenMenuThreadId(null);
     try {
-      const res = await fetch(`http://localhost:8000/api/chats/${chat.thread_id}`, {
+      const res = await fetch(`/api/chats/${chat.thread_id}`, {
         headers: {
           'x-user-id': user?.id || ''
         }
@@ -242,21 +242,12 @@ export default function Sidebar({
 
   const safeProjects = Array.isArray(projects) ? projects : [];
 
-  const defaultChats = [
-    { thread_id: 'chat-1', title: 'Improve AI Response Speed', time: 'Recently', mode: 'chat' },
-    { thread_id: 'chat-2', title: 'Python Array Practice', time: '2 hours ago', mode: 'chat' },
-    { thread_id: 'chat-3', title: 'AI Capabilities Overview', time: '4 hours ago', mode: 'chat' },
-    { thread_id: 'chat-4', title: 'React Hooks & State Guide', time: '6 hours ago', mode: 'chat' },
-  ];
-
-  const allChats = safeProjects.length > 0
-    ? safeProjects.map((p, idx) => ({
-        thread_id: p.thread_id,
-        title: p.title || p.requirement || 'Chat Session',
-        time: p.updated_at ? 'Recently' : `${(idx + 1) * 2} hours ago`,
-        mode: p.mode || 'chat'
-      }))
-    : defaultChats;
+  const allChats = safeProjects.map((p, idx) => ({
+    thread_id: p.thread_id,
+    title: p.title || p.requirement || 'Chat Session',
+    time: p.updated_at ? 'Recently' : `${(idx + 1) * 2} hours ago`,
+    mode: p.mode || 'chat'
+  }));
 
   // Separate pinned chats and unpinned chats
   const pinnedChats = allChats.filter((c) => pinnedThreadIds.includes(c.thread_id));
@@ -577,10 +568,10 @@ export default function Sidebar({
               </div>
               <div className="truncate text-left leading-tight">
                 <div className="font-semibold text-xs text-slate-900 truncate">
-                  {user?.name || 'Mukesh Singh'}
+                  {user?.name || 'Developer'}
                 </div>
                 <div className="text-[10px] text-slate-400 truncate">
-                  {user?.email || 'mukesh@gmail.com'}
+                  {user?.email || 'guest@dev.local'}
                 </div>
               </div>
             </div>
