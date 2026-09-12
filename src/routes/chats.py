@@ -276,6 +276,7 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
     messages = [{"role": "system", "content": system_instruction}] + contents
 
     async def generate_chunks():
+        nonlocal sandbox_id
         yield f"data: {json.dumps({'routing': task_classification.to_dict()})}\n\n"
 
         if is_simple_greeting(raw_last_user_msg):
