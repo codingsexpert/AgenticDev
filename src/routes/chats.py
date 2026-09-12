@@ -289,7 +289,7 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
             yield f"data: {json.dumps({'done': True})}\n\n"
             return
 
-        raw_model = target_model or os.getenv("LLM_MODEL", "gemini/gemini-1.5-flash")
+        raw_model = target_model or os.getenv("LLM_MODEL", "openrouter/qwen/qwen-2.5-coder-32b-instruct")
         
         model_alias_map = {
             "gemini-flash-latest": "gemini/gemini-1.5-flash",
@@ -300,21 +300,27 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
             "gemini-flash-lite-latest": "gemini/gemini-2.0-flash-lite",
             "openrouter-qwen": "openrouter/qwen/qwen-2.5-coder-32b-instruct",
         }
-        primary_model = model_alias_map.get(raw_model) or (raw_model if "/" in raw_model else f"gemini/{raw_model}")
+        primary_model = model_alias_map.get(raw_model) or (raw_model if "/" in raw_model else raw_model)
         
         env_model = os.getenv("LLM_MODEL")
         seen_models = set()
         models_to_try = []
         
-        candidate_list = [primary_model]
+        candidate_list = []
+        if os.getenv("OPENROUTER_API_KEY"):
+            candidate_list.extend([
+                "openrouter/qwen/qwen-2.5-coder-32b-instruct",
+                "openrouter/google/gemini-2.0-flash-001",
+                "openrouter/deepseek/deepseek-chat"
+            ])
+        if primary_model:
+            candidate_list.insert(0, primary_model)
         if env_model:
             candidate_list.append(env_model)
-        if os.getenv("OPENROUTER_API_KEY"):
-            candidate_list.append("openrouter/qwen/qwen-2.5-coder-32b-instruct")
         candidate_list.extend(["gemini/gemini-2.0-flash", "gemini/gemini-1.5-flash", "gemini/gemini-2.0-flash-lite", "gemini/gemini-1.5-pro"])
 
         for m in candidate_list:
-            if m not in seen_models:
+            if m and m not in seen_models:
                 seen_models.add(m)
                 models_to_try.append(m)
 

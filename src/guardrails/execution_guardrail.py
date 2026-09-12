@@ -38,7 +38,7 @@ BLOCKED_COMMANDS = [
     r"/etc/passwd",
     r"/etc/hosts",
     r"\bprintenv\b",
-    r"\benv\b\s*$",
+    r"^\s*env\s*$",
     r"cat\s+.*\.env",
     r"grep\s+.*API_KEY",
 ]

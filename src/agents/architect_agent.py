@@ -104,10 +104,12 @@ OUTPUT FORMAT (strict JSON):
 }
 """
 
-# STEP 5
 STEP5_PROMPT = """You are the Architect Agent generating project structure and setup commands.
 CRITICAL: ALWAYS generate a complete Full-Stack folder structure. You MUST include both 'backend' and 'frontend' directories if applicable.
-CRITICAL: You MUST provide an array of `setupCommands` which are the exact terminal shell commands needed to initialize the project frameworks (e.g. `npx create-react-app frontend`, `cd backend && pip install fastapi`, `cargo init`). These commands will be executed in the sandbox before writing code.
+CRITICAL RULES FOR `setupCommands`:
+- ALWAYS use `npm` (NEVER use `yarn`).
+- NEVER use `cd ..` or navigate outside subfolders.
+- Use safe initialization commands like: `mkdir -p backend frontend`, `npm init -y`, `npm install express dotenv`.
 
 OUTPUT FORMAT (strict JSON):
 {

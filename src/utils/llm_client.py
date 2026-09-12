@@ -64,98 +64,111 @@ def call_llm(
     if current_cost >= token_budget:
         raise ValueError(f"TOKEN_BUDGET_EXCEEDED: Current cost (${current_cost:.4f}) exceeded budget (${token_budget:.4f})")
 
-    target_model = model or os.getenv("LLM_MODEL", "gemini/gemini-1.5-flash")
+    primary_model = model or os.getenv("LLM_MODEL", "openrouter/qwen/qwen-2.5-coder-32b-instruct")
     
-    messages = [{"role": "system", "content": system_prompt}]
-    
-    if media_items:
-        content_arr = [{"type": "text", "text": user_prompt}]
-        for item in media_items:
-            mime = item.get("mime_type", "")
-            data = item.get("data", "")
-            if isinstance(data, bytes):
-                data = base64.b64encode(data).decode('utf-8')
-            elif isinstance(data, str) and "," in data:
-                data = data.split(",", 1)[1]
-            content_arr.append({"type": "image_url", "image_url": {"url": f"data:{mime};base64,{data}"}})
-        messages.append({"role": "user", "content": content_arr})
-    else:
-        messages.append({"role": "user", "content": user_prompt})
+    candidate_models = [primary_model]
+    if os.getenv("OPENROUTER_API_KEY"):
+        for openrouter_m in [
+            "openrouter/qwen/qwen-2.5-coder-32b-instruct",
+            "openrouter/google/gemini-2.0-flash-001",
+            "openrouter/deepseek/deepseek-chat"
+        ]:
+            if openrouter_m not in candidate_models:
+                candidate_models.append(openrouter_m)
+    for gemini_m in ["gemini/gemini-1.5-flash", "gemini/gemini-2.0-flash"]:
+        if gemini_m not in candidate_models:
+            candidate_models.append(gemini_m)
 
-    tools = [search_tool] if enable_web_search else None
+    last_exception = None
 
-    kwargs = {}
-    if schema:
-        # Ask for JSON format for broader compatibility
-        kwargs["response_format"] = {"type": "json_object"}
+    for target_model in candidate_models:
+        messages = [{"role": "system", "content": system_prompt}]
+        
+        if media_items:
+            content_arr = [{"type": "text", "text": user_prompt}]
+            for item in media_items:
+                mime = item.get("mime_type", "")
+                data = item.get("data", "")
+                if isinstance(data, bytes):
+                    data = base64.b64encode(data).decode('utf-8')
+                elif isinstance(data, str) and "," in data:
+                    data = data.split(",", 1)[1]
+                content_arr.append({"type": "image_url", "image_url": {"url": f"data:{mime};base64,{data}"}})
+            messages.append({"role": "user", "content": content_arr})
+        else:
+            messages.append({"role": "user", "content": user_prompt})
 
-    max_loops = 3
-    for loop in range(max_loops):
+        tools = [search_tool] if enable_web_search else None
+
+        kwargs = {}
+        if schema:
+            kwargs["response_format"] = {"type": "json_object"}
+
+        max_loops = 3
         try:
-            # Tell the agent to output strict JSON if schema is provided
-            if schema and loop == 0:
-                messages.append({"role": "user", "content": "IMPORTANT: You MUST return ONLY valid JSON matching the required schema. Do not return markdown blocks around the JSON."})
+            for loop in range(max_loops):
+                if schema and loop == 0:
+                    messages.append({"role": "user", "content": "IMPORTANT: You MUST return ONLY valid JSON matching the required schema. Do not return markdown blocks around the JSON."})
 
-            response = completion(
-                model=target_model,
-                messages=messages,
-                tools=tools,
-                **kwargs
-            )
-            
-            choice = response.choices[0]
-            message = choice.message
-
-            if getattr(message, "tool_calls", None):
-                # Convert message to dict format for appending as per LiteLLM/OpenAI standard
-                msg_dict = message.model_dump()
-                messages.append(msg_dict) 
+                response = completion(
+                    model=target_model,
+                    messages=messages,
+                    tools=tools,
+                    **kwargs
+                )
                 
-                for tool_call in message.tool_calls:
-                    if tool_call.function.name == "search_internet":
-                        try:
-                            args = json.loads(tool_call.function.arguments)
-                            q = args.get("query", "")
-                        except:
-                            q = tool_call.function.arguments
-                        search_res = search_internet(q)
-                        messages.append({
-                            "role": "tool",
-                            "tool_call_id": tool_call.id,
-                            "name": "search_internet",
-                            "content": search_res
-                        })
-                continue
-            
-            raw_text = message.content or "{}"
-            
-            usage = response.usage
-            prompt_tokens = usage.prompt_tokens if usage else 0
-            completion_tokens = usage.completion_tokens if usage else 0
+                choice = response.choices[0]
+                message = choice.message
 
-            parsed = parse_and_validate_json(raw_text, schema=schema)
+                if getattr(message, "tool_calls", None):
+                    msg_dict = message.model_dump()
+                    messages.append(msg_dict) 
+                    
+                    for tool_call in message.tool_calls:
+                        if tool_call.function.name == "search_internet":
+                            try:
+                                args = json.loads(tool_call.function.arguments)
+                                q = args.get("query", "")
+                            except:
+                                q = tool_call.function.arguments
+                            search_res = search_internet(q)
+                            messages.append({
+                                "role": "tool",
+                                "tool_call_id": tool_call.id,
+                                "name": "search_internet",
+                                "content": search_res
+                            })
+                    continue
+                
+                raw_text = message.content or "{}"
+                
+                usage = response.usage
+                prompt_tokens = usage.prompt_tokens if usage else 0
+                completion_tokens = usage.completion_tokens if usage else 0
 
-            try:
-                cost = litellm.completion_cost(completion_response=response)
-            except Exception:
-                cost = calculate_gemini_cost(prompt_tokens, completion_tokens)
-            
-            return {
-                "parsed": parsed,
-                "raw": raw_text,
-                "tokens": {
-                    "prompt": prompt_tokens,
-                    "completion": completion_tokens,
-                },
-                "cost": cost,
-            }
+                parsed = parse_and_validate_json(raw_text, schema=schema)
 
+                try:
+                    cost = litellm.completion_cost(completion_response=response)
+                except Exception:
+                    cost = calculate_gemini_cost(prompt_tokens, completion_tokens)
+                
+                return {
+                    "parsed": parsed,
+                    "raw": raw_text,
+                    "tokens": {
+                        "prompt": prompt_tokens,
+                        "completion": completion_tokens,
+                    },
+                    "cost": cost,
+                }
         except Exception as e:
             err_str = str(e)
-            if any(k in err_str for k in ["429", "503", "rate limit", "quota"]):
-                print(f"   ⏳ Rate limited on {target_model}. Retrying...")
-                time.sleep(2)
-                continue
-            raise e
+            print(f" ⚠️  [llm_client] Model '{target_model}' failed ({err_str[:90]}). Retrying fallback...")
+            last_exception = e
+            continue
 
-    raise Exception("Max tool call loops reached without final answer.")
+    if last_exception:
+        raise last_exception
+    raise Exception("All candidate LLM models failed without response.")
+
