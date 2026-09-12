@@ -2446,5 +2446,55 @@
     "token_budget": 5.0,
     "total_cost": 0.0,
     "created_at": 1789199896.23775
+  },
+  "auth_test_1789199896@example.com": {
+    "id": "usr_1789199896692",
+    "name": "Auth User",
+    "email": "auth_test_1789199896@example.com",
+    "salt": "72dff77f13d7e157be0916b6751ae859",
+    "password_hash": "6fff42fc143f27c3b50a2c3ec5581eed716dedbde74ca062633b930e7bde4d44",
+    "token": "pixl_jwt_bc780b4e1aa107fe6f32537c9bb7a0189d8713861b28e1dc1db80499699ac370",
+    "token_expires_at": 1789286297.543514,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Auth User",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789199896.692402
+  },
+  "logout_user_1789199898@example.com": {
+    "id": "usr_1789199898179",
+    "name": "Logout User",
+    "email": "logout_user_1789199898@example.com",
+    "salt": "2a97e00c5e63388fd8d39a5a8c1015c1",
+    "password_hash": "1b894c0ccb8ac972485b6262b1a06c3b2a298991535a90870dacd5d911763ea9",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Logout User",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789199898.179216
+  },
+  "tenant_a_1789199898@example.com": {
+    "id": "usr_1789199898708",
+    "name": "User A",
+    "email": "tenant_a_1789199898@example.com",
+    "salt": "35d40ec8150c8bee7eec0d7f1e9b9419",
+    "password_hash": "8a8f45b666c3931371c86edd940a1bc0da49d4fbc7c19e83739036460fd59670",
+    "token": "pixl_jwt_3a22bc7cd15f1db89accb063c8c83586d218eb83e370eccb484d572d166cd165",
+    "token_expires_at": 1789286298.708226,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User A",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789199898.708232
+  },
+  "tenant_b_1789199898@example.com": {
+    "id": "usr_1789199899282",
+    "name": "User B",
+    "email": "tenant_b_1789199898@example.com",
+    "salt": "5f6e4f618c38b11e089585e58e1c590b",
+    "password_hash": "cda9a571259cdae6f1f8aa9186f8d0b1bfd470100700d5e3880eb05120ccc9eb",
+    "token": "pixl_jwt_ffeea49ef43e6a425b368687fdc1001c34bec926989adbf51174d71d380791ea",
+    "token_expires_at": 1789286299.282018,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User B",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789199899.2820292
   }
 }
