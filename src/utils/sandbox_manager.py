@@ -457,9 +457,33 @@ def extract_and_write_code_files(sandbox_id: str, markdown_text: str) -> List[Di
 </html>"""
         try:
             write_file(sandbox_id, "index.html", auto_html_content)
-            written_files.append({"path": "index.html", "bytes": len(auto_html_content)})
+            written_files.append({"path": "index.html", "bytes": len(auto_html_content), "content": auto_html_content})
+            has_html = True
         except Exception:
             pass
+
+    # Auto-Link Heuristic: Ensure index.html links to style.css and script.js if present
+    has_css = any(f["path"] == "style.css" for f in written_files)
+    has_js = any(f["path"] == "script.js" for f in written_files)
+    if has_html and (has_css or has_js):
+        html_item = next((f for f in written_files if f["path"] == "index.html"), None)
+        if html_item and "content" in html_item:
+            html_text = html_item["content"]
+            modified = False
+            if has_css and "style.css" not in html_text:
+                if "</head>" in html_text:
+                    html_text = html_text.replace("</head>", '    <link rel="stylesheet" href="style.css">\n</head>')
+                    modified = True
+            if has_js and "script.js" not in html_text:
+                if "</body>" in html_text:
+                    html_text = html_text.replace("</body>", '    <script src="script.js"></script>\n</body>')
+                    modified = True
+            if modified:
+                try:
+                    write_file(sandbox_id, "index.html", html_text)
+                    html_item["content"] = html_text
+                except Exception:
+                    pass
 
     return written_files
 
