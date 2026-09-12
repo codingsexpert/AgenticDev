@@ -288,14 +288,14 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
             yield f"data: {json.dumps({'done': True})}\n\n"
             return
 
-        raw_model = target_model or os.getenv("LLM_MODEL", "gemini/gemini-2.0-flash")
+        raw_model = target_model or os.getenv("LLM_MODEL", "gemini/gemini-1.5-flash")
         
         model_alias_map = {
-            "gemini-flash-latest": "gemini/gemini-2.0-flash",
-            "gemini-2.0-flash": "gemini/gemini-2.0-flash",
+            "gemini-flash-latest": "gemini/gemini-1.5-flash",
+            "gemini-2.0-flash": "gemini/gemini-1.5-flash",
             "gemini-1.5-flash": "gemini/gemini-1.5-flash",
             "gemini-1.5-pro": "gemini/gemini-1.5-pro",
-            "gemini-3.6-flash": "gemini/gemini-2.0-flash",
+            "gemini-3.6-flash": "gemini/gemini-1.5-flash",
             "gemini-flash-lite-latest": "gemini/gemini-2.0-flash-lite",
         }
         primary_model = model_alias_map.get(raw_model) or (raw_model if "/" in raw_model else f"gemini/{raw_model}")

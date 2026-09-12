@@ -1,0 +1,46 @@
+{
+  "thread_id": "session_1789157272466",
+  "title": "build simple  to do list html cs",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "build simple  to do list html css js",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Code generation completed successfully."
+    },
+    {
+      "role": "user",
+      "content": "where is code",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Code generation completed successfully."
+    },
+    {
+      "role": "user",
+      "content": "code kaha hai bia",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Code generation completed successfully."
+    },
+    {
+      "role": "user",
+      "content": "build calculator",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Code generation completed successfully."
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_1788777734257",
+  "updated_at": 1789192532.131297
+}

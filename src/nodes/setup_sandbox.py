@@ -15,14 +15,18 @@ def setup_sandbox_node(state: Dict[str, Any]) -> Dict[str, Any]:
         return {}
 
     folder_struct = blueprint.get("folderStructure")
-    dependencies = blueprint.get("dependencies")
+    setup_commands = blueprint.get("setupCommands", [])
     db_schema = blueprint.get("dbSchema")
 
     sandbox_id = create_sandbox(
         folder_structure=folder_struct,
-        dependencies=dependencies,
         db_schema=db_schema,
     )
+
+    if setup_commands:
+        from src.utils.sandbox_manager import run_setup_commands
+        print(f"    Running {len(setup_commands)} setup commands...")
+        run_setup_commands(sandbox_id, setup_commands)
 
     print(f"    Sandbox initialized: {sandbox_id}")
     return {"sandboxId": sandbox_id}

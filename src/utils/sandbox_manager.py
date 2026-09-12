@@ -99,38 +99,8 @@ def create_sandbox(
     if folder_structure:
         scaffold_folder_structure(sandbox_path, folder_structure)
 
-    # Write dynamic package / dependency files if backend/frontend exist
-    deps = dependencies or {}
-    if "backend" in deps:
-        b_deps = deps["backend"]
-        backend_path = os.path.join(sandbox_path, "backend")
-        os.makedirs(backend_path, exist_ok=True)
-        import json
-        with open(os.path.join(backend_path, "package.json"), "w", encoding="utf-8") as f:
-            json.dump({
-                "name": b_deps.get("name", "backend"),
-                "version": "1.0.0",
-                "type": "module",
-                "main": "src/index.js",
-                "scripts": {"start": "node src/index.js", "dev": "nodemon src/index.js"},
-                "dependencies": b_deps.get("dependencies", {}),
-                "devDependencies": b_deps.get("devDependencies", {}),
-            }, f, indent=2)
-
-    if "frontend" in deps:
-        f_deps = deps["frontend"]
-        frontend_path = os.path.join(sandbox_path, "frontend")
-        os.makedirs(frontend_path, exist_ok=True)
-        import json
-        with open(os.path.join(frontend_path, "package.json"), "w", encoding="utf-8") as f:
-            json.dump({
-                "name": f_deps.get("name", "frontend"),
-                "version": "1.0.0",
-                "type": "module",
-                "scripts": {"dev": "vite", "build": "vite build", "preview": "vite preview"},
-                "dependencies": f_deps.get("dependencies", {}),
-                "devDependencies": f_deps.get("devDependencies", {}),
-            }, f, indent=2)
+    # We no longer hardcode package.json scaffolding here.
+    # The Architect Agent generates setupCommands which the Coder Agent executes dynamically.
 
     # Dynamic environment secrets (no hardcoded secrets)
     jwt_secret = os.getenv("JWT_SECRET") or secrets.token_hex(32)
@@ -338,6 +308,22 @@ def execute_command(sandbox_id: str, command: str, timeout: int = 30000) -> Dict
         return {"stdout": "", "stderr": "Execution timed out", "exitCode": 124}
     except Exception as e:
         return {"stdout": "", "stderr": str(e), "exitCode": 1}
+
+
+def run_setup_commands(sandbox_id: str, commands: List[str]) -> List[Dict[str, Any]]:
+    """
+    Executes a list of setup shell commands inside the sandbox sequentially.
+    Useful for initializing frameworks (e.g. npx create-react-app, pip install, cargo init).
+    """
+    results = []
+    for cmd in commands:
+        print(f"    [Setup] Running: {cmd}")
+        res = execute_command(sandbox_id, cmd, timeout=120000) # Give 2 mins for setup commands
+        results.append({"command": cmd, "result": res})
+        if res["exitCode"] != 0:
+            print(f"    [Setup] Error in command '{cmd}': {res['stderr']}")
+            # We don't abort immediately because some setup scripts might return non-zero but still succeed partially.
+    return results
 
 
 def rollback(sandbox_id: str, git_tag: str) -> Dict[str, Any]:

@@ -53,14 +53,27 @@ def executor_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
             else:
                 errors.append(f"Python syntax error in {f_path}: {res['stderr'][:200]}")
 
-        elif f_path.endswith(".js"):
-            res = execute_command(sandbox_id, f"node --check {f_path}")
-            if res["exitCode"] == 0:
-                outputs.append(f" {f_path} Node syntax valid")
-            elif "SyntaxError" in res["stderr"]:
-                errors.append(f"JS syntax error in {f_path}: {res['stderr'][:200]}")
+        elif f_path.endswith((".js", ".jsx", ".ts", ".tsx")):
+            # Instead of just node --check, if it's react/ts we can just skip or run tsc if available
+            # We'll just run a basic syntax check if possible
+            if f_path.endswith(".js"):
+                res = execute_command(sandbox_id, f"node --check {f_path}")
+                if res["exitCode"] == 0:
+                    outputs.append(f" {f_path} JS syntax valid")
+                elif "SyntaxError" in res["stderr"]:
+                    errors.append(f"JS syntax error in {f_path}: {res['stderr'][:200]}")
             else:
-                outputs.append(f" {f_path} syntax checked")
+                outputs.append(f" {f_path} syntax assumed valid (JSX/TSX requires build step)")
+
+        elif f_path.endswith(".go"):
+            res = execute_command(sandbox_id, f"go build -n {f_path}") # Dry run build
+            if res["exitCode"] == 0:
+                outputs.append(f" {f_path} Go syntax valid")
+            else:
+                errors.append(f"Go syntax error in {f_path}: {res['stderr'][:200]}")
+                
+        elif f_path.endswith(".rs"):
+            outputs.append(f" {f_path} syntax assumed valid (Rust requires cargo check)")
 
     return _build_result(len(errors) == 0, outputs, errors)
 

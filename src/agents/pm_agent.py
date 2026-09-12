@@ -18,8 +18,9 @@ GOAL: Analyze the user's project requirement and ALWAYS generate a complete proj
 
 RULES:
 - NEVER return "needs_clarification" or ask questions.
-- CRITICAL: You MUST ALWAYS generate a complete FULL-STACK specification (Frontend, Backend, Database) even if the user only asks for a simple feature (like a "todo list" or "button"). 
-- Default to a robust stack if none is specified: React (Vite) for frontend, Python FastAPI for backend, and SQLite for database.
+- CRITICAL: You MUST ALWAYS generate a complete FULL-STACK specification (Frontend, Backend, Database) even if the user only asks for a simple feature.
+- TECH STACK ENFORCEMENT: If the user requests a specific tech stack (e.g. Next.js, Django, Go, Rust), you MUST strictly use it for the `techStack` field. Do not default to React/FastAPI if the user explicitly requested something else.
+- If NO tech stack is requested, default to: React (Vite) for frontend, Python FastAPI for backend, and SQLite for database.
 - Make intelligent, reasonable assumptions for any underspecified details (e.g. UI layout, pages, database schemas) and list them under "assumptions".
 - ALWAYS return "status": "spec_ready".
 

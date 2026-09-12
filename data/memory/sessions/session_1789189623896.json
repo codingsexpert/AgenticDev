@@ -1,0 +1,28 @@
+{
+  "thread_id": "session_1789189623896",
+  "title": "hi",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Hello!  How can I help you build your project, write code, or answer your questions today?"
+    },
+    {
+      "role": "user",
+      "content": "build simple calculator using html css javascript",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Code generation completed successfully."
+    }
+  ],
+  "node_history": [],
+  "user_id": "guest_wc3znvhxw_1789189528340",
+  "updated_at": 1789189661.264333
+}

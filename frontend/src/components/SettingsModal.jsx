@@ -33,7 +33,7 @@ export default function SettingsModal({
   const [activeTab, setActiveTab] = useState('model'); // 'model' | 'guardrails' | 'budget' | 'account'
 
   // Model Settings State
-  const [selectedModel, setSelectedModel] = useState('gemini-2.0-flash');
+  const [selectedModel, setSelectedModel] = useState('gemini-1.5-flash');
   const [geminiApiKey, setGeminiApiKey] = useState('');
   const [langsmithApiKey, setLangsmithApiKey] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
@@ -55,7 +55,7 @@ export default function SettingsModal({
   useEffect(() => {
     const savedApiKey = localStorage.getItem('pixlexpert_gemini_key') || '';
     const savedLangsmithKey = localStorage.getItem('pixlexpert_langsmith_key') || '';
-    const savedModel = localStorage.getItem('pixlexpert_model') || 'gemini-2.0-flash';
+    const savedModel = localStorage.getItem('pixlexpert_model') || 'gemini-1.5-flash';
     const savedBudget = localStorage.getItem('pixlexpert_budget') || '2.0';
     const savedVercelToken = localStorage.getItem('pixlexpert_vercel_token') || '';
 
@@ -218,7 +218,7 @@ export default function SettingsModal({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
-                      { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash (Recommended)', desc: 'Fastest reasoning & multi-agent tool execution.', badge: 'Default' },
+                      { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Recommended)', desc: 'Fastest reasoning & multi-agent tool execution.', badge: 'Default' },
                       { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', desc: '1M+ context window for large codebase refactoring.', badge: 'Deep Thinking' },
                       { id: 'claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', desc: 'High accuracy code & architectural blueprint generation.', badge: 'Advanced Code' },
                       { id: 'gpt-4o', name: 'GPT-4o', desc: 'Omni multi-modal language model support.', badge: 'Multi-Modal' }

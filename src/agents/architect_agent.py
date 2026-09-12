@@ -42,11 +42,11 @@ OUTPUT FORMAT (strict JSON):
 STEP2_PROMPT = f"""You are the Architect Agent designing the database schema.
 
 {NAMING_RULES}
-CRITICAL: ALWAYS design a robust database schema with necessary tables, even for simple apps like a "todo list". Set "databaseType" to a relational or NoSQL DB (e.g. SQLite, PostgreSQL).
+CRITICAL: ALWAYS design a robust database schema with necessary tables, even for simple apps like a "todo list". Make sure the "databaseType" strictly matches the tech stack requested by the user.
 
 OUTPUT FORMAT (strict JSON):
 {{
-  "databaseType": "Supabase (PostgreSQL)" | "SQLite" | "PostgreSQL" | "MongoDB",
+  "databaseType": "Name of the Database (e.g. PostgreSQL, MongoDB, MySQL, SQLite)",
   "databaseReason": "Reason for DB choice",
   "tables": [
     {{
@@ -105,19 +105,14 @@ OUTPUT FORMAT (strict JSON):
 """
 
 # STEP 5
-STEP5_PROMPT = """You are the Architect Agent generating project structure and dependencies.
-CRITICAL: ALWAYS generate a complete Full-Stack folder structure. You MUST include both 'backend' and 'frontend' modules. Do not generate a simple flat HTML/JS structure.
+STEP5_PROMPT = """You are the Architect Agent generating project structure and setup commands.
+CRITICAL: ALWAYS generate a complete Full-Stack folder structure. You MUST include both 'backend' and 'frontend' directories if applicable.
+CRITICAL: You MUST provide an array of `setupCommands` which are the exact terminal shell commands needed to initialize the project frameworks (e.g. `npx create-react-app frontend`, `cd backend && pip install fastapi`, `cargo init`). These commands will be executed in the sandbox before writing code.
 
 OUTPUT FORMAT (strict JSON):
 {
   "folderStructure": "tree-format string showing folder and file structure",
-  "dependencies": {
-    "project_module_name (e.g. 'root', 'frontend', or 'backend')": {
-      "name": "module name",
-      "dependencies": {},
-      "devDependencies": {}
-    }
-  }
+  "setupCommands": ["command 1", "command 2", "command 3"]
 }
 """
 
@@ -209,7 +204,7 @@ def architect_step5_node(state: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "blueprint": {
             "folderStructure": out.get("folderStructure", ""),
-            "dependencies": out.get("dependencies", {}),
+            "setupCommands": out.get("setupCommands", []),
         },
         "tokenUsage": make_token_delta("architectStep5", result["tokens"]),
     }
