@@ -314,17 +314,6 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* Hackathon Sponsor Track Badge: ElevenLabs Voice AI */}
-        <div className="px-3.5 py-2 border-b border-purple-100/80 bg-gradient-to-r from-purple-50/90 via-indigo-50/80 to-purple-50/90 flex items-center justify-between text-xs shrink-0">
-          <div className="flex items-center space-x-1.5 min-w-0">
-            <span className="w-2 h-2 rounded-full bg-purple-600 animate-pulse shrink-0"></span>
-            <span className="font-semibold text-purple-950 text-[11px] truncate">ElevenLabs Voice AI</span>
-          </div>
-          <span className="text-[9px] font-mono font-bold text-purple-700 bg-white px-2 py-0.5 rounded-full border border-purple-200 shadow-2xs shrink-0">
-            TRACK ACTIVE
-          </span>
-        </div>
-
         {/* Scrollable Container for Navigation & ChatGPT-Style Recents List */}
         <div className="px-3 py-3 space-y-4 flex-1 overflow-y-auto custom-scrollbar">
           {/* Main Top Navigation Tabs */}
