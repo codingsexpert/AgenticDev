@@ -292,3 +292,24 @@ async def cleanup_sandboxes():
         "message": f"Successfully cleaned up {deleted_count} sandbox directories & temporary files."
     }
 
+
+@router.get("/sandboxes/{sandbox_id}/download")
+async def download_sandbox_zip(sandbox_id: str):
+    """
+    Archives all files in the sandbox into a downloadable .zip file.
+    """
+    from src.utils.sandbox_manager import get_sandbox_path
+    sandbox_path = get_sandbox_path(sandbox_id)
+    
+    if not os.path.exists(sandbox_path):
+        raise HTTPException(status_code=404, detail="Sandbox folder not found on disk")
+        
+    temp_dir = tempfile.gettempdir()
+    zip_filename = f"workspace_{sandbox_id}"
+    zip_full_path = os.path.join(temp_dir, f"{zip_filename}.zip")
+    
+    import shutil
+    shutil.make_archive(os.path.join(temp_dir, zip_filename), 'zip', sandbox_path)
+    
+    return FileResponse(zip_full_path, media_type="application/zip", filename=f"workspace_{sandbox_id}.zip")
+

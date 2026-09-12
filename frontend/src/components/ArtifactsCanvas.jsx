@@ -508,6 +508,18 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                   <span>Open in New Tab</span>
                 </a>
               )}
+
+              {sandboxId && (
+                <a
+                  href={`/api/sandboxes/${sandboxId}/download`}
+                  download={`workspace_${sandboxId}.zip`}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-300 bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-500/40 transition-colors"
+                  title="Download Entire Workspace Project as .ZIP Archive"
+                >
+                  <Download className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Download Zip</span>
+                </a>
+              )}
             </>
           )}
           
