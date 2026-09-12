@@ -168,6 +168,17 @@ def list_sandbox_files(sandbox_id: str):
     return {"sandbox_id": sandbox_id, "files": files}
 
 
+@router.post("/sandboxes/{sandbox_id}/extract")
+def extract_sandbox_code(sandbox_id: str, req: Dict[str, Any]):
+    markdown_text = req.get("markdown_text", "")
+    if not markdown_text:
+        return {"written": []}
+    from src.utils.sandbox_manager import extract_and_write_code_files, reconnect_sandbox
+    reconnect_sandbox(sandbox_id)
+    written = extract_and_write_code_files(sandbox_id, markdown_text)
+    return {"sandbox_id": sandbox_id, "files": written}
+
+
 @router.get("/sandboxes/{sandbox_id}/file")
 def get_sandbox_file_content(sandbox_id: str, path: str):
     content = read_file(sandbox_id, path)

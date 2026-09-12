@@ -500,12 +500,31 @@ export default function App() {
               if (payload.text) {
                 accumulatedText += payload.text;
                 setStreamingText(accumulatedText);
+
+                // Live Claude Artifact Canvas Auto-Trigger: Open split-screen IDE as soon as code blocks stream in
+                if (!showCanvas && (accumulatedText.includes('```') || accumulatedText.includes('<!-- File:') || accumulatedText.includes('// File:'))) {
+                  const targetSb = activeSandboxId || (activeThread.startsWith('sandbox-') ? activeThread : `sandbox-${activeThread}`);
+                  setActiveSandboxId(targetSb);
+                  setShowCanvas(true);
+                }
               }
             } catch (e) {
               console.warn('SSE line parse skip:', e);
             }
           }
         }
+      }
+
+      if (accumulatedText.trim() && activeThread) {
+        const targetSb = activeSandboxId || (activeThread.startsWith('sandbox-') ? activeThread : `sandbox-${activeThread}`);
+        setActiveSandboxId(targetSb);
+        setShowCanvas(true);
+
+        fetch(`/api/sandboxes/${targetSb}/extract`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ markdown_text: accumulatedText })
+        }).catch(console.warn);
       }
 
       const finalAns = accumulatedText.trim() || '⚠️ No response text was returned from model. Please check your prompt or model configuration in Settings.';
