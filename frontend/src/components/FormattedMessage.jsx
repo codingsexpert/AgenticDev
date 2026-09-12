@@ -195,7 +195,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
     : cleanCurrentFilename;
 
   return (
-    <div className="my-4 flex flex-col bg-[#0d0f17] border border-slate-800/80 shadow-xl rounded-2xl overflow-hidden transition-all duration-200">
+    <div className="my-4 flex flex-col bg-[#0d0f17] border border-slate-800/80 shadow-xl rounded-2xl overflow-hidden transition-all duration-200 w-full max-w-full min-w-0">
       {/* Top Card Header (Claude Artifact Style Card) */}
       <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-[#131625] border-b border-slate-800/80 gap-3">
         <div className="flex items-center space-x-3">

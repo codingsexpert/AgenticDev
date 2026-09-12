@@ -101,7 +101,7 @@ export default function Sidebar({
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
-        if (sidebarOpen && typeof window !== 'undefined' && window.innerWidth < 1024) {
+        if (sidebarOpen && typeof window !== 'undefined' && window.innerWidth < 768) {
           setSidebarOpen(false);
         }
         setOpenMenuThreadId(null);
@@ -109,7 +109,7 @@ export default function Sidebar({
       }
     };
 
-    if (sidebarOpen && typeof window !== 'undefined' && window.innerWidth < 1024) {
+    if (sidebarOpen && typeof window !== 'undefined' && window.innerWidth < 768) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -157,7 +157,7 @@ export default function Sidebar({
       onNewProject();
     }
 
-    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
       setSidebarOpen(false);
     }
   };
@@ -264,20 +264,20 @@ export default function Sidebar({
       {sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 lg:hidden transition-opacity"
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 md:hidden transition-opacity"
         />
       )}
 
       <aside
-        style={typeof window !== 'undefined' && window.innerWidth >= 1024 ? {
+        style={typeof window !== 'undefined' && window.innerWidth >= 768 ? {
           width: sidebarOpen ? `${sidebarWidth}px` : '0px'
         } : undefined}
-        className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto bg-white/90 backdrop-blur-md border-r border-slate-200/70 flex flex-col relative shrink-0 shadow-2xl lg:shadow-none w-[280px] xs:w-[300px] sm:w-[320px] lg:w-auto ${
+        className={`fixed md:static inset-y-0 left-0 z-50 md:z-auto bg-white/90 backdrop-blur-md border-r border-slate-200/70 flex flex-col relative shrink-0 shadow-2xl md:shadow-none w-[280px] xs:w-[300px] sm:w-[320px] md:w-auto ${
           isResizing ? 'transition-none select-none' : 'transition-all duration-300 ease-in-out'
         } ${
           sidebarOpen
             ? 'translate-x-0 opacity-100'
-            : '-translate-x-full lg:translate-x-0 lg:w-0 lg:opacity-0 lg:overflow-hidden lg:border-none'
+            : '-translate-x-full md:translate-x-0 md:w-0 md:opacity-0 md:overflow-hidden md:border-none'
         }`}
       >
         {/* Right Drag Resizer Edge Handle (ChatGPT / IDE Style) */}

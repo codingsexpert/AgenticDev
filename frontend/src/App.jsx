@@ -39,8 +39,8 @@ import {
 } from 'lucide-react';
 
 export default function App() {
-  // Collapsible Sidebar state (default open on desktop lg: 1024px+, closed on mobile)
-  const [sidebarOpen, setSidebarOpen] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : false);
+  // Collapsible Sidebar state (default open on desktop md: 768px+, closed on mobile)
+  const [sidebarOpen, setSidebarOpen] = useState(typeof window !== 'undefined' ? window.innerWidth >= 768 : false);
   const [projects, setProjects] = useState([]);
   const [currentThreadId, setCurrentThreadId] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -187,9 +187,6 @@ export default function App() {
     const handleResize = () => {
       const mobileStatus = window.innerWidth < 768;
       setIsMobile(mobileStatus);
-      if (window.innerWidth >= 1024) {
-        setSidebarOpen(true);
-      }
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -685,7 +682,7 @@ export default function App() {
           </div>
 
           {/* Center: Search Command Bar */}
-          <div className="flex-1 max-w-md mx-2 hidden md:block">
+          <div className="flex-1 max-w-md mx-2 hidden lg:block">
             <div className="relative w-full">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
@@ -905,25 +902,25 @@ export default function App() {
             </div>
           ) : (
             /* Welcome Hero View with Crisp Minimal Glassmorphic Aesthetics */
-            <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-10 max-w-4xl mx-auto w-full h-full overflow-y-auto">
-              <div className="w-full flex flex-col items-center justify-center my-auto py-4">
+            <div className="flex-1 flex flex-col items-center justify-start sm:justify-center p-3 sm:p-6 lg:p-10 max-w-4xl mx-auto w-full h-full overflow-y-auto min-h-0">
+              <div className="w-full flex flex-col items-center justify-center py-6 sm:py-10 my-0 sm:my-auto">
                 {/* Flowing Crisp Greeting */}
-                <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-2 text-center">
+                <h1 className="text-2xl min-[400px]:text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-2 text-center">
                   Good morning{user?.name ? `, ${user.name.split(' ')[0]}` : ''}
                 </h1>
 
                 {/* Short Description */}
-                <p className="text-xs sm:text-sm text-slate-500 text-center font-normal mb-8 max-w-md">
+                <p className="text-xs sm:text-sm text-slate-500 text-center font-normal mb-6 max-w-md px-2">
                   Ask me anything, write code, solve problems, or explore ideas.
                 </p>
 
                 {/* Centered Message Composer */}
-                <div className="w-full max-w-4xl mb-8">
+                <div className="w-full max-w-4xl mb-6">
                   <PromptBar onSubmit={handlePromptSubmit} isLoading={isLoading} onStop={handleStopGeneration} mode={mode} setMode={setMode} />
                 </div>
 
                 {/* 4 Clean Glassmorphic Action Cards Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-4xl">
+                <div className="grid grid-cols-1 min-[500px]:grid-cols-2 min-[900px]:grid-cols-4 gap-3 sm:gap-4 w-full max-w-4xl px-1 sm:px-0">
                   {/* Card 1: Build SaaS App */}
                   <div
                     onClick={() => handlePromptSubmit('Build a responsive full-stack SaaS landing page with dark mode, features section, pricing cards, and contact form', 'gemini-1.5-flash', 'build')}
