@@ -275,25 +275,34 @@ export default function ChatTimeline({
         </div>
       ))}
 
-      {/* Build Progress Timeline (Only visible while building before sandbox is ready) */}
-      {nodeHistory && nodeHistory.length > 0 && !activeSandboxId && (
+      {/* Build Progress Timeline */}
+      {nodeHistory && nodeHistory.length > 0 && (
         <div className="flex flex-col items-start mr-auto w-full max-w-[85%] sm:max-w-[80%] my-2 animate-fade-in">
-          <div className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider mb-2 ml-1">AI Dev Team Progress</div>
-          <div className="bg-white border border-zinc-200 rounded-xl p-3 sm:p-4 shadow-sm w-full space-y-3">
+          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2 ml-1 flex items-center justify-between w-full">
+            <span>AI Dev Team Multi-Agent Execution</span>
+            {activeSandboxId && (
+              <span className="text-[10px] text-indigo-600 font-mono font-normal lowercase bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">
+                sandbox active
+              </span>
+            )}
+          </div>
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 shadow-sm w-full space-y-2.5">
             {nodeHistory.map((hist, i) => (
-              <div key={i} className="flex items-center space-x-3 text-sm text-zinc-700">
-                <div className="w-5 h-5 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0">
+              <div key={i} className="flex items-center space-x-3 text-xs sm:text-sm text-slate-700">
+                <div className="w-5 h-5 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0 shadow-2xs">
                   <Check className="w-3 h-3 text-emerald-600" />
                 </div>
-                <span className="capitalize font-medium">{hist.node.replace('_', ' ')} phase completed</span>
+                <span className="capitalize font-medium text-slate-800">{hist.node.replace(/([A-Z])/g, ' $1').replace('_', ' ')} phase completed</span>
               </div>
             ))}
-            <div className="flex items-center space-x-3 text-sm text-zinc-500 mt-2 bg-zinc-50 p-2 rounded-lg border border-zinc-100">
-              <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                <div className="w-3.5 h-3.5 border-2 border-zinc-300 border-t-indigo-500 rounded-full animate-spin" />
+            {isLoading && (
+              <div className="flex items-center space-x-3 text-xs sm:text-sm text-slate-500 mt-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                  <div className="w-3.5 h-3.5 border-2 border-slate-300 border-t-indigo-600 rounded-full animate-spin" />
+                </div>
+                <span className="animate-pulse font-medium text-indigo-600">Executing next agent node...</span>
               </div>
-              <span className="animate-pulse">Working on next phase...</span>
-            </div>
+            )}
           </div>
         </div>
       )}

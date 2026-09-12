@@ -1,0 +1,19 @@
+{
+  "thread_id": "session_1789195745953",
+  "title": "build simple calculator",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "build simple calculator",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "Code generation completed successfully."
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_1788777734257",
+  "updated_at": 1789195748.81224
+}

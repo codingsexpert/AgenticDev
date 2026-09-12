@@ -422,25 +422,36 @@ export default function App() {
     const updatedMessages = [...messages, newMsg];
     setMessages(updatedMessages);
     if (selectedMode === 'build') {
-      fetch('/api/projects/start', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ 
-          requirement: promptText, 
-          model: modelName,
-          thread_id: activeThread,
-          messages: updatedMessages,
-          langsmithApiKey: localStorage.getItem('pixlexpert_langsmith_key') || null
-        }),
-        signal: controller.signal,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.thread_id) connectEventSource(data.thread_id);
-        })
-        .catch((e) => {
-          console.warn('Background graph trace:', e);
+      try {
+        const res = await fetch('/api/projects/start', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ 
+            requirement: promptText, 
+            model: modelName,
+            thread_id: activeThread,
+            messages: updatedMessages,
+            langsmithApiKey: localStorage.getItem('pixlexpert_langsmith_key') || null
+          }),
+          signal: controller.signal,
         });
+        const data = await res.json();
+        if (data.thread_id) {
+          connectEventSource(data.thread_id);
+        } else {
+          setIsLoading(false);
+        }
+      } catch (e) {
+        if (e.name !== 'AbortError') {
+          console.error('Project start error:', e);
+          setMessages((prev) => [
+            ...prev,
+            { role: 'assistant', content: '⚠️ Could not start project build pipeline. Please try again.' }
+          ]);
+          setIsLoading(false);
+        }
+      }
+      return;
     }
 
     try {
@@ -484,6 +495,7 @@ export default function App() {
               }
               if (payload.sandbox && payload.sandbox.sandbox_id) {
                 setActiveSandboxId(payload.sandbox.sandbox_id);
+                setShowCanvas(true);
               }
               if (payload.text) {
                 accumulatedText += payload.text;
@@ -496,7 +508,7 @@ export default function App() {
         }
       }
 
-      const finalAns = accumulatedText || 'Code generation completed successfully.';
+      const finalAns = accumulatedText.trim() || '⚠️ No response text was returned from model. Please check your prompt or model configuration in Settings.';
       const finalMsgs = [...updatedMessages, { role: 'assistant', content: finalAns }];
       setMessages(finalMsgs);
       setStreamingText('');
@@ -543,13 +555,39 @@ export default function App() {
           }
           if (state_delta?.sandboxId) {
             setActiveSandboxId(state_delta.sandboxId);
+            setShowCanvas(true);
           }
         } else if (payload.type === 'complete') {
           setIsLoading(false);
           sse.close();
+          const sbId = payload.data?.sandbox_id || activeSandboxId;
+          if (sbId) {
+            setActiveSandboxId(sbId);
+            setShowCanvas(true);
+          }
+          setMessages((prevMsgs) => {
+            const lastMsg = prevMsgs[prevMsgs.length - 1];
+            if (lastMsg && lastMsg.role === 'assistant' && (lastMsg.content.includes('Build Complete') || lastMsg.content.includes('scaffolded'))) {
+              return prevMsgs;
+            }
+            return [
+              ...prevMsgs,
+              {
+                role: 'assistant',
+                content: '🚀 **Build Complete!**\n\nThe AI Dev Team has finished building your project in the workspace sandbox.\n\n📂 **Workspace Canvas**: Your generated code files are ready in the side-by-side Code Editor and Live Preview panel on the right. You can inspect, edit, run, or download your project.'
+              }
+            ];
+          });
         } else if (payload.type === 'error') {
           setIsLoading(false);
           sse.close();
+          setMessages((prevMsgs) => [
+            ...prevMsgs,
+            {
+              role: 'assistant',
+              content: `⚠️ **Build Notice**: ${payload.data?.message || 'An error occurred during multi-agent graph execution.'}`
+            }
+          ]);
         }
       } catch (e) {
         console.error('SSE parse error', e);
@@ -648,7 +686,23 @@ export default function App() {
           </div>
 
           {/* Right Header Quick Actions */}
-          <div className="flex items-center space-x-3 shrink-0">
+          <div className="flex items-center space-x-2 shrink-0">
+            {activeSandboxId && (
+              <button
+                type="button"
+                onClick={() => setShowCanvas(!showCanvas)}
+                title={showCanvas ? "Hide Code Canvas" : "Open Code Editor & Preview"}
+                className={`p-1.5 px-3 rounded-lg border transition-all cursor-pointer flex items-center space-x-1.5 shadow-sm text-xs font-semibold ${
+                  showCanvas 
+                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-indigo-200' 
+                    : 'bg-white border-indigo-200 hover:bg-indigo-50 text-indigo-600'
+                }`}
+              >
+                <Code className="w-4 h-4" />
+                <span className="hidden sm:inline">{showCanvas ? 'Hide Canvas' : 'Code & Preview'}</span>
+              </button>
+            )}
+
             {currentThreadId && (
               <a
                 href={`/api/projects/${currentThreadId}/download`}

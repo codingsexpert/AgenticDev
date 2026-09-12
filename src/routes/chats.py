@@ -310,11 +310,9 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
         stream_success = False
         full_text = ""
 
-        gemini_api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-
+        # LiteLLM automatically picks up the correct API key from the environment based on the model prefix.
+        # No need to explicitly pass it and risk sending the Gemini key to OpenRouter/OpenAI.
         acompletion_kwargs = {}
-        if gemini_api_key:
-            acompletion_kwargs["api_key"] = gemini_api_key
 
         for m_name in models_to_try:
             try:
