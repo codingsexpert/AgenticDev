@@ -123,6 +123,7 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
   const [previewKey, setPreviewKey] = useState(Date.now());
   const [terminalHeight, setTerminalHeight] = useState(130);
   const [isTerminalMaximized, setIsTerminalMaximized] = useState(false);
+  const [showMobileExplorer, setShowMobileExplorer] = useState(false);
   
   const isDraggingRef = useRef(false);
   const startYRef = useRef(0);
@@ -434,22 +435,36 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
   return (
     <div className="fixed inset-0 lg:relative lg:inset-auto z-40 lg:z-30 w-full h-full lg:flex-1 min-w-0 bg-[#181a24] text-slate-200 flex flex-col transition-all duration-300 select-none">
       {/* Header (VS Code Slate Theme) */}
-      <div className="p-3 border-b border-[#282c3f] flex items-center justify-between bg-[#151722]">
-        <div className="flex items-center space-x-2">
-          <div className="flex bg-[#1d2030] p-1 rounded-lg border border-[#2b3044] text-xs shadow-inner overflow-x-auto hide-scrollbar whitespace-nowrap">
+      <div className="p-2 sm:p-3 border-b border-[#282c3f] flex items-center justify-between bg-[#151722] gap-2 overflow-x-auto hide-scrollbar">
+        <div className="flex items-center space-x-2 shrink-0">
+          {activeTab === 'code' && (
+            <button
+              type="button"
+              onClick={() => setShowMobileExplorer(!showMobileExplorer)}
+              className="md:hidden flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-[#1d2030] text-amber-400 border border-[#2b3044] hover:bg-[#262a3e] transition-all shrink-0"
+              title="Toggle File Explorer"
+            >
+              <FolderOpen className="w-3.5 h-3.5" />
+              <span>Files</span>
+            </button>
+          )}
+
+          <div className="flex bg-[#1d2030] p-1 rounded-lg border border-[#2b3044] text-xs shadow-inner shrink-0">
             <button
               onClick={() => setActiveTab('code')}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded-md transition-all font-medium ${activeTab === 'code' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-100 hover:bg-[#262a3e]'}`}
+              className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-md transition-all font-medium text-xs ${activeTab === 'code' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-100 hover:bg-[#262a3e]'}`}
             >
               <Code className="w-3.5 h-3.5" />
-              <span>Code Editor</span>
+              <span className="hidden sm:inline">Code Editor</span>
+              <span className="sm:hidden">Code</span>
             </button>
             <button
               onClick={() => setActiveTab('preview')}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded-md transition-all font-medium ${activeTab === 'preview' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-100 hover:bg-[#262a3e]'}`}
+              className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-md transition-all font-medium text-xs ${activeTab === 'preview' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-100 hover:bg-[#262a3e]'}`}
             >
               <Eye className="w-3.5 h-3.5" />
-              <span>Live Web Preview</span>
+              <span className="hidden sm:inline">Live Web Preview</span>
+              <span className="sm:hidden">Preview</span>
             </button>
           </div>
         </div>
@@ -524,15 +539,24 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
 
       {/* Main Canvas View */}
       {activeTab === 'code' ? (
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex overflow-hidden relative">
+          {/* Mobile Overlay Backdrop */}
+          {showMobileExplorer && (
+            <div
+              onClick={() => setShowMobileExplorer(false)}
+              className="absolute inset-0 bg-slate-950/60 backdrop-blur-xs z-20 md:hidden"
+            />
+          )}
+
           {/* File Tree Drawer */}
-          <div className="w-56 bg-[#141622] border-r border-[#262a3c] p-0 overflow-y-auto flex flex-col shrink-0">
+          <div className={`absolute md:relative inset-y-0 left-0 z-30 w-64 md:w-56 bg-[#141622] border-r border-[#262a3c] p-0 overflow-y-auto flex-col shrink-0 transition-all ${showMobileExplorer ? 'flex shadow-2xl' : 'hidden md:flex'}`}>
             <div className="text-[10px] text-slate-400 px-4 py-2 uppercase tracking-widest flex items-center justify-between font-mono font-medium shrink-0 border-b border-[#212435]">
               <span>Explorer</span>
               <div className="flex items-center space-x-2">
                 <button onClick={handleCreateNewFile} className="hover:text-white transition-colors" title="New File"><FilePlus className="w-3.5 h-3.5" /></button>
                 <button onClick={handleCreateNewFolder} className="hover:text-white transition-colors" title="New Folder"><FolderPlus className="w-3.5 h-3.5" /></button>
                 <button onClick={fetchFiles} className="hover:text-white transition-colors ml-1" title="Refresh Explorer"><RefreshCw className="w-3 h-3" /></button>
+                <button onClick={() => setShowMobileExplorer(false)} className="hover:text-white transition-colors md:hidden ml-1" title="Close Explorer"><X className="w-3.5 h-3.5" /></button>
               </div>
             </div>
             
@@ -556,6 +580,7 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                       }
                       setSelectedFile(path);
                       fetchFileContent(path);
+                      setShowMobileExplorer(false);
                    }}
                    onRename={handleRenameFile}
                    hasUnsavedChanges={hasUnsavedChanges}

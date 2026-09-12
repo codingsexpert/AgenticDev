@@ -687,7 +687,7 @@ export default function App() {
           </div>
 
           {/* Center: Search Command Bar with Cmd+K */}
-          <div className="flex-1 max-w-md mx-2">
+          <div className="flex-1 max-w-md mx-2 hidden sm:block">
             <div className="relative w-full">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
