@@ -21,6 +21,7 @@ from src.routes import (
     projects_router,
     rag_router,
     system_router,
+    tts_router,
 )
 from src.routes.billing import router as billing_router
 from src.routes.auth import load_users, save_users, hash_password
@@ -99,6 +100,7 @@ app.include_router(sandboxes_router)
 app.include_router(projects_router)
 app.include_router(rag_router)
 app.include_router(system_router)
+app.include_router(tts_router)
 app.include_router(billing_router)
 
 # 6. Serve Frontend Static Assets if Built

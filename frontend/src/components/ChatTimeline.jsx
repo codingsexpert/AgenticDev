@@ -61,6 +61,7 @@ function MessageActions({ content, onRegenerate }) {
   const [copied, setCopied] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [feedback, setFeedback] = useState(null); // 'like' | 'dislike' | null
+  const audioRef = useRef(null);
 
   const handleCopy = () => {
     if (!content) return;
@@ -70,23 +71,65 @@ function MessageActions({ content, onRegenerate }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSpeak = () => {
+  const fallbackWebSpeech = (cleanText) => {
     if (!('speechSynthesis' in window)) {
       toast.warning('Text-to-speech is not supported in this browser.');
-      return;
-    }
-    if (speaking) {
-      window.speechSynthesis.cancel();
       setSpeaking(false);
       return;
     }
     window.speechSynthesis.cancel();
-    const cleanText = content.replace(/```[\s\S]*?```/g, ' Code snippet omitted. ').replace(/[*_#`]/g, '');
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.onend = () => setSpeaking(false);
     utterance.onerror = () => setSpeaking(false);
     setSpeaking(true);
     window.speechSynthesis.speak(utterance);
+  };
+
+  const handleSpeak = async () => {
+    if (speaking) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      setSpeaking(false);
+      return;
+    }
+
+    const cleanText = content?.replace(/```[\s\S]*?```/g, ' Code snippet omitted. ').replace(/[*_#`]/g, '') || '';
+    if (!cleanText.trim()) return;
+
+    setSpeaking(true);
+
+    try {
+      const res = await fetch('/api/tts/speak', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: cleanText }),
+      });
+
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audioRef.current = audio;
+        audio.onended = () => {
+          setSpeaking(false);
+          URL.revokeObjectURL(url);
+          audioRef.current = null;
+        };
+        audio.onerror = () => {
+          fallbackWebSpeech(cleanText);
+        };
+        audio.play().catch(() => fallbackWebSpeech(cleanText));
+      } else {
+        fallbackWebSpeech(cleanText);
+      }
+    } catch (err) {
+      fallbackWebSpeech(cleanText);
+    }
   };
 
   const handleLike = () => {

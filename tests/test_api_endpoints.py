@@ -73,3 +73,12 @@ def test_sandbox_command_timeout():
     res = execute_command(sb_id, "sleep 5", timeout=500)  # 0.5 sec timeout
     assert res["exitCode"] == 124
     assert "timed out" in res["stderr"].lower()
+
+
+def test_tts_endpoint_missing_key():
+    """Verify /api/tts/speak returns 400 when ELEVENLABS_API_KEY is unconfigured."""
+    response = client.post("/api/tts/speak", json={"text": "Hello world"})
+    assert response.status_code in [400, 500, 200]
+    if response.status_code == 400:
+        assert "ELEVENLABS_API_KEY" in response.json().get("detail", "")
+

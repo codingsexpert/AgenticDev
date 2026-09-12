@@ -8,6 +8,7 @@ from src.routes.sandboxes import router as sandboxes_router
 from src.routes.projects import router as projects_router
 from src.routes.rag import router as rag_router
 from src.routes.system import router as system_router
+from src.routes.tts import router as tts_router
 
 __all__ = [
     "auth_router",
@@ -16,4 +17,5 @@ __all__ = [
     "projects_router",
     "rag_router",
     "system_router",
+    "tts_router",
 ]
