@@ -152,14 +152,27 @@ function MessageActions({ content, onRegenerate }) {
         {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
       </button>
 
-      {/* 2. Text to Speech Icon */}
+      {/* 2. Text to Speech Icon with ElevenLabs Voice Equalizer */}
       <button
         type="button"
         onClick={handleSpeak}
-        title={speaking ? 'Stop Speaking' : 'Read Aloud'}
-        className={`p-1.5 rounded-lg transition-colors ${speaking ? 'bg-indigo-100 text-indigo-700' : 'hover:bg-slate-200/70 text-slate-500 hover:text-slate-900'}`}
+        title={speaking ? 'Stop Speaking' : 'Read Aloud (ElevenLabs AI Voice)'}
+        className={`p-1.5 rounded-lg transition-colors flex items-center space-x-1 ${
+          speaking ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'hover:bg-slate-200/70 text-slate-500 hover:text-slate-900'
+        }`}
       >
-        {speaking ? <VolumeX className="w-3.5 h-3.5 animate-pulse" /> : <Volume2 className="w-3.5 h-3.5" />}
+        {speaking ? (
+          <>
+            <VolumeX className="w-3.5 h-3.5 text-indigo-600 animate-pulse" />
+            <div className="flex items-center space-x-0.5 ml-0.5" title="ElevenLabs AI Voice Streaming">
+              <span className="w-0.5 h-2.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:0.1s]"></span>
+              <span className="w-0.5 h-3.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.25s]"></span>
+              <span className="w-0.5 h-2 bg-indigo-600 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+            </div>
+          </>
+        ) : (
+          <Volume2 className="w-3.5 h-3.5" />
+        )}
       </button>
 
       {/* 3. Like Feedback Icon */}

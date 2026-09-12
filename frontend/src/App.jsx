@@ -926,79 +926,79 @@ export default function App() {
 
                 {/* 4 Clean Glassmorphic Action Cards Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 w-full max-w-3xl">
-                  {/* Card 1: Write Code */}
+                  {/* Card 1: Build SaaS App */}
                   <div
-                    onClick={() => handlePromptSubmit('Write and debug Python code for data processing', 'gemini-1.5-flash', 'chat')}
-                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
+                    onClick={() => handlePromptSubmit('Build a responsive full-stack SaaS landing page with dark mode, features section, pricing cards, and contact form', 'gemini-1.5-flash', 'build')}
+                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between hover:border-indigo-400/50 hover:shadow-lg transition-all"
                   >
                     <div>
-                      <Code className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-2.5" />
+                      <Code className="w-4 h-4 text-indigo-500 group-hover:scale-110 transition-transform mb-2.5" />
                       <h3 className="font-semibold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
-                        Write Code
+                        Build SaaS Landing
                       </h3>
                       <p className="text-[11px] text-slate-500 leading-snug">
-                        Create, edit and debug code in your project.
+                        Generate full-stack web app with live IDE preview.
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" />
+                      <Sparkles className="w-3.5 h-3.5 text-indigo-400 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
-                  {/* Card 2: Analyze Document */}
+                  {/* Card 2: Analytics Dashboard */}
                   <div
-                    onClick={() => handlePromptSubmit('Analyze this document and extract key insights', 'gemini-1.5-flash', 'chat')}
-                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
+                    onClick={() => handlePromptSubmit('Build a responsive real-time data analytics dashboard with KPI cards, CSS grid layout, and dark aesthetic', 'gemini-1.5-flash', 'build')}
+                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between hover:border-indigo-400/50 hover:shadow-lg transition-all"
                   >
                     <div>
-                      <FileText className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-2.5" />
-                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
-                        Analyze Document
+                      <Layers className="w-4 h-4 text-purple-500 group-hover:scale-110 transition-transform mb-2.5" />
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-purple-600 transition-colors mb-1">
+                        Analytics Dashboard
                       </h3>
                       <p className="text-[11px] text-slate-500 leading-snug">
-                        Upload and get insights from your files.
+                        Create data visualization UI with auto-linked CSS/JS.
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" />
+                      <Sparkles className="w-3.5 h-3.5 text-purple-400 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
-                  {/* Card 3: Solve Problem */}
+                  {/* Card 3: FastAPI REST Service */}
                   <div
-                    onClick={() => handlePromptSubmit('Help me solve this logic problem step by step', 'gemini-1.5-flash', 'chat')}
-                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
+                    onClick={() => handlePromptSubmit('Write a production FastAPI REST backend service with Pydantic schemas, CORS middleware, and unit tests', 'gemini-1.5-flash', 'build')}
+                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between hover:border-indigo-400/50 hover:shadow-lg transition-all"
                   >
                     <div>
-                      <Sparkles className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-2.5" />
-                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
-                        Solve Problem
+                      <FileText className="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform mb-2.5" />
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-emerald-600 transition-colors mb-1">
+                        FastAPI Service
                       </h3>
                       <p className="text-[11px] text-slate-500 leading-snug">
-                        Get help with complex questions and logic.
+                        Build clean REST backend API with schemas.
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" />
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
 
-                  {/* Card 4: Research */}
+                  {/* Card 4: Voice AI Architecture */}
                   <div
-                    onClick={() => handlePromptSubmit('Research the latest trends in AI agents and write a summary', 'gemini-1.5-flash', 'chat')}
-                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
+                    onClick={() => handlePromptSubmit('Explain how multi-agent LangGraph orchestrates ElevenLabs AI text-to-speech for real-time natural voice agents', 'gemini-1.5-flash', 'chat')}
+                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between hover:border-indigo-400/50 hover:shadow-lg transition-all"
                   >
                     <div>
-                      <Search className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-2.5" />
-                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
-                        Research
+                      <Sparkles className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform mb-2.5" />
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-amber-600 transition-colors mb-1">
+                        ElevenLabs Voice AI
                       </h3>
                       <p className="text-[11px] text-slate-500 leading-snug">
-                        Find information and explore topics.
+                        Explore multi-agent voice streaming features.
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
                 </div>
