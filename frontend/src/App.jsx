@@ -429,11 +429,6 @@ export default function App() {
     const updatedMessages = [...messages, newMsg];
     setMessages(updatedMessages);
 
-    // Instant Visual Feedback for Hackathon Demo: Open split-screen canvas immediately
-    const targetSb = (typeof activeThread === 'string' && activeThread.startsWith('sandbox-')) ? activeThread : `sandbox-${activeThread}`;
-    setActiveSandboxId(targetSb);
-    setShowCanvas(true);
-
     if (selectedMode === 'build') {
       try {
         const res = await fetch('/api/projects/start', {
