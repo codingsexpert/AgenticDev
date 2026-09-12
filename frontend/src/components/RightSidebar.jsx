@@ -31,6 +31,7 @@ export default function RightSidebar({ projects = [], onSelectProject, onPromptA
         setSysStatus({
           status: data.status || 'Operational',
           model: data.model || 'Gemini 1.5 Flash',
+          tracing: data.tracing || null,
           sandboxes: data.sandboxes !== undefined ? data.sandboxes : safeProjects.length,
           loading: false
         });
@@ -97,6 +98,22 @@ export default function RightSidebar({ projects = [], onSelectProject, onPromptA
             <span className="font-bold text-indigo-600 truncate block mt-0.5">
               {sysStatus.model}
             </span>
+          </div>
+
+          <div className="bg-slate-50 p-2 rounded-xl border border-slate-100 col-span-2 flex items-center justify-between">
+            <div className="flex items-center space-x-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+              <span className="text-[10px] text-slate-600 font-semibold">LangSmith AI Tracing</span>
+            </div>
+            <a
+              href="https://smith.langchain.com"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[10px] font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 px-2 py-0.5 rounded-md border border-purple-200 transition-colors flex items-center space-x-1 cursor-pointer"
+              title="Open LangSmith Monitoring Dashboard"
+            >
+              <span>{sysStatus.tracing?.enabled ? '🟢 Active' : '🟢 Configured'}</span>
+            </a>
           </div>
         </div>
       </div>
