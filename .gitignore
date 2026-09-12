@@ -7,9 +7,15 @@ __pycache__/
 .env
 .env.local
 
-# Local Sandboxes directory (generated code output)
+# Local Sandboxes & Runtime Data
 sandboxes/
 data/sandbox/
+data/memory/sessions/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.log
+server.log
 
 # Testing & Cache
 .pytest_cache/
