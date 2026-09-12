@@ -147,27 +147,36 @@ select {
   -webkit-text-fill-color: transparent;
 }
 
-/* Apple Liquid Glassmorphic Card Effect */
+/* Apple Liquid Glassmorphic Card Effect - Ultra-Smooth Silk Transitions */
 .clean-glass-card {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(226, 232, 240, 0.8);
   box-shadow:
-    0 10px 30px -5px rgba(0, 0, 0, 0.04),
-    0 4px 12px -2px rgba(0, 0, 0, 0.02),
+    0 4px 20px -2px rgba(0, 0, 0, 0.03),
+    0 2px 6px -1px rgba(0, 0, 0, 0.02),
     inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              background-color 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
 }
 
 .clean-glass-card:hover {
-  transform: translateY(-2px) scale(1.02);
-  background: rgba(255, 255, 255, 0.88);
-  border-color: rgba(255, 255, 255, 0.95);
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(99, 102, 241, 0.4);
   box-shadow:
-    0 20px 40px -10px rgba(99, 102, 241, 0.12),
-    0 8px 20px -4px rgba(0, 0, 0, 0.04),
+    0 16px 36px -8px rgba(99, 102, 241, 0.14),
+    0 6px 16px -4px rgba(0, 0, 0, 0.04),
     inset 0 1px 1px 0 rgba(255, 255, 255, 1);
+}
+
+.clean-glass-card:active {
+  transform: translateY(-1px) scale(0.99);
+  transition-duration: 0.15s;
 }
 
 @keyframes float {
@@ -195,14 +204,15 @@ select {
 
 .liquid-pill-btn-active {
   background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.9);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* Primary Indigo Button */
 .clean-primary-btn {
   background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .clean-primary-btn:hover {

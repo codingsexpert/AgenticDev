@@ -924,11 +924,11 @@ export default function App() {
                   {/* Card 1: Build SaaS App */}
                   <div
                     onClick={() => handlePromptSubmit('Build a responsive full-stack SaaS landing page with dark mode, features section, pricing cards, and contact form', 'gemini-1.5-flash', 'build')}
-                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between hover:border-indigo-400/50 hover:shadow-lg transition-all"
+                    className="clean-glass-card p-3.5 sm:p-4 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
-                      <Code className="w-4 h-4 text-indigo-500 group-hover:scale-110 transition-transform mb-2.5" />
-                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
+                      <Code className="w-4 h-4 text-indigo-500 group-hover:scale-110 transition-transform duration-300 ease-out mb-2.5" />
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-indigo-600 transition-colors duration-300 mb-1">
                         Build SaaS Landing
                       </h3>
                       <p className="text-[11px] text-slate-500 leading-snug">
@@ -936,18 +936,18 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Sparkles className="w-3.5 h-3.5 text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      <Sparkles className="w-3.5 h-3.5 text-indigo-400 group-hover:translate-x-0.5 transition-transform duration-300 ease-out" />
                     </div>
                   </div>
 
                   {/* Card 2: Analytics Dashboard */}
                   <div
                     onClick={() => handlePromptSubmit('Build a responsive real-time data analytics dashboard with KPI cards, CSS grid layout, and dark aesthetic', 'gemini-1.5-flash', 'build')}
-                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between hover:border-indigo-400/50 hover:shadow-lg transition-all"
+                    className="clean-glass-card p-3.5 sm:p-4 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
-                      <Layers className="w-4 h-4 text-purple-500 group-hover:scale-110 transition-transform mb-2.5" />
-                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-purple-600 transition-colors mb-1">
+                      <Layers className="w-4 h-4 text-purple-500 group-hover:scale-110 transition-transform duration-300 ease-out mb-2.5" />
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-purple-600 transition-colors duration-300 mb-1">
                         Analytics Dashboard
                       </h3>
                       <p className="text-[11px] text-slate-500 leading-snug">
@@ -955,18 +955,18 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Sparkles className="w-3.5 h-3.5 text-purple-400 group-hover:translate-x-0.5 transition-all" />
+                      <Sparkles className="w-3.5 h-3.5 text-purple-400 group-hover:translate-x-0.5 transition-transform duration-300 ease-out" />
                     </div>
                   </div>
 
                   {/* Card 3: FastAPI REST Service */}
                   <div
                     onClick={() => handlePromptSubmit('Write a production FastAPI REST backend service with Pydantic schemas, CORS middleware, and unit tests', 'gemini-1.5-flash', 'build')}
-                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between hover:border-indigo-400/50 hover:shadow-lg transition-all"
+                    className="clean-glass-card p-3.5 sm:p-4 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
-                      <FileText className="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform mb-2.5" />
-                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-emerald-600 transition-colors mb-1">
+                      <FileText className="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform duration-300 ease-out mb-2.5" />
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-emerald-600 transition-colors duration-300 mb-1">
                         FastAPI Service
                       </h3>
                       <p className="text-[11px] text-slate-500 leading-snug">
@@ -974,18 +974,18 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Sparkles className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-x-0.5 transition-transform duration-300 ease-out" />
                     </div>
                   </div>
 
                   {/* Card 4: Voice AI Architecture */}
                   <div
                     onClick={() => handlePromptSubmit('Explain how multi-agent LangGraph orchestrates ElevenLabs AI text-to-speech for real-time natural voice agents', 'gemini-1.5-flash', 'chat')}
-                    className="clean-glass-card p-3.5 rounded-2xl cursor-pointer group text-left flex flex-col justify-between hover:border-indigo-400/50 hover:shadow-lg transition-all"
+                    className="clean-glass-card p-3.5 sm:p-4 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
-                      <Sparkles className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform mb-2.5" />
-                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-amber-600 transition-colors mb-1">
+                      <Sparkles className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform duration-300 ease-out mb-2.5" />
+                      <h3 className="font-semibold text-xs text-slate-900 group-hover:text-amber-600 transition-colors duration-300 mb-1">
                         ElevenLabs Voice AI
                       </h3>
                       <p className="text-[11px] text-slate-500 leading-snug">
@@ -993,7 +993,7 @@ export default function App() {
                       </p>
                     </div>
                     <div className="flex justify-end mt-3">
-                      <Search className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-all" />
+                      <Search className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-transform duration-300 ease-out" />
                     </div>
                   </div>
                 </div>

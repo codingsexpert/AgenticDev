@@ -318,8 +318,8 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
           <button
             type="button"
             onClick={() => setMode('chat')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all ${
-              mode === 'chat' ? 'liquid-pill-btn-active text-slate-900 font-semibold' : 'text-slate-500 hover:text-slate-800'
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all duration-300 ease-out ${
+              mode === 'chat' ? 'liquid-pill-btn-active text-slate-900 font-semibold' : 'text-slate-500 hover:text-slate-800 hover:bg-white/50'
             }`}
           >
             <MessageSquare className="w-3.5 h-3.5 text-indigo-500" />
@@ -328,8 +328,8 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
           <button
             type="button"
             onClick={() => setMode('reasoning')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all ${
-              mode === 'reasoning' ? 'liquid-pill-btn-active text-amber-950 font-semibold' : 'text-slate-500 hover:text-slate-800'
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all duration-300 ease-out ${
+              mode === 'reasoning' ? 'liquid-pill-btn-active text-amber-950 font-semibold' : 'text-slate-500 hover:text-slate-800 hover:bg-white/50'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
@@ -338,8 +338,8 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
           <button
             type="button"
             onClick={() => setMode('build')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all ${
-              mode === 'build' ? 'liquid-pill-btn-active text-indigo-950 font-semibold' : 'text-slate-500 hover:text-slate-800'
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all duration-300 ease-out ${
+              mode === 'build' ? 'liquid-pill-btn-active text-indigo-950 font-semibold' : 'text-slate-500 hover:text-slate-800 hover:bg-white/50'
             }`}
           >
             <Wrench className="w-3.5 h-3.5 text-indigo-600" />
