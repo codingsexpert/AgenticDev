@@ -312,6 +312,32 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
         </div>
       )}
 
+      {/* Hackathon Judge Quick Action Demo Chips */}
+      <div className="flex items-center space-x-2 mb-2.5 overflow-x-auto pb-1 no-scrollbar">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600/90 bg-indigo-50/80 px-2 py-1 rounded-lg shrink-0 flex items-center gap-1 border border-indigo-100/60 shadow-2xs">
+          <Sparkles className="w-3 h-3 text-indigo-600" /> Demo Prompts
+        </span>
+        {[
+          { label: "🚀 Crypto Dashboard", prompt: "Build a high-end Crypto Portfolio & Trading Dashboard in index.html, style.css, script.js with live metric cards, dark glassmorphism, interactive Chart.js charts, transaction tables, and wallet connection button." },
+          { label: "⚡ AI SaaS Landing Page", prompt: "Build an ultra-modern AI SaaS Landing Page in index.html, style.css, script.js with dark glassmorphism, animated feature cards, pricing tier toggle, interactive live demo preview, and gradient hero." },
+          { label: "🎵 Music Player App", prompt: "Build a Web Music Player application in index.html, style.css, script.js with interactive track list, audio player controls, volume slider, visualizer equalizer, and playlist manager." },
+          { label: "📋 Kanban Task Board", prompt: "Build a full-featured Drag & Drop Kanban Task Board web app in index.html, style.css, script.js with To-Do, In-Progress, Done columns, task creation modal, priority tags, and interactive handlers." }
+        ].map((chip, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => {
+              setInput(chip.prompt);
+              setMode('build');
+              if (textareaRef.current) textareaRef.current.focus();
+            }}
+            className="text-xs px-3 py-1 rounded-xl bg-white/90 hover:bg-indigo-50/80 border border-slate-200/80 hover:border-indigo-300 text-slate-700 hover:text-indigo-700 font-medium transition-all shadow-2xs shrink-0 flex items-center space-x-1 hover:scale-[1.02] active:scale-95 cursor-pointer"
+          >
+            <span>{chip.label}</span>
+          </button>
+        ))}
+      </div>
+
       {/* Mode Switcher Bar (Apple Liquid Pill) */}
       <div className="flex items-center justify-start mb-2.5 overflow-x-auto pb-0.5 no-scrollbar">
         <div className="liquid-pill-bar flex items-center p-1 rounded-2xl text-xs font-medium shrink-0">

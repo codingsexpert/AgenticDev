@@ -462,22 +462,33 @@ def extract_and_write_code_files(sandbox_id: str, markdown_text: str) -> List[Di
         except Exception:
             pass
 
-    # Auto-Link Heuristic: Ensure index.html links to style.css and script.js if present
+    # Auto-Link & CDN Inject Heuristic: Ensure index.html includes Tailwind, FontAwesome, Google Fonts, style.css and script.js
     has_css = any(f["path"] == "style.css" for f in written_files)
     has_js = any(f["path"] == "script.js" for f in written_files)
-    if has_html and (has_css or has_js):
+    if has_html:
         html_item = next((f for f in written_files if f["path"] == "index.html"), None)
         if html_item and "content" in html_item:
             html_text = html_item["content"]
             modified = False
-            if has_css and "style.css" not in html_text:
-                if "</head>" in html_text:
-                    html_text = html_text.replace("</head>", '    <link rel="stylesheet" href="style.css">\n</head>')
-                    modified = True
-            if has_js and "script.js" not in html_text:
-                if "</body>" in html_text:
-                    html_text = html_text.replace("</body>", '    <script src="script.js"></script>\n</body>')
-                    modified = True
+            
+            # Inject Tailwind CDN if missing
+            if "cdn.tailwindcss.com" not in html_text and "</head>" in html_text:
+                html_text = html_text.replace("</head>", '    <script src="https://cdn.tailwindcss.com"></script>\n</head>')
+                modified = True
+            
+            # Inject FontAwesome CDN if missing
+            if "cdnjs.cloudflare.com/ajax/libs/font-awesome" not in html_text and "</head>" in html_text:
+                html_text = html_text.replace("</head>", '    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">\n</head>')
+                modified = True
+                
+            if has_css and "style.css" not in html_text and "</head>" in html_text:
+                html_text = html_text.replace("</head>", '    <link rel="stylesheet" href="style.css">\n</head>')
+                modified = True
+                
+            if has_js and "script.js" not in html_text and "</body>" in html_text:
+                html_text = html_text.replace("</body>", '    <script src="script.js"></script>\n</body>')
+                modified = True
+                
             if modified:
                 try:
                     write_file(sandbox_id, "index.html", html_text)
