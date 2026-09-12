@@ -1,0 +1,19 @@
+{
+  "thread_id": "session_1789196941663",
+  "title": "build personal porfolio website",
+  "mode": "chat",
+  "messages": [
+    {
+      "role": "user",
+      "content": "build personal porfolio website",
+      "attachments": []
+    },
+    {
+      "role": "assistant",
+      "content": "<!-- File: index.html -->\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>मेरा पर्सोनल पोर्टफोलियो</title>\n    <link rel=\"stylesheet\" href=\"style.css\">\n</head>\n<body>\n    <header class=\"header\">\n        <h"
+    }
+  ],
+  "node_history": [],
+  "user_id": "usr_1788777734257",
+  "updated_at": 1789196949.6000152
+}

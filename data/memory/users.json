@@ -102,10 +102,10 @@
     "email": "test_user_prod@example.com",
     "salt": "fdd1d8d772ccefc233406a2d43a55bd5",
     "password_hash": "3bf63f4eeacd8e97ea7fef87c38ebafe14946dd08a22b1181d8f32d531d152a3",
-    "token": "pixl_jwt_79e4a0ac5a1fe4abcc5dcf58f1b8be5b2179802869fbd67fbad2d467f4df2406",
+    "token": "pixl_jwt_f10e3f4d79b1bf5598498cab3efa4ee0cd499d7bbf145116c915f97bc8e2725a",
     "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Prod Test User",
     "created_at": 1786476455.377128,
-    "token_expires_at": 1789283102.138298
+    "token_expires_at": 1789283569.120259
   },
   "signup_user_1788664935@example.com": {
     "id": "usr_1788664935641",
@@ -1992,5 +1992,68 @@
     "token_budget": 5.0,
     "total_cost": 0.0,
     "created_at": 1789196709.9608588
+  },
+  "signup_user_1789197171@example.com": {
+    "id": "usr_1789197171444",
+    "name": "Valid User",
+    "email": "signup_user_1789197171@example.com",
+    "salt": "31e631454862efd49749b737eff7f921",
+    "password_hash": "0ff9e6369b5ad6f75b5ad1a2dbeefd3025d767c265cd6967de077259babdd5ff",
+    "token": "pixl_jwt_10903b89e18258634d2e060448d65b78cd7b89b1c835dbe953f3671051b1ea1f",
+    "token_expires_at": 1789283571.444472,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Valid User",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789197171.4444811
+  },
+  "auth_test_1789197172@example.com": {
+    "id": "usr_1789197172421",
+    "name": "Auth User",
+    "email": "auth_test_1789197172@example.com",
+    "salt": "67949d5fe64f0c376d34cb14bf309018",
+    "password_hash": "a8b8defc9e7537ae005de56699421ce80b38c8ea4def47a503fdc63be68ff794",
+    "token": "pixl_jwt_e9d8083e69e4b9225afbddf01616d4bf5213896ae5176b93be624d5569fd7740",
+    "token_expires_at": 1789283573.0412061,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Auth User",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789197172.4219189
+  },
+  "logout_user_1789197173@example.com": {
+    "id": "usr_1789197173384",
+    "name": "Logout User",
+    "email": "logout_user_1789197173@example.com",
+    "salt": "722c3b4c1921022adf63af2e1f0e6e15",
+    "password_hash": "fb52124bac2a431b299549315a161048b8d6f7277331162a1222202e9e576496",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Logout User",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789197173.384007
+  },
+  "tenant_a_1789197174@example.com": {
+    "id": "usr_1789197174460",
+    "name": "User A",
+    "email": "tenant_a_1789197174@example.com",
+    "salt": "9701caf4a989a60d6104ced1e4f57083",
+    "password_hash": "3499bd76dbe90b43e72b69f854c119e6f1469459c85daf7e29f5c75eac4301a2",
+    "token": "pixl_jwt_a1951879ad760e3b53710b96843416f36e798cd779413f45c2cd903ff63aa24e",
+    "token_expires_at": 1789283574.4603012,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User A",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789197174.460311
+  },
+  "tenant_b_1789197174@example.com": {
+    "id": "usr_1789197174973",
+    "name": "User B",
+    "email": "tenant_b_1789197174@example.com",
+    "salt": "c6f16a391fc14d8d6d90a2774056b6c7",
+    "password_hash": "d48fd7433a6fea7294de1037a40516788d143fe09eb3a0266cecd5738d2b3212",
+    "token": "pixl_jwt_2c77376e6a23489382ec8229ca2ddc4b2b7be99e1be4bf47873fdacd0b8066f3",
+    "token_expires_at": 1789283574.97398,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User B",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789197174.97399
   }
 }

@@ -361,16 +361,15 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
             # Smart active workspace fallback interceptor for multi-turn edits & follow-ups
             if sandbox_id:
                 try:
-                    from src.utils.sandbox_manager import list_files, read_file, get_sandbox_path
+                    from src.utils.sandbox_manager import get_file_list, read_file, get_sandbox_path
                     sb_path = get_sandbox_path(sandbox_id)
                     if os.path.exists(sb_path):
-                        existing_files = list_files(sandbox_id)
-                        if existing_files:
+                        existing_file_paths = get_file_list(sandbox_id)
+                        if existing_file_paths:
                             html_content = ""
                             css_content = ""
                             js_content = ""
-                            for f in existing_files:
-                                fp = f.get("path", "")
+                            for fp in existing_file_paths:
                                 if fp == "index.html":
                                     html_content = read_file(sandbox_id, fp)
                                 elif fp == "style.css":
@@ -691,9 +690,105 @@ function calculateResult() { try { currentInput = eval(currentInput).toString();
 </body>
 </html>
 ```"""
-                elif req.mode == "build" or any(w in user_msg_clean for w in ["build", "create", "make", "app", "website", "application", "dashboard", "portfolio", "system"]):
+                elif "portfolio" in user_msg_clean or "porfolio" in user_msg_clean or "resume" in user_msg_clean:
+                    fallback_reply = """```html
+<!-- File: index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mukesh Singh | Developer & AI Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen">
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <span class="font-extrabold text-indigo-400 text-lg tracking-tight">Mukesh.dev</span>
+            <div class="flex items-center space-x-6 text-sm font-medium text-slate-300">
+                <a href="#about" class="hover:text-white transition-colors">About</a>
+                <a href="#projects" class="hover:text-white transition-colors">Projects</a>
+                <a href="#skills" class="hover:text-white transition-colors">Skills</a>
+                <a href="#contact" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl transition-all shadow-md">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 pt-32 pb-20 space-y-28">
+        <!-- Hero Section -->
+        <section id="about" class="flex flex-col md:flex-row items-center justify-between gap-12">
+            <div class="flex-1 space-y-6">
+                <span class="px-3 py-1 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 rounded-full text-xs font-semibold uppercase tracking-wider">Available for Hire</span>
+                <h1 class="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight">Full-Stack & AI Software Engineer</h1>
+                <p class="text-slate-400 text-base leading-relaxed max-w-xl">Building high-performance web applications, multi-agent AI systems, and modern cloud architectures with clean code and great design.</p>
+                <div class="flex items-center space-x-4 pt-2">
+                    <a href="#projects" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/30">View My Work</a>
+                    <a href="#contact" class="border border-slate-800 hover:bg-slate-900 text-slate-300 font-semibold px-6 py-3 rounded-xl transition-all">Get in Touch</a>
+                </div>
+            </div>
+            <div class="w-64 h-64 sm:w-80 sm:h-80 rounded-3xl bg-gradient-to-tr from-indigo-600 to-indigo-400 p-1 shadow-2xl shadow-indigo-500/20">
+                <div class="w-full h-full bg-slate-900 rounded-[22px] flex items-center justify-center text-5xl font-extrabold text-indigo-400">MS</div>
+            </div>
+        </section>
+
+        <!-- Projects Grid -->
+        <section id="projects" class="space-y-8">
+            <div class="space-y-2">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Featured Projects</h2>
+                <p class="text-slate-400 text-sm">A selection of recent applications and AI tools I've built.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4 hover:border-indigo-500/50 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold">01</div>
+                    <h3 class="text-lg font-bold text-white">AI Agent Dashboard</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">Full-stack multi-agent autonomous dev team orchestrator with live code sandbox.</p>
+                    <div class="flex gap-2 text-[10px] font-mono text-indigo-300 pt-2"><span class="bg-slate-800 px-2 py-0.5 rounded">React</span><span class="bg-slate-800 px-2 py-0.5 rounded">FastAPI</span></div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4 hover:border-indigo-500/50 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold">02</div>
+                    <h3 class="text-lg font-bold text-white">Real-Time Data Analytics</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">Interactive dashboard visualizing streaming metrics and data insights.</p>
+                    <div class="flex gap-2 text-[10px] font-mono text-indigo-300 pt-2"><span class="bg-slate-800 px-2 py-0.5 rounded">Tailwind</span><span class="bg-slate-800 px-2 py-0.5 rounded">Python</span></div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4 hover:border-indigo-500/50 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold">03</div>
+                    <h3 class="text-lg font-bold text-white">SaaS Landing Platform</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">High-converting landing page with responsive glassmorphic aesthetic.</p>
+                    <div class="flex gap-2 text-[10px] font-mono text-indigo-300 pt-2"><span class="bg-slate-800 px-2 py-0.5 rounded">HTML5</span><span class="bg-slate-800 px-2 py-0.5 rounded">JavaScript</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="bg-indigo-950/40 border border-indigo-500/20 rounded-3xl p-8 sm:p-12 text-center space-y-4">
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Let's Work Together</h2>
+            <p class="text-slate-400 text-sm max-w-lg mx-auto">Have a project in mind or looking for a developer? Feel free to reach out anytime!</p>
+            <div class="pt-4">
+                <a href="mailto:mukesh@example.com" class="inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3.5 rounded-xl transition-all shadow-xl shadow-indigo-600/30">mukesh@example.com</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-slate-800/80 text-center py-6 text-xs text-slate-500">
+        © 2026 Mukesh Singh. All rights reserved.
+    </footer>
+</body>
+</html>
+```
+
+```css
+/* File: style.css */
+html { scroll-behavior: smooth; }
+body { font-family: system-ui, -apple-system, sans-serif; }
+```
+
+```javascript
+// File: script.js
+console.log("Portfolio loaded successfully.");
+```"""
+                elif req.mode == "build" or any(w in user_msg_clean for w in ["build", "create", "make", "app", "website", "application", "dashboard", "system"]):
                     # Smart dynamic builder for fallback scenarios
-                    import re
                     app_name = re.sub(r'\b(build|create|make|a|an|the|app|website|application)\b', '', user_msg_clean, flags=re.IGNORECASE).strip().title()
                     if not app_name:
                         app_name = "Web Application"
@@ -740,7 +835,6 @@ function triggerAction() {{
 }}
 ```"""
                 else:
-                    import re
                     app_name = re.sub(r'\b(build|create|make|a|an|the|app|website|application|page|system|bnao|bna|do)\b', '', user_msg_clean, flags=re.IGNORECASE).strip().title()
                     if not app_name or len(app_name) < 2:
                         app_name = "Application Workspace"
