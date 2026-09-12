@@ -257,7 +257,38 @@ def preview_sandbox_file(sandbox_id: str, file_path: str = "index.html"):
 
     import glob
     html_files = glob.glob(os.path.join(sandbox_path, "**/*.html"), recursive=True)
-    raise HTTPException(status_code=404, detail=f"Preview file '{file_path}' not found in sandbox '{sandbox_id}'.")
+    if html_files:
+        return FileResponse(html_files[0], headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
+
+    # Clean HTML Building Fallback for New Tab / Preview (Auto-refreshes every 2s until code generates)
+    from fastapi.responses import HTMLResponse
+    building_html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Workspace Building...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta http-equiv="refresh" content="2">
+</head>
+<body class="bg-slate-950 text-white font-sans antialiased flex items-center justify-center min-h-screen p-4">
+    <div class="text-center p-8 bg-slate-900/90 border border-slate-800 rounded-3xl shadow-2xl max-w-md w-full backdrop-blur-md">
+        <div class="relative w-14 h-14 mx-auto mb-5 flex items-center justify-center">
+            <div class="absolute inset-0 rounded-full border-4 border-indigo-500/20 animate-ping"></div>
+            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        <h2 class="text-xl font-extrabold text-white mb-2 tracking-tight">⚡ AI Dev Team Building...</h2>
+        <p class="text-xs text-slate-400 leading-relaxed mb-4">
+            Scaffolding application components, styling UI, and assembling scripts.
+        </p>
+        <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-indigo-950/80 border border-indigo-500/30 text-[11px] font-mono text-indigo-300">
+            <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+            <span>Auto-refreshing live preview...</span>
+        </div>
+    </div>
+</body>
+</html>"""
+    return HTMLResponse(content=building_html, status_code=200)
 
 
 @router.delete("/sandboxes/cleanup")
