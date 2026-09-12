@@ -316,30 +316,30 @@ export default function App() {
   };
 
   const handleOpenCodeInIDE = async (input) => {
-    const newSandboxId = 'sb_' + Date.now();
+    const targetSandboxId = activeSandboxId || (typeof currentThreadId === 'string' && currentThreadId.startsWith('sandbox-') ? currentThreadId : (currentThreadId ? `sandbox-${currentThreadId}` : `sb_${Date.now()}`));
     const blocks = Array.isArray(input) ? input : [input];
 
     try {
       await Promise.all(blocks.map(block => {
         const cleanPath = getCleanFilename(block.filename, block.language);
 
-        return fetch(`/api/sandboxes/${newSandboxId}/file`, {
+        return fetch(`/api/sandboxes/${targetSandboxId}/file`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ path: cleanPath, content: block.code })
         });
       }));
-      setActiveSandboxId(newSandboxId);
+      setActiveSandboxId(targetSandboxId);
       setShowCanvas(true);
 
       if (currentThreadId) {
-        const newNode = { state_delta: { sandboxId: newSandboxId } };
+        const newNode = { state_delta: { sandboxId: targetSandboxId } };
         const updatedHistory = [...nodeHistory, newNode];
         setNodeHistory(updatedHistory);
         autoSaveChat(currentThreadId, messages, updatedHistory, mode);
       }
     } catch (e) {
-      console.error('Failed to create sandbox for code block', e);
+      console.error('Failed to sync sandbox for code block', e);
     }
   };
 

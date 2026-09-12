@@ -27,8 +27,8 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [copied, setCopied] = useState(false);
   const [applied, setApplied] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const [showCode, setShowCode] = useState(isStreaming);
+  const [showPreview, setShowPreview] = useState(true);
+  const [showCode, setShowCode] = useState(true);
   const [userToggledCode, setUserToggledCode] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionResult, setExecutionResult] = useState(null);
