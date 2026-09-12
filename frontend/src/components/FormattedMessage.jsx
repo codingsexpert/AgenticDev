@@ -51,6 +51,7 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
   const validBlocks = displayBlocks.length > 0 ? displayBlocks : blocks;
 
   const currentBlock = validBlocks[activeTabIndex] || validBlocks[0] || blocks[0];
+  if (!currentBlock) return null;
   const langLower = (currentBlock.language || '').toLowerCase();
   const cleanCurrentFilename = getCleanFilename(currentBlock.filename, currentBlock.language);
 
