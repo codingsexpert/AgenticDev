@@ -49,12 +49,15 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
       const data = await res.json();
 
       if (!res.ok) {
+        if (data.detail && typeof data.detail === 'string') {
+          throw new Error(data.detail);
+        }
         // Fallback to Supabase auth if backend API returned error
         const supaRes = await supabase.auth.signInWithPassword({
           email: cleanEmail,
           password: cleanPassword,
         });
-        if (supaRes.error) throw new Error(data.detail || supaRes.error.message);
+        if (supaRes.error) throw new Error(supaRes.error.message);
         
         const u = supaRes.data.user;
         const userData = {

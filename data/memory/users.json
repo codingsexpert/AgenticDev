@@ -102,10 +102,10 @@
     "email": "test_user_prod@example.com",
     "salt": "fdd1d8d772ccefc233406a2d43a55bd5",
     "password_hash": "3bf63f4eeacd8e97ea7fef87c38ebafe14946dd08a22b1181d8f32d531d152a3",
-    "token": "pixl_jwt_6d03e8693937ef94ade7909b6a1e2589344fa2be5ef2798042e7837b3eb452de",
+    "token": "pixl_jwt_4b6e94243f705e86d5e962c7523eaf4e55db869c40236218d83564e9fb607988",
     "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Prod Test User",
     "created_at": 1786476455.377128,
-    "token_expires_at": 1789291972.532814
+    "token_expires_at": 1789292254.109463
   },
   "signup_user_1788664935@example.com": {
     "id": "usr_1788664935641",
@@ -2937,5 +2937,81 @@
     "token_budget": 5.0,
     "total_cost": 0.0,
     "created_at": 1789205577.689025
+  },
+  "testdev@local.io": {
+    "id": "usr_1789205794596",
+    "name": "Test Dev",
+    "email": "testdev@local.io",
+    "salt": "4516dbb651970ed1e2d3ecc89d4ba012",
+    "password_hash": "6233a1ddd8276fc4ff3d84980aee831acb3e7948d04de30b264d2b0d9318b32f",
+    "token": "pixl_jwt_20234417d8fa50745664a928c9ad3437299c1e9279db08cd82258899b25fb36f",
+    "token_expires_at": 1789292195.332222,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Test Dev",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789205794.59683
+  },
+  "signup_user_1789205856@example.com": {
+    "id": "usr_1789205856982",
+    "name": "Valid User",
+    "email": "signup_user_1789205856@example.com",
+    "salt": "922e2b4110123aa26c633030d8e95108",
+    "password_hash": "a6f3ee78df24bbe4bbb1a11de147f80adeda204fd2902a5616f05d875b239cfb",
+    "token": "pixl_jwt_58b75d7d6e7abdc81fa3a09b6ec5ade1812e0d639b789cdbd1ccf36537727ae0",
+    "token_expires_at": 1789292256.9829729,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Valid User",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789205856.982982
+  },
+  "auth_test_1789205857@example.com": {
+    "id": "usr_1789205857577",
+    "name": "Auth User",
+    "email": "auth_test_1789205857@example.com",
+    "salt": "870706df4023f2cc8461e53f6d7ae251",
+    "password_hash": "b06e770dd8c62a58a5e3536b7e018d056adcb1c505c5d57ac203bbf493a44020",
+    "token": "pixl_jwt_2aeb6b9c86ba9b39a494d572b709d7ed855f4e742c3acb172b8d273aa32ee1a6",
+    "token_expires_at": 1789292257.984216,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Auth User",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789205857.577282
+  },
+  "logout_user_1789205858@example.com": {
+    "id": "usr_1789205858366",
+    "name": "Logout User",
+    "email": "logout_user_1789205858@example.com",
+    "salt": "6e2aa83ab29dae955c4d22e2a92447a9",
+    "password_hash": "12d30f2df032a08e970d10aeeff86b209d9f2be16e3d22aaf7fac57af9e161bd",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Logout User",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789205858.366047
+  },
+  "tenant_a_1789205858@example.com": {
+    "id": "usr_1789205858865",
+    "name": "User A",
+    "email": "tenant_a_1789205858@example.com",
+    "salt": "07a296e8a19f9edc4bd43200d29d95dd",
+    "password_hash": "93aff4659b932f7855d5789ea2a2b7500ad74950d7aea0edd0a31f4de10b2de7",
+    "token": "pixl_jwt_35a6ae7fdd5b5c26c18435bd9bc44c0e5cddf50e727c57d926e7f698bca0af2d",
+    "token_expires_at": 1789292258.865738,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User A",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789205858.8657439
+  },
+  "tenant_b_1789205858@example.com": {
+    "id": "usr_1789205859208",
+    "name": "User B",
+    "email": "tenant_b_1789205858@example.com",
+    "salt": "17625f6fdf781c927767f94afa9b50bb",
+    "password_hash": "6fa9a7b6e067eeb993fcac8698fe6d16fcaeac2fb67c82fea9cb2a7c081e065a",
+    "token": "pixl_jwt_10b6e79efbcc8a0851c9ee779fe9e747db72514d97788831931b16127192ace3",
+    "token_expires_at": 1789292259.208441,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User B",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789205859.208448
   }
 }
