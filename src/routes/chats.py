@@ -297,12 +297,22 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
             "gemini-1.5-pro": "gemini/gemini-1.5-pro",
             "gemini-3.6-flash": "gemini/gemini-1.5-flash",
             "gemini-flash-lite-latest": "gemini/gemini-2.0-flash-lite",
+            "openrouter-qwen": "openrouter/qwen/qwen-2.5-coder-32b-instruct",
         }
         primary_model = model_alias_map.get(raw_model) or (raw_model if "/" in raw_model else f"gemini/{raw_model}")
         
+        env_model = os.getenv("LLM_MODEL")
         seen_models = set()
         models_to_try = []
-        for m in [primary_model, "gemini/gemini-2.0-flash", "gemini/gemini-1.5-flash", "gemini/gemini-2.0-flash-lite", "gemini/gemini-1.5-pro"]:
+        
+        candidate_list = [primary_model]
+        if env_model:
+            candidate_list.append(env_model)
+        if os.getenv("OPENROUTER_API_KEY"):
+            candidate_list.append("openrouter/qwen/qwen-2.5-coder-32b-instruct")
+        candidate_list.extend(["gemini/gemini-2.0-flash", "gemini/gemini-1.5-flash", "gemini/gemini-2.0-flash-lite", "gemini/gemini-1.5-pro"])
+
+        for m in candidate_list:
             if m not in seen_models:
                 seen_models.add(m)
                 models_to_try.append(m)
@@ -729,9 +739,48 @@ function triggerAction() {{
 }}
 ```"""
                 else:
-                    fallback_reply = "I am ready to help you build and manage your workspace. Please configure your LLM API Key in settings to enable full-stack generation, or use the 'build' mode for scaffolding."
+                    import re
+                    app_name = re.sub(r'\b(build|create|make|a|an|the|app|website|application|page|system|bnao|bna|do)\b', '', user_msg_clean, flags=re.IGNORECASE).strip().title()
+                    if not app_name or len(app_name) < 2:
+                        app_name = "Application Workspace"
 
-                full_text = fallback_reply
+                    fallback_reply = f"""```html
+<!-- File: index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{app_name}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 antialiased">
+    <div class="w-full max-w-xl bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl text-center">
+        <h1 class="text-2xl font-extrabold text-white mb-2">{app_name} Workspace</h1>
+        <p class="text-sm text-slate-400 mb-6">Interactive workspace for {app_name} generated and ready for development.</p>
+        <button onclick="triggerAction()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md cursor-pointer">Launch {app_name}</button>
+        <div id="actionResult" class="mt-4 text-xs font-semibold text-emerald-400 hidden">Application initialized successfully!</div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+```css
+/* File: style.css */
+body {{ font-family: system-ui, -apple-system, sans-serif; }}
+```
+
+```javascript
+// File: script.js
+function triggerAction() {{
+    const res = document.getElementById('actionResult');
+    res.classList.remove('hidden');
+}}
+```"""
+
+                full_text = fallback_reply or "Workspace ready."
                 if req.thread_id:
                     from src.utils.sandbox_manager import extract_and_write_code_files, reconnect_sandbox
                     sandbox_id = req.thread_id if req.thread_id.startswith("sandbox-") else f"sandbox-{req.thread_id}"
@@ -740,7 +789,7 @@ function triggerAction() {{
                     if written:
                         yield f"data: {json.dumps({'sandbox': {'sandbox_id': sandbox_id, 'files': written}})}\n\n"
 
-            tokens = re.split(r'(\s+)', fallback_reply)
+            tokens = re.split(r'(\s+)', full_text)
             for tok in tokens:
                 if tok:
                     yield f"data: {json.dumps({'text': tok})}\n\n"

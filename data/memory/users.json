@@ -1853,5 +1853,18 @@
     "token_budget": 5.0,
     "total_cost": 0.0,
     "created_at": 1789196381.722847
+  },
+  "tenant_b_1789196381@example.com": {
+    "id": "usr_1789196382596",
+    "name": "User B",
+    "email": "tenant_b_1789196381@example.com",
+    "salt": "5081e11b5f2b6ebd4b514bf9c5f9c91a",
+    "password_hash": "c27bfefff421143706f76fb8488e85959c4f668152f082cf49be7378a80927ba",
+    "token": "pixl_jwt_8da00a352b62bede4c92244786c8b8d281d623bf8e12805bf66670a33e51c6f4",
+    "token_expires_at": 1789282782.596787,
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=User B",
+    "token_budget": 5.0,
+    "total_cost": 0.0,
+    "created_at": 1789196382.5967932
   }
 }
