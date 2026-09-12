@@ -80,9 +80,9 @@ const FileTreeNode = ({ node, level, selectedFile, onSelect, onRename, hasUnsave
       
       {!isFile && isOpen && (
         <div>
-          {Object.keys(node.children).sort((a,b) => {
-             const isAFolder = node.children[a].type === 'folder';
-             const isBFolder = node.children[b].type === 'folder';
+          {Object.keys(node?.children || {}).sort((a,b) => {
+             const isAFolder = node.children?.[a]?.type === 'folder';
+             const isBFolder = node.children?.[b]?.type === 'folder';
              if (isAFolder && !isBFolder) return -1;
              if (!isAFolder && isBFolder) return 1;
              return a.localeCompare(b);
@@ -573,9 +573,9 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
             </div>
             
             <div className="flex-1 py-1">
-               {Object.keys(fileTree).sort((a,b) => {
-                 const isAFolder = fileTree[a].type === 'folder';
-                 const isBFolder = fileTree[b].type === 'folder';
+               {Object.keys(fileTree || {}).sort((a,b) => {
+                 const isAFolder = fileTree?.[a]?.type === 'folder';
+                 const isBFolder = fileTree?.[b]?.type === 'folder';
                  if (isAFolder && !isBFolder) return -1;
                  if (!isAFolder && isBFolder) return 1;
                  return a.localeCompare(b);
