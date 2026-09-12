@@ -37,7 +37,7 @@ async def text_to_speech(req: TTSRequest):
     if len(clean_text) > 3000:
         clean_text = clean_text[:3000]
 
-    voice_id = req.voice_id or os.getenv("ELEVENLABS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM") # Rachel / Default voice
+    voice_id = req.voice_id or os.getenv("ELEVENLABS_VOICE_ID", "EXAVITQu4vr4xnSDxMaL") # Sarah / Default free tier voice
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
 
     headers = {
