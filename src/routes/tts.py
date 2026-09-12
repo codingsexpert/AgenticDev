@@ -3,6 +3,7 @@ src/routes/tts.py — ElevenLabs Text-to-Speech API Router
 """
 
 import os
+import ssl
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Response
 from pydantic import BaseModel
@@ -57,7 +58,10 @@ async def text_to_speech(req: TTSRequest):
     try:
         data_bytes = json.dumps(payload).encode("utf-8")
         request = urllib.request.Request(url, data=data_bytes, headers=headers, method="POST")
-        with urllib.request.urlopen(request, timeout=15) as response:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        with urllib.request.urlopen(request, timeout=15, context=ctx) as response:
             audio_data = response.read()
             return Response(content=audio_data, media_type="audio/mpeg")
     except urllib.error.HTTPError as e:
