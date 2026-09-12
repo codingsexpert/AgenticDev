@@ -421,7 +421,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
               </button>
 
               {modelDropdownOpen && (
-                <div className="absolute bottom-full mb-2 left-0 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 space-y-1 z-50 animate-fade-in">
+                <div className="absolute bottom-full mb-2 left-0 w-64 max-w-[85vw] sm:max-w-xs bg-white border border-slate-200 rounded-2xl shadow-xl p-2 space-y-1 z-50 animate-fade-in">
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 py-1">AI Model Engine</div>
                   {models.map((m) => (
                     <button
@@ -461,7 +461,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
               </button>
 
               {toolsDropdownOpen && (
-                <div className="absolute bottom-full mb-2 left-0 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl p-2.5 space-y-2 z-50 animate-fade-in">
+                <div className="absolute bottom-full mb-2 left-0 w-72 max-w-[88vw] sm:max-w-xs bg-white border border-slate-200 rounded-2xl shadow-xl p-2.5 space-y-2 z-50 animate-fade-in">
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Active Agent Capabilities</div>
 
                   <div className="space-y-1">

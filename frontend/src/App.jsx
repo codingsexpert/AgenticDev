@@ -661,23 +661,21 @@ export default function App() {
       {/* 2. Main Content Area */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative w-full min-w-0">
         {/* Minimal Professional Top Header Bar */}
-        <header className="h-14 border-b border-slate-200/70 px-4 sm:px-6 flex items-center justify-between bg-white/90 backdrop-blur-md z-40 shrink-0 gap-3 relative">
-          {/* Left: Expand Sidebar Button (only when sidebar is closed) & Session Title */}
-          <div className="flex items-center space-x-3 shrink-0">
-            {!sidebarOpen && (
-              <button
-                onClick={() => setSidebarOpen(true)}
-                title="Expand Sidebar"
-                className="p-1.5 rounded-xl border border-slate-200/70 hover:bg-slate-100 text-indigo-600 transition-all shrink-0 cursor-pointer shadow-2xs"
-              >
-                <PanelLeft className="w-4 h-4 text-indigo-600" />
-              </button>
-            )}
+        <header className="h-14 border-b border-slate-200/70 px-3 sm:px-6 flex items-center justify-between bg-white/90 backdrop-blur-md z-40 shrink-0 gap-2 relative w-full min-w-0">
+          {/* Left: Sidebar Toggle Button & Active Workspace Title */}
+          <div className="flex items-center space-x-2.5 shrink-0 min-w-0">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              title={sidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+              className="p-1.5 rounded-xl border border-slate-200/80 hover:bg-slate-100 text-slate-600 hover:text-indigo-600 transition-all shrink-0 cursor-pointer shadow-2xs"
+            >
+              {sidebarOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeft className="w-4 h-4" />}
+            </button>
 
-            {/* Active Session Status Title (No duplicate PixiExpert text!) */}
-            <div className="hidden sm:flex items-center space-x-2 text-xs">
-              <span className="w-2 h-2 rounded-full bg-slate-400"></span>
-              <span className="font-semibold text-slate-800 truncate max-w-[200px] md:max-w-[320px]">
+            {/* Active Session Status Title */}
+            <div className="flex items-center space-x-2 text-xs truncate">
+              <span className="w-2 h-2 rounded-full bg-indigo-500 shrink-0 animate-pulse"></span>
+              <span className="font-semibold text-slate-800 truncate max-w-[100px] min-[400px]:max-w-[140px] sm:max-w-[200px] md:max-w-[280px]">
                 {currentThreadId
                   ? (projects.find(p => p.thread_id === currentThreadId)?.title || 'Active Chat')
                   : 'New Workspace'
@@ -686,8 +684,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* Center: Search Command Bar with Cmd+K */}
-          <div className="flex-1 max-w-md mx-2 hidden sm:block">
+          {/* Center: Search Command Bar */}
+          <div className="flex-1 max-w-md mx-2 hidden md:block">
             <div className="relative w-full">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
@@ -705,13 +703,13 @@ export default function App() {
           </div>
 
           {/* Right Header Quick Actions */}
-          <div className="flex items-center space-x-2 shrink-0">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             {activeSandboxId && (
               <button
                 type="button"
                 onClick={() => setShowCanvas(!showCanvas)}
                 title={showCanvas ? "Hide Code Canvas" : "Open Code Editor & Preview"}
-                className={`p-1.5 px-3 rounded-lg border transition-all cursor-pointer flex items-center space-x-1.5 shadow-sm text-xs font-semibold ${
+                className={`p-1.5 px-2.5 sm:px-3 rounded-lg border transition-all cursor-pointer flex items-center space-x-1.5 shadow-sm text-xs font-semibold ${
                   showCanvas 
                     ? 'bg-indigo-600 border-indigo-600 text-white shadow-indigo-200' 
                     : 'bg-white border-indigo-200 hover:bg-indigo-50 text-indigo-600'
@@ -727,7 +725,7 @@ export default function App() {
                 href={`/api/projects/${currentThreadId}/download`}
                 download={`project_${currentThreadId}.zip`}
                 title="Download Project Workspace"
-                className="p-1.5 px-3 rounded-lg border border-slate-200 hover:bg-indigo-50 text-indigo-600 transition-all cursor-pointer flex items-center space-x-1.5 shadow-sm bg-white"
+                className="p-1.5 px-2.5 sm:px-3 rounded-lg border border-slate-200 hover:bg-indigo-50 text-indigo-600 transition-all cursor-pointer flex items-center space-x-1.5 shadow-sm bg-white"
               >
                 <Download className="w-4 h-4" />
                 <span className="text-xs font-medium hidden sm:inline">Download</span>
@@ -920,12 +918,12 @@ export default function App() {
                 </p>
 
                 {/* Centered Message Composer */}
-                <div className="w-full max-w-3xl mb-8">
+                <div className="w-full max-w-4xl mb-8">
                   <PromptBar onSubmit={handlePromptSubmit} isLoading={isLoading} onStop={handleStopGeneration} mode={mode} setMode={setMode} />
                 </div>
 
                 {/* 4 Clean Glassmorphic Action Cards Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 w-full max-w-3xl">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-4xl">
                   {/* Card 1: Build SaaS App */}
                   <div
                     onClick={() => handlePromptSubmit('Build a responsive full-stack SaaS landing page with dark mode, features section, pricing cards, and contact form', 'gemini-1.5-flash', 'build')}

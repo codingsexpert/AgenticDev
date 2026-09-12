@@ -469,23 +469,23 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
           {activeTab === 'code' && (
             <>
               <button
                 onClick={handleRunCode}
                 disabled={isExecuting}
-                className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 hover:bg-emerald-500 text-white shadow-md cursor-pointer border border-emerald-400/40 active:scale-95 disabled:opacity-50"
+                className="flex items-center space-x-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 hover:bg-emerald-500 text-white shadow-md cursor-pointer border border-emerald-400/40 active:scale-95 disabled:opacity-50 shrink-0"
                 title="Save & Run Code Natively"
               >
                 {isExecuting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5 fill-white" />}
-                <span>{isExecuting ? 'Running...' : 'Run Code'}</span>
+                <span>{isExecuting ? 'Running...' : 'Run'}</span>
               </button>
 
               <button
                 onClick={handleSave}
                 disabled={!hasUnsavedChanges || saving}
-                className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`flex items-center space-x-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 ${
                     hasUnsavedChanges 
                         ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-500/20' 
                         : 'bg-[#212434] text-slate-500 cursor-not-allowed border border-[#2b3044]'
@@ -493,7 +493,7 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                 title="Save Changes (Cmd+S)"
               >
                   {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                  <span>Save</span>
+                  <span className="hidden sm:inline">Save</span>
               </button>
 
               {rawPreviewUrl && (
@@ -501,11 +501,11 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                   href={rawPreviewUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-300 bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-500/40 transition-colors"
+                  className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-300 bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-500/40 transition-colors shrink-0"
                   title="Open Live Web Preview in New Browser Tab"
                 >
                   <ExternalLink className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>Open in New Tab</span>
+                  <span className="hidden md:inline">Open in New Tab</span>
                 </a>
               )}
 
@@ -513,11 +513,11 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
                 <a
                   href={`/api/sandboxes/${sandboxId}/download`}
                   download={`workspace_${sandboxId}.zip`}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-300 bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-500/40 transition-colors"
+                  className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-300 bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-500/40 transition-colors shrink-0"
                   title="Download Entire Workspace Project as .ZIP Archive"
                 >
                   <Download className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Download Zip</span>
+                  <span className="hidden sm:inline">Download Zip</span>
                 </a>
               )}
             </>

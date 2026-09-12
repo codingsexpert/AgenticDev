@@ -272,7 +272,7 @@ export default function Sidebar({
         style={typeof window !== 'undefined' && window.innerWidth >= 1024 ? {
           width: sidebarOpen ? `${sidebarWidth}px` : '0px'
         } : undefined}
-        className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto bg-white/90 backdrop-blur-md border-r border-slate-200/70 flex flex-col relative shrink-0 shadow-2xl lg:shadow-none ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto bg-white/90 backdrop-blur-md border-r border-slate-200/70 flex flex-col relative shrink-0 shadow-2xl lg:shadow-none w-[280px] xs:w-[300px] sm:w-[320px] lg:w-auto ${
           isResizing ? 'transition-none select-none' : 'transition-all duration-300 ease-in-out'
         } ${
           sidebarOpen
