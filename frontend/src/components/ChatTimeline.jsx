@@ -218,12 +218,14 @@ export default function ChatTimeline({
   routingInfo = null,
   isLoading = false,
   activeSandboxId = null,
+  autoVoiceEnabled = false,
   onAnswerQuestions,
   onRegenerate,
   onOpenCodeBlock,
   onQuickAction,
 }) {
   const chatEndRef = useRef(null);
+  const lastSpokenRef = useRef('');
   const [editingIdx, setEditingIdx] = useState(null);
   const [editText, setEditText] = useState('');
   const [answers, setAnswers] = useState({});
@@ -237,7 +239,37 @@ export default function ChatTimeline({
 
   useEffect(() => {
     scrollToBottom();
-  }, [safeMessages.length, streamingText, safeQuestions.length]);
+
+    // ElevenLabs Track Feature: Auto-speak latest assistant message if autoVoiceEnabled is ON
+    if (autoVoiceEnabled && !isLoading && safeMessages.length > 0) {
+      const lastMsg = safeMessages[safeMessages.length - 1];
+      if (lastMsg && lastMsg.role === 'assistant' && lastMsg.content && lastMsg.content !== lastSpokenRef.current) {
+        lastSpokenRef.current = lastMsg.content;
+        const cleanText = lastMsg.content
+          .replace(/```[\s\S]*?```/g, ' Code snippet ready in workspace canvas. ')
+          .replace(/[*_#`]/g, '')
+          .trim()
+          .slice(0, 450);
+
+        if (cleanText) {
+          fetch('/api/tts/speak', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: cleanText }),
+          })
+            .then((res) => (res.ok ? res.blob() : null))
+            .then((blob) => {
+              if (blob) {
+                const url = URL.createObjectURL(blob);
+                const audio = new Audio(url);
+                audio.play().catch(() => {});
+              }
+            })
+            .catch(() => {});
+        }
+      }
+    }
+  }, [safeMessages.length, streamingText, safeQuestions.length, isLoading, autoVoiceEnabled]);
 
   const handleAnswerSubmit = (e) => {
     e?.preventDefault();

@@ -35,7 +35,8 @@ import {
   Globe,
   Plus,
   Settings,
-  Download
+  Download,
+  Volume2
 } from 'lucide-react';
 
 export default function App() {
@@ -64,6 +65,15 @@ export default function App() {
 
   // Search State
   const [searchQuery, setSearchQuery] = useState('');
+
+  // ElevenLabs Voice AI Auto-Speak Switch State (Hackathon ElevenLabs Track Feature)
+  const [autoVoiceEnabled, setAutoVoiceEnabled] = useState(() => {
+    try {
+      return localStorage.getItem('pixlexpert_auto_voice') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
 
   useEffect(() => {
     document.documentElement.classList.remove('dark');
@@ -701,6 +711,32 @@ export default function App() {
 
           {/* Right Header Quick Actions */}
           <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+            {/* ElevenLabs AI Voice Auto-Speak Toggle Button (Hackathon Track Feature) */}
+            <button
+              type="button"
+              onClick={() => {
+                const next = !autoVoiceEnabled;
+                setAutoVoiceEnabled(next);
+                localStorage.setItem('pixlexpert_auto_voice', next ? 'true' : 'false');
+              }}
+              title={autoVoiceEnabled ? "ElevenLabs AI Voice Auto-Read Active (Click to Mute)" : "Enable ElevenLabs Voice AI Auto-Read"}
+              className={`p-1.5 px-2.5 sm:px-3 rounded-lg border transition-all duration-300 cursor-pointer flex items-center space-x-1.5 shadow-sm text-xs font-semibold ${
+                autoVoiceEnabled
+                  ? 'bg-purple-600 border-purple-600 text-white shadow-purple-200'
+                  : 'bg-white border-purple-200 hover:bg-purple-50 text-purple-700'
+              }`}
+            >
+              <Volume2 className={`w-4 h-4 ${autoVoiceEnabled ? 'animate-pulse' : ''}`} />
+              <span className="hidden min-[480px]:inline">{autoVoiceEnabled ? 'ElevenLabs Voice ON' : 'ElevenLabs Voice'}</span>
+              {autoVoiceEnabled && (
+                <span className="flex items-center space-x-0.5 ml-0.5" title="ElevenLabs AI Voice Agent Active">
+                  <span className="w-0.5 h-2.5 bg-white rounded-full animate-bounce [animation-delay:0.1s]"></span>
+                  <span className="w-0.5 h-3.5 bg-white rounded-full animate-bounce [animation-delay:0.25s]"></span>
+                  <span className="w-0.5 h-2 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                </span>
+              )}
+            </button>
+
             {activeSandboxId && (
               <button
                 type="button"
@@ -886,6 +922,7 @@ export default function App() {
                 routingInfo={routingInfo}
                 isLoading={isLoading}
                 activeSandboxId={activeSandboxId}
+                autoVoiceEnabled={autoVoiceEnabled}
                 onAnswerQuestions={handleAnswerQuestions}
                 onRegenerate={handleRegenerate}
                 onOpenCodeBlock={handleOpenCodeInIDE}
