@@ -114,9 +114,9 @@ function UnifiedProjectCard({ blocks, activeSandboxId, onOpenCodeBlock, onQuickA
   };
 
   const getCombinedSrcDoc = () => {
-    let htmlBlock = validBlocks.find(b => b.language === 'html' || b.filename.endsWith('.html'));
-    let cssBlock = validBlocks.find(b => b.language === 'css' || b.filename.endsWith('.css'));
-    let jsBlock = validBlocks.find(b => b.language === 'javascript' || b.language === 'js' || b.filename.endsWith('.js'));
+    let htmlBlock = validBlocks.find(b => (b.language || '').toLowerCase() === 'html' || (b.filename || '').toLowerCase().endsWith('.html'));
+    let cssBlock = validBlocks.find(b => (b.language || '').toLowerCase() === 'css' || (b.filename || '').toLowerCase().endsWith('.css'));
+    let jsBlock = validBlocks.find(b => ['javascript', 'js', 'jsx'].includes((b.language || '').toLowerCase()) || (b.filename || '').toLowerCase().endsWith('.js') || (b.filename || '').toLowerCase().endsWith('.jsx'));
 
     let html = htmlBlock ? htmlBlock.code : (validBlocks.length === 1 && hasWebBlocks ? validBlocks[0].code : '<div id="root"></div>');
     let css = cssBlock ? cssBlock.code : '';

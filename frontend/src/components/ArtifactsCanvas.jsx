@@ -384,8 +384,9 @@ export default function ArtifactsCanvas({ sandboxId, onClose, initialTab = 'code
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [fileContent, originalContent, activeTab, sandboxId, selectedFile]);
 
-  const safeSelectedFile = selectedFile || 'index.html';
-  const htmlFile = files.find(f => typeof f?.path === 'string' && f.path.endsWith('.html'));
+  const safeSelectedFile = typeof selectedFile === 'string' ? selectedFile : 'index.html';
+  const safeFileList = Array.isArray(files) ? files : [];
+  const htmlFile = safeFileList.find(f => typeof f?.path === 'string' && f.path.endsWith('.html'));
   const mainHtmlPath = htmlFile ? htmlFile.path : (safeSelectedFile.endsWith('.html') ? safeSelectedFile : null);
   
   // If deployed to Vercel, use the live Vercel URL. Otherwise, fallback to static HTML preview.
