@@ -133,6 +133,7 @@ def create_initial_state(user_requirement: str = "", chat_history: List[Any] = N
         "userRequirement": user_requirement,
         "chatHistory": chat_history or [],
         "pmStatus": "idle",
+        "sandboxHealthy": False,
         "tokenBudget": token_budget,
         "userSatisfied": False,
         "deploymentConfig": {"platform": "", "files": [], "instructions": []},
@@ -143,7 +144,6 @@ def create_initial_state(user_requirement: str = "", chat_history: List[Any] = N
             "totalOutput": 0,
             "estimatedCost": 0.0,
         },
-        "tokenBudget": token_budget,
         "currentPhase": "pm",
         "error": None,
     }
