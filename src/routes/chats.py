@@ -71,7 +71,7 @@ async def chat_stream(
                 yield f"data: {json.dumps({'done': True})}\n\n"
             return StreamingResponse(rate_limit_error_stream(), media_type="text/event-stream")
 
-    target_model = req.model or "gemini-1.5-flash"
+    target_model = req.model or "gemini-2.5-flash"
 
     # Persistent Session Memory Retrieval
     persistent_msgs = []
@@ -289,35 +289,44 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
             yield f"data: {json.dumps({'done': True})}\n\n"
             return
 
-        raw_model = target_model or os.getenv("LLM_MODEL", "openrouter/qwen/qwen-2.5-coder-32b-instruct")
+        raw_model = target_model or os.getenv("LLM_MODEL", "openrouter/google/gemini-2.5-flash")
         
         model_alias_map = {
-            "gemini-flash-latest": "gemini/gemini-1.5-flash",
-            "gemini-2.0-flash": "gemini/gemini-1.5-flash",
-            "gemini-1.5-flash": "gemini/gemini-1.5-flash",
-            "gemini-1.5-pro": "gemini/gemini-1.5-pro",
-            "gemini-3.6-flash": "gemini/gemini-1.5-flash",
-            "gemini-flash-lite-latest": "gemini/gemini-2.0-flash-lite",
+            "gemini-2.5-flash": "openrouter/google/gemini-2.5-flash",
+            "gemini-2.5": "openrouter/google/gemini-2.5-flash",
+            "gemini-2.5-pro": "openrouter/google/gemini-2.5-pro",
+            "gemini-2.5-flash-lite": "openrouter/google/gemini-2.5-flash-lite",
+            "gemini-flash-latest": "openrouter/google/gemini-2.5-flash",
+            "gemini-2.0-flash": "openrouter/google/gemini-2.5-flash",
+            "gemini-1.5-flash": "openrouter/google/gemini-2.5-flash",
+            "gemini-1.5-pro": "openrouter/google/gemini-2.5-pro",
+            "gemini-3.6-flash": "gemini/gemini-3.6-flash",
+            "gemini-flash-lite-latest": "openrouter/google/gemini-2.5-flash-lite",
             "openrouter-qwen": "openrouter/qwen/qwen-2.5-coder-32b-instruct",
         }
-        primary_model = model_alias_map.get(raw_model) or (raw_model if "/" in raw_model else raw_model)
+        primary_model = model_alias_map.get(raw_model) or (raw_model if "/" in raw_model else f"openrouter/google/{raw_model}")
         
         env_model = os.getenv("LLM_MODEL")
         seen_models = set()
         models_to_try = []
         
         candidate_list = []
-        if os.getenv("OPENROUTER_API_KEY"):
-            candidate_list.extend([
-                "openrouter/qwen/qwen-2.5-coder-32b-instruct",
-                "openrouter/google/gemini-2.0-flash-001",
-                "openrouter/deepseek/deepseek-chat"
-            ])
         if primary_model:
-            candidate_list.insert(0, primary_model)
+            candidate_list.append(primary_model)
         if env_model:
             candidate_list.append(env_model)
-        candidate_list.extend(["gemini/gemini-2.0-flash", "gemini/gemini-1.5-flash", "gemini/gemini-2.0-flash-lite", "gemini/gemini-1.5-pro"])
+        if os.getenv("OPENROUTER_API_KEY"):
+            candidate_list.extend([
+                "openrouter/google/gemini-2.5-flash",
+                "openrouter/google/gemini-2.5-flash-lite",
+                "openrouter/qwen/qwen-2.5-coder-32b-instruct",
+                "openrouter/deepseek/deepseek-chat",
+                "openrouter/meta-llama/llama-3.1-8b-instruct"
+            ])
+        
+        gemini_key = os.getenv("GEMINI_API_KEY", "")
+        if gemini_key and gemini_key.startswith("AIza"):
+            candidate_list.extend(["gemini/gemini-3.6-flash"])
 
         for m in candidate_list:
             if m and m not in seen_models:
@@ -327,12 +336,12 @@ CLAUDE / CODEX UNIVERSAL FULL-STACK GENERATION RULES (CRITICAL):
         stream_success = False
         full_text = ""
 
-        # LiteLLM automatically picks up the correct API key from the environment based on the model prefix.
-        # No need to explicitly pass it and risk sending the Gemini key to OpenRouter/OpenAI.
-        acompletion_kwargs = {}
-
         for m_name in models_to_try:
             try:
+                acompletion_kwargs = {}
+                if m_name.startswith("openrouter/"):
+                    acompletion_kwargs["max_tokens"] = 4096
+
                 response_stream = await litellm.acompletion(
                     model=m_name,
                     messages=messages,

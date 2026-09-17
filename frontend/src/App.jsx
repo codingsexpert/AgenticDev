@@ -262,7 +262,7 @@ export default function App() {
         localStorage.setItem(`active_thread_id_${uid}`, data.thread_id);
         localStorage.setItem('active_thread_id', data.thread_id);
         setMessages(data.messages || []);
-        const loadedHist = data.node_history || [];
+        const loadedHist = Array.isArray(data.node_history) ? data.node_history : [];
         setNodeHistory(loadedHist);
         setMode(data.mode || 'chat');
         setStreamingText('');
@@ -352,7 +352,7 @@ export default function App() {
 
   const triggerQuickAction = (action, code) => {
     setMode('chat');
-    handlePromptSubmit(`${action} this code:\n\n\`\`\`\n${code}\n\`\`\``, 'gemini-1.5-flash', 'chat');
+    handlePromptSubmit(`${action} this code:\n\n\`\`\`\n${code}\n\`\`\``, 'gemini-2.5-flash', 'chat');
   };
 
   const handleRegenerate = (msgIdx, overridePrompt = null) => {
@@ -370,7 +370,7 @@ export default function App() {
       }
     }
     if (lastPrompt) {
-      handlePromptSubmit(lastPrompt, 'gemini-1.5-flash', mode);
+      handlePromptSubmit(lastPrompt, 'gemini-2.5-flash', mode);
     }
   };
 
@@ -661,7 +661,7 @@ export default function App() {
         user={user}
         onOpenAuth={() => setAuthModalOpen(true)}
         onLogout={handleLogout}
-        onPromptAction={(p) => handlePromptSubmit(p, 'gemini-1.5-flash', mode)}
+        onPromptAction={(p) => handlePromptSubmit(p, 'gemini-2.5-flash', mode)}
         activeNav={activeNav}
         onSelectNav={(nav) => setActiveNav(nav)}
       />
@@ -944,7 +944,7 @@ export default function App() {
               <div className="w-full flex flex-col items-center justify-center py-6 sm:py-10 my-0 sm:my-auto">
                 {/* Flowing Crisp Greeting */}
                 <h1 className="text-2xl min-[400px]:text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-2 text-center">
-                  Good morning{user?.name ? `, ${user.name.split(' ')[0]}` : ''}
+                  Good morning{user?.name && typeof user.name === 'string' ? `, ${user.name.split(' ')[0]}` : ''}
                 </h1>
 
                 {/* Short Description */}
@@ -961,7 +961,7 @@ export default function App() {
                 <div className="grid grid-cols-1 min-[500px]:grid-cols-2 min-[900px]:grid-cols-4 gap-3 sm:gap-4 w-full max-w-4xl px-1 sm:px-0">
                   {/* Card 1: Build SaaS App */}
                   <div
-                    onClick={() => handlePromptSubmit('Build a responsive full-stack SaaS landing page with dark mode, features section, pricing cards, and contact form', 'gemini-1.5-flash', 'build')}
+                    onClick={() => handlePromptSubmit('Build a responsive full-stack SaaS landing page with dark mode, features section, pricing cards, and contact form', 'gemini-2.5-flash', 'build')}
                     className="clean-glass-card p-3.5 sm:p-4 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
@@ -980,7 +980,7 @@ export default function App() {
 
                   {/* Card 2: Analytics Dashboard */}
                   <div
-                    onClick={() => handlePromptSubmit('Build a responsive real-time data analytics dashboard with KPI cards, CSS grid layout, and dark aesthetic', 'gemini-1.5-flash', 'build')}
+                    onClick={() => handlePromptSubmit('Build a responsive real-time data analytics dashboard with KPI cards, CSS grid layout, and dark aesthetic', 'gemini-2.5-flash', 'build')}
                     className="clean-glass-card p-3.5 sm:p-4 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
@@ -999,7 +999,7 @@ export default function App() {
 
                   {/* Card 3: FastAPI REST Service */}
                   <div
-                    onClick={() => handlePromptSubmit('Write a production FastAPI REST backend service with Pydantic schemas, CORS middleware, and unit tests', 'gemini-1.5-flash', 'build')}
+                    onClick={() => handlePromptSubmit('Write a production FastAPI REST backend service with Pydantic schemas, CORS middleware, and unit tests', 'gemini-2.5-flash', 'build')}
                     className="clean-glass-card p-3.5 sm:p-4 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
@@ -1018,7 +1018,7 @@ export default function App() {
 
                   {/* Card 4: Voice AI Architecture */}
                   <div
-                    onClick={() => handlePromptSubmit('Explain how multi-agent LangGraph orchestrates ElevenLabs AI text-to-speech for real-time natural voice agents', 'gemini-1.5-flash', 'chat')}
+                    onClick={() => handlePromptSubmit('Explain how multi-agent LangGraph orchestrates ElevenLabs AI text-to-speech for real-time natural voice agents', 'gemini-2.5-flash', 'chat')}
                     className="clean-glass-card p-3.5 sm:p-4 rounded-2xl cursor-pointer group text-left flex flex-col justify-between"
                   >
                     <div>
@@ -1044,7 +1044,7 @@ export default function App() {
             <RightSidebar
               projects={projects}
               onSelectProject={handleSelectChat}
-              onPromptAction={(promptText) => handlePromptSubmit(promptText, 'gemini-1.5-flash', 'chat')}
+              onPromptAction={(promptText) => handlePromptSubmit(promptText, 'gemini-2.5-flash', 'chat')}
             />
           )}
 
@@ -1105,7 +1105,7 @@ export default function App() {
         onClose={() => setActiveNav('Chat')}
         onPromptAction={(p) => {
           setActiveNav('Chat');
-          handlePromptSubmit(p, 'gemini-1.5-flash', mode);
+          handlePromptSubmit(p, 'gemini-2.5-flash', mode);
         }}
       />
 
@@ -1115,7 +1115,7 @@ export default function App() {
         onClose={() => setActiveNav('Chat')}
         onPromptAction={(p) => {
           setActiveNav('Chat');
-          handlePromptSubmit(p, 'gemini-1.5-flash', mode);
+          handlePromptSubmit(p, 'gemini-2.5-flash', mode);
         }}
       />
 

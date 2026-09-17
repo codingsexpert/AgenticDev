@@ -23,7 +23,7 @@ from src.routes.state import _event_queues, _thread_states, compiled_graph
 router = APIRouter(prefix="/api", tags=["projects"])
 
 
-def _sync_graph_worker(thread_id: str, requirement: str, token_budget: float, chat_history: list, user_email: str, langsmith_api_key: str, loop: asyncio.AbstractEventLoop):
+def _sync_graph_worker(thread_id: str, requirement: str, token_budget: float, chat_history: list, user_email: str, langsmith_api_key: str, loop: asyncio.AbstractEventLoop, model: str = "gemini-2.5-flash"):
     if langsmith_api_key:
         os.environ["LANGCHAIN_TRACING_V2"] = "true"
         os.environ["LANGCHAIN_API_KEY"] = langsmith_api_key
@@ -40,7 +40,7 @@ def _sync_graph_worker(thread_id: str, requirement: str, token_budget: float, ch
         "configurable": {"thread_id": thread_id},
         "recursion_limit": 500,
     }
-    initial_state = create_initial_state(user_requirement=requirement, chat_history=chat_history, token_budget=token_budget)
+    initial_state = create_initial_state(user_requirement=requirement, chat_history=chat_history, token_budget=token_budget, model=model)
 
     def push_event(event_type: str, data: Dict[str, Any]):
         if queue:
@@ -119,9 +119,9 @@ def _sync_graph_worker(thread_id: str, requirement: str, token_budget: float, ch
 from concurrent.futures import ThreadPoolExecutor
 _graph_executor = ThreadPoolExecutor(max_workers=5)
 
-async def _run_graph_execution(thread_id: str, requirement: str, token_budget: float, chat_history: list, user_email: str = None, langsmith_api_key: str = None):
+async def _run_graph_execution(thread_id: str, requirement: str, token_budget: float, chat_history: list, user_email: str = None, langsmith_api_key: str = None, model: str = "gemini-2.5-flash"):
     loop = asyncio.get_running_loop()
-    await loop.run_in_executor(_graph_executor, _sync_graph_worker, thread_id, requirement, token_budget, chat_history, user_email, langsmith_api_key, loop)
+    await loop.run_in_executor(_graph_executor, _sync_graph_worker, thread_id, requirement, token_budget, chat_history, user_email, langsmith_api_key, loop, model)
 
 
 @router.post("/projects/start")
@@ -164,7 +164,8 @@ async def start_project(
             if final_budget <= 0.01:
                 raise HTTPException(status_code=402, detail="Insufficient token budget. Please top up using Stripe in settings.")
 
-    background_tasks.add_task(_run_graph_execution, thread_id, msg, final_budget, req.messages or [], user_email, req.langsmithApiKey)
+    target_model = req.model or "gemini-2.5-flash"
+    background_tasks.add_task(_run_graph_execution, thread_id, msg, final_budget, req.messages or [], user_email, req.langsmithApiKey, target_model)
 
     return {
         "thread_id": thread_id,

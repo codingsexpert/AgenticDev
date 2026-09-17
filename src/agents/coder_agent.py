@@ -73,6 +73,7 @@ def coder_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
         current_cost=state.get("tokenUsage", {}).get("estimatedCost", 0.0),
         token_budget=state.get("tokenBudget", 2.0),
         schema=CoderOutputModel,
+        model=state.get("model") or "gemini-2.5-flash",
         enable_web_search=True,
     )
 

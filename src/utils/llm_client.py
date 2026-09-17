@@ -64,20 +64,39 @@ def call_llm(
     if current_cost >= token_budget:
         raise ValueError(f"TOKEN_BUDGET_EXCEEDED: Current cost (${current_cost:.4f}) exceeded budget (${token_budget:.4f})")
 
-    primary_model = model or os.getenv("LLM_MODEL", "openrouter/qwen/qwen-2.5-coder-32b-instruct")
+    model_alias_map = {
+        "gemini-2.5-flash": "openrouter/google/gemini-2.5-flash",
+        "gemini-2.5": "openrouter/google/gemini-2.5-flash",
+        "gemini-2.5-pro": "openrouter/google/gemini-2.5-pro",
+        "gemini-2.5-flash-lite": "openrouter/google/gemini-2.5-flash-lite",
+        "gemini-flash-latest": "openrouter/google/gemini-2.5-flash",
+        "gemini-2.0-flash": "openrouter/google/gemini-2.5-flash",
+        "gemini-1.5-flash": "openrouter/google/gemini-2.5-flash",
+        "gemini-1.5-pro": "openrouter/google/gemini-2.5-pro",
+        "gemini-3.6-flash": "gemini/gemini-3.6-flash",
+        "gemini-flash-lite-latest": "openrouter/google/gemini-2.5-flash-lite",
+        "openrouter-qwen": "openrouter/qwen/qwen-2.5-coder-32b-instruct",
+    }
+    raw_model = model or os.getenv("LLM_MODEL", "openrouter/google/gemini-2.5-flash")
+    primary_model = model_alias_map.get(raw_model, raw_model if "/" in raw_model else f"openrouter/google/{raw_model}")
     
     candidate_models = [primary_model]
     if os.getenv("OPENROUTER_API_KEY"):
         for openrouter_m in [
+            "openrouter/google/gemini-2.5-flash",
+            "openrouter/google/gemini-2.5-flash-lite",
             "openrouter/qwen/qwen-2.5-coder-32b-instruct",
-            "openrouter/google/gemini-2.0-flash-001",
-            "openrouter/deepseek/deepseek-chat"
+            "openrouter/deepseek/deepseek-chat",
+            "openrouter/meta-llama/llama-3.1-8b-instruct",
         ]:
             if openrouter_m not in candidate_models:
                 candidate_models.append(openrouter_m)
-    for gemini_m in ["gemini/gemini-1.5-flash", "gemini/gemini-2.0-flash"]:
-        if gemini_m not in candidate_models:
-            candidate_models.append(gemini_m)
+    
+    gemini_key = os.getenv("GEMINI_API_KEY", "")
+    if gemini_key and gemini_key.startswith("AIza"):
+        for gemini_m in ["gemini/gemini-3.6-flash"]:
+            if gemini_m not in candidate_models:
+                candidate_models.append(gemini_m)
 
     last_exception = None
 
@@ -103,6 +122,8 @@ def call_llm(
         kwargs = {}
         if schema:
             kwargs["response_format"] = {"type": "json_object"}
+        if target_model.startswith("openrouter/"):
+            kwargs["max_tokens"] = 4096
 
         max_loops = 3
         try:

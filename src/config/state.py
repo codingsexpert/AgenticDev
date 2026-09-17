@@ -126,12 +126,14 @@ class AgentState(TypedDict, total=False):
     # Control & Phase
     currentPhase: str
     error: Optional[str]
+    model: Optional[str]
 
 
-def create_initial_state(user_requirement: str = "", chat_history: List[Any] = None, token_budget: float = 2.0) -> AgentState:
+def create_initial_state(user_requirement: str = "", chat_history: List[Any] = None, token_budget: float = 2.0, model: str = "gemini-2.5-flash") -> AgentState:
     return {
         "userRequirement": user_requirement,
         "chatHistory": chat_history or [],
+        "model": model,
         "pmStatus": "idle",
         "sandboxHealthy": False,
         "tokenBudget": token_budget,

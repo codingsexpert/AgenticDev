@@ -6,7 +6,7 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
   const toast = useToast();
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState([]);
-  const [selectedModel, setSelectedModel] = useState('gemini-flash-latest');
+  const [selectedModel, setSelectedModel] = useState('gemini-2.5-flash');
   const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [dictationStatus, setDictationStatus] = useState('');
@@ -200,10 +200,10 @@ export default function PromptBar({ onSubmit, isLoading, onStop, mode, setMode }
   };
 
   const models = [
-    { id: 'gemini-flash-latest', label: 'Gemini 2.0 Flash (Recommended)', desc: 'Instant Speed & Tool Use' },
+    { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash (Recommended)', desc: 'Next-Gen Instant Speed & Tool Use' },
+    { id: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro', desc: 'Deep Context Reasoning & Large Codebases' },
+    { id: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite', desc: 'Ultra-Fast Lightweight Engine' },
     { id: 'gemini-3.6-flash', label: 'Gemini 3.6 Flash', desc: 'Complex Multi-Agent Engine' },
-    { id: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro', desc: 'Deep Context Reasoning' },
-    { id: 'gemini-flash-lite-latest', label: 'Gemini Flash Lite', desc: 'Ultra-Fast Lightweight' },
   ];
 
   const presets = [

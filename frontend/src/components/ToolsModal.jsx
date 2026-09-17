@@ -107,7 +107,7 @@ export default function ToolsModal({
         const data = await res.json();
         setDiagResult({
           status: 'online',
-          model: data.model || 'gemini/gemini-1.5-flash',
+          model: data.model || 'openrouter/google/gemini-2.5-flash',
           projectsCount: data.memorySummary?.projectsCount || 0,
           patternsCount: data.memorySummary?.patternsCount || 0,
           supabaseConfigured: data.supabaseConfigured || false

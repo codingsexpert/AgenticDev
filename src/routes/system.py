@@ -17,7 +17,7 @@ def get_status():
     long_term = get_long_term_memory()
     return {
         "status": "online",
-        "model": os.getenv("LLM_MODEL", "gemini/gemini-1.5-flash"),
+        "model": os.getenv("LLM_MODEL", "openrouter/google/gemini-2.5-flash"),
         "tracing": tracer_info,
         "supabaseConfigured": bool(os.getenv("SUPABASE_URL")),
         "userPreferences": prefs,

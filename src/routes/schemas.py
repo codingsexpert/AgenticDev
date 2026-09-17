@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 class ProjectStartRequest(BaseModel):
     requirement: str
-    model: Optional[str] = "gemini-1.5-flash"
+    model: Optional[str] = "gemini-2.5-flash"
     techStack: Optional[str] = "python-fastapi"
     database: Optional[str] = "supabase"
     tokenBudget: Optional[float] = 2.0
@@ -19,9 +19,10 @@ class ProjectStartRequest(BaseModel):
 
 
 class ChatMessage(BaseModel):
-    role: str
-    content: str
+    role: str = "user"
+    content: Optional[str] = ""
     attachments: Optional[List[Dict[str, Any]]] = None
+    timestamp: Optional[Any] = None
 
 
 class RunCodeRequest(BaseModel):
@@ -35,11 +36,12 @@ class SaveFileRequest(BaseModel):
 
 
 class ChatStreamRequest(BaseModel):
-    messages: List[ChatMessage]
-    model: Optional[str] = "gemini-1.5-flash"
+    messages: List[ChatMessage] = []
+    model: Optional[str] = "gemini-2.5-flash"
     thread_id: Optional[str] = None
     attachments: Optional[List[Dict[str, Any]]] = None
     mode: Optional[str] = "chat"
+    user_id: Optional[str] = None
 
 
 class QuestionAnswerRequest(BaseModel):
